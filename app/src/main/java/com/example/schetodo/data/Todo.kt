@@ -4,13 +4,24 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(
+    tableName = "todo",
+    foreignKeys = [
+        ForeignKey(
+            entity = TodoCategory::class,
+            parentColumns = ["categoryId"],
+            childColumns = ["categoryId"],
+            onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE
+        )
+    ]
+)
 data class Todo(
     @PrimaryKey(autoGenerate = true) val todoId: Int,
     val description: String?,
     val priority: TodoPriority,
     val flag: TodoFlag,
-    val categoryId: Int // TODO create foreign key constraint
+    val categoryId: Int
 )
 
 enum class TodoFlag {
