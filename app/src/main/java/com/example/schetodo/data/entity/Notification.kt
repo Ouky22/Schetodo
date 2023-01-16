@@ -2,6 +2,7 @@ package com.example.schetodo.data.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import java.time.LocalTime
 
 @Entity(
@@ -14,7 +15,8 @@ import java.time.LocalTime
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index("todoBlockId")]
 )
 data class Notification(
     val time: LocalTime,

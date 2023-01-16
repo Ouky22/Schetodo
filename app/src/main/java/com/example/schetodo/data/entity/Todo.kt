@@ -2,6 +2,7 @@ package com.example.schetodo.data.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -13,6 +14,9 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index("categoryId")
     ]
 )
 data class Todo(

@@ -9,7 +9,8 @@ import java.time.LocalTime
 
 @Entity(
     indices = [
-        Index("date")
+        Index("date"),
+        Index("templateId")
     ],
     foreignKeys = [
         ForeignKey(

@@ -2,11 +2,12 @@ package com.example.schetodo.data.relationship
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import com.example.schetodo.data.entity.TodoBlock
 import com.example.schetodo.data.entity.TodoCategory
 
 @Entity(
-    primaryKeys = ["todoBlockId", "todoCategoryId"],
+    primaryKeys = ["todoBlockId", "categoryId"],
     foreignKeys = [
         ForeignKey(
             entity = TodoBlock::class,
@@ -22,7 +23,8 @@ import com.example.schetodo.data.entity.TodoCategory
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index("categoryId")]
 )
 data class TodoBlockCategoryRelationship(
     val todoBlockId: Int,
