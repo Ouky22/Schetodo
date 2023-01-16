@@ -5,7 +5,6 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "todo_category",
     foreignKeys = [
         ForeignKey(
             entity = TodoCategory::class,
