@@ -1,4 +1,4 @@
-package com.example.schetodo.data
+package com.example.schetodo.data.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey

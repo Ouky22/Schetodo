@@ -2,8 +2,8 @@ package com.example.schetodo.data.relationship
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import com.example.schetodo.data.Todo
-import com.example.schetodo.data.TodoBlock
+import com.example.schetodo.data.entity.Todo
+import com.example.schetodo.data.entity.TodoBlock
 
 @Entity(
     primaryKeys = ["todoBlockId", "todoId"],
