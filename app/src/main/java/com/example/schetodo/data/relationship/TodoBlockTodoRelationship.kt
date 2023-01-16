@@ -1,10 +1,12 @@
-package com.example.schetodo.data
+package com.example.schetodo.data.relationship
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import com.example.schetodo.data.Todo
+import com.example.schetodo.data.TodoBlock
 
 @Entity(
-    primaryKeys = ["todoBlockId", "todoCategoryId"],
+    primaryKeys = ["todoBlockId", "todoId"],
     foreignKeys = [
         ForeignKey(
             entity = TodoBlock::class,
@@ -14,15 +16,15 @@ import androidx.room.ForeignKey
             onUpdate = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = TodoCategory::class,
-            parentColumns = ["categoryId"],
-            childColumns = ["categoryId"],
+            entity = Todo::class,
+            parentColumns = ["todoId"],
+            childColumns = ["todoId"],
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
     ]
 )
-data class TodoBlockCategoryRelationship(
+data class TodoBlockTodoRelationship(
     val todoBlockId: Int,
-    val categoryId: Int
+    val todoId: Int
 )
