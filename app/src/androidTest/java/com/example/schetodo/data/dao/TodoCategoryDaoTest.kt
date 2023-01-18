@@ -33,7 +33,7 @@ class TodoCategoryDaoTest {
     }
 
     @Test
-    fun test_getTopLevelTodoCategories() = runTest {
+    fun test_get_top_level_todo_categories() = runTest {
         val topLevelCategory1 = TodoCategory(1, "c1", 0, null)
         val topLevelCategory2 = TodoCategory(2, "c2", 0, null)
         val childCategory1 = TodoCategory(3, "c3", 0, 1)
@@ -55,7 +55,7 @@ class TodoCategoryDaoTest {
     }
 
     @Test
-    fun test_getChildTodoCategoriesOfParentCategory() = runTest {
+    fun test_get_child_todo_categories_of_parent_category() = runTest {
         val topLevelCategory1 = TodoCategory(1, "c1", 0, null)
         val topLevelCategory2 = TodoCategory(2, "c2", 0, null)
         val childCategory1 = TodoCategory(3, "c3", 0, 1)

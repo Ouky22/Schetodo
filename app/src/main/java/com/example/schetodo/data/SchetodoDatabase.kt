@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.schetodo.data.dao.TodoCategoryDao
+import com.example.schetodo.data.dao.TodoDao
 import com.example.schetodo.data.entity.*
 import com.example.schetodo.data.relationship.TodoBlockCategoryRelationship
 import com.example.schetodo.data.relationship.TodoBlockTodoRelationship
@@ -21,6 +22,7 @@ import com.example.schetodo.data.relationship.TodoBlockTodoRelationship
 abstract class SchetodoDatabase : RoomDatabase() {
 
     abstract val todoCategoryDao: TodoCategoryDao
+    abstract val todoDao: TodoDao
 
     companion object {
         @Volatile
