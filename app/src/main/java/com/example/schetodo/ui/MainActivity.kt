@@ -1,4 +1,4 @@
-package com.example.schetodo
+package com.example.schetodo.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

@@ -78,7 +78,7 @@ class TodoDaoTest {
         todoDao.insertTodo(todo1)
         todoDao.insertTodo(todo2)
         todoDao.insertTodo(todo3)
-        
+
         todoCategoryDao.deleteTodoCategory(category2)
         todoDao.getAllTodosOfTodoCategory(category2.categoryId).test {
             val todos = awaitItem()
