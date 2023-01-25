@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Schetodo</string>
+
+    <string name="statistics">Statistics</string>
+    <string name="schedule">Schedule</string>
+    <string name="todos">Todos</string>
 </resources>

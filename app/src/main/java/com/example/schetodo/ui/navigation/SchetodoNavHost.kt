@@ -13,16 +13,16 @@ import com.example.schetodo.ui.todocategory.TodoCategoryScreen
 fun SchetodoNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
-        startDestination = Schedule.route,
+        startDestination = SchetodoDestination.Schedule.route,
         modifier = modifier
     ) {
-        composable(route = Schedule.route) {
+        composable(route = SchetodoDestination.Schedule.route) {
             ScheduleScreen()
         }
-        composable(route = TodoCategory.route) {
+        composable(route = SchetodoDestination.Todos.route) {
             TodoCategoryScreen()
         }
-        composable(route = Statistics.route) {
+        composable(route = SchetodoDestination.Statistics.route) {
             StatisticsScreen()
         }
     }
