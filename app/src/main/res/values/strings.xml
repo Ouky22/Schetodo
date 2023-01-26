@@ -4,4 +4,6 @@
     <string name="statistics">Statistics</string>
     <string name="schedule">Schedule</string>
     <string name="todos">Todos</string>
+
+    <string name="check_off_todos">Check off todos</string>
 </resources>

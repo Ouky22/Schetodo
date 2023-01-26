@@ -7,7 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.schetodo.ui.schedule.ScheduleScreen
 import com.example.schetodo.ui.statistics.StatisticsScreen
-import com.example.schetodo.ui.todocategory.TodoCategoryScreen
+import com.example.schetodo.ui.todos.TodosScreen
 
 @Composable
 fun SchetodoNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
@@ -20,7 +20,7 @@ fun SchetodoNavHost(navController: NavHostController, modifier: Modifier = Modif
             ScheduleScreen()
         }
         composable(route = SchetodoDestination.Todos.route) {
-            TodoCategoryScreen()
+            TodosScreen()
         }
         composable(route = SchetodoDestination.Statistics.route) {
             StatisticsScreen()
