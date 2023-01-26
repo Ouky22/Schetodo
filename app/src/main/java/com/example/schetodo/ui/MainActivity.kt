@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
 fun SchetodoApp() {
     SchetodoTheme {
         val navController = rememberNavController()
-        val currentBackStack by navController.currentBackStackEntryAsState() 
+        val currentBackStack by navController.currentBackStackEntryAsState()
         val currentDestination = currentBackStack?.destination
 
         Scaffold(

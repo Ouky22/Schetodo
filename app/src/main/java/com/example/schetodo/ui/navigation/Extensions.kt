@@ -11,5 +11,6 @@ fun NavHostController.navigateSingleTopTo(destination: SchetodoDestination) {
             saveState = true
         }
         launchSingleTop = true
+        restoreState = true
     }
 }
