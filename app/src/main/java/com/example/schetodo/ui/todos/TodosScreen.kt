@@ -7,6 +7,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Checklist
+import androidx.compose.material.icons.outlined.Done
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +32,15 @@ fun TodosScreen(
     ) {
         LazyColumn(modifier = Modifier.weight(1f)) {
             items(10) { index ->
-                CategoryItem(backgroundColor = Color.Cyan, text = "Category $index")
+                CategoryItem(
+                    modifier = Modifier
+                        .height(125.dp)
+                        .padding(vertical = 8.dp, horizontal = 16.dp),
+                    color = listOf(Color.Red, Color.Cyan, Color.Green, Color.Blue).shuffled()
+                        .first(),
+                    text = "Category $index",
+                    icon = Icons.Outlined.Done
+                )
             }
         }
 
