@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.PieChart
 import androidx.compose.material.icons.outlined.Schedule
+import androidx.compose.material.icons.outlined.TaskAlt
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.schetodo.R
 
@@ -20,7 +21,7 @@ sealed class SchetodoDestination(
     )
 
     object Todos : SchetodoDestination(
-        icon = Icons.Outlined.Done,
+        icon = Icons.Outlined.TaskAlt,
         route = "todos",
         titleResourceId = R.string.todos
     )

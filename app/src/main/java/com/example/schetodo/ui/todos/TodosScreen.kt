@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.schetodo.R
+import com.example.schetodo.data.entity.TodoCategory
 import com.example.schetodo.ui.theme.SchetodoTheme
 
 @Composable
@@ -36,10 +37,7 @@ fun TodosScreen(
                     modifier = Modifier
                         .height(125.dp)
                         .padding(vertical = 8.dp, horizontal = 16.dp),
-                    color = listOf(Color.Red, Color.Cyan, Color.Green, Color.Blue).shuffled()
-                        .first(),
-                    text = "Category $index",
-                    icon = Icons.Outlined.Done
+                    todoCategory = TodoCategory(index, "Category $index", 0xff799FCB, null),
                 )
             }
         }
