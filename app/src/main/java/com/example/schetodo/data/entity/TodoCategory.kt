@@ -18,6 +18,6 @@ import androidx.room.PrimaryKey
 data class TodoCategory(
     @PrimaryKey(autoGenerate = true) val categoryId: Int,
     val name: String,
-    val color: Int,
+    val color: Long,
     val parentTodoCategoryId: Int?
 )
