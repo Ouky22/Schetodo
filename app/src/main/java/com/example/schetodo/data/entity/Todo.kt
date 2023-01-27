@@ -21,7 +21,7 @@ import androidx.room.PrimaryKey
 )
 data class Todo(
     @PrimaryKey(autoGenerate = true) val todoId: Int,
-    val description: String?,
+    val description: String,
     val priority: TodoPriority,
     val flag: TodoFlag,
     val categoryId: Int
