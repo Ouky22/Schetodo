@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.todos
+package com.example.schetodo.ui.feature.todos
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn

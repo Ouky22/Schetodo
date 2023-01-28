@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.statistics
+package com.example.schetodo.ui.feature.statistics
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

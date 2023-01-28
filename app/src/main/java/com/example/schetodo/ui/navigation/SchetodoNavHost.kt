@@ -5,9 +5,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.schetodo.ui.schedule.ScheduleScreen
-import com.example.schetodo.ui.statistics.StatisticsScreen
-import com.example.schetodo.ui.todos.TodosScreen
+import com.example.schetodo.ui.feature.schedule.ScheduleScreen
+import com.example.schetodo.ui.feature.statistics.StatisticsScreen
+import com.example.schetodo.ui.feature.todos.TodosScreen
 
 @Composable
 fun SchetodoNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
