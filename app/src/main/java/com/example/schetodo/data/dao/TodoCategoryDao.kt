@@ -13,6 +13,9 @@ interface TodoCategoryDao {
     @Insert
     fun insertTodoCategory(todoCategory: TodoCategory): Long
 
+    @Query("SELECT * FROM TodoCategory WHERE categoryId = :todoCategoryId")
+    fun getTodoCategoryById(todoCategoryId: Int): Flow<TodoCategory?>
+
     @Query("SELECT * FROM TodoCategory WHERE parentTodoCategoryId IS NULL ORDER BY name ASC")
     fun getTopLevelTodoCategories(): Flow<List<TodoCategory>>
 
