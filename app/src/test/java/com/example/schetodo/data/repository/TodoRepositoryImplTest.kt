@@ -13,20 +13,20 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 @ExperimentalCoroutinesApi
-internal class TodoRepositoryTest {
+internal class TodoRepositoryImplTest {
 
     private lateinit var fakeTodoDao: TodoDao
-    private lateinit var todoRepository: TodoRepository
+    private lateinit var todoRepositoryImpl: TodoRepositoryImpl
 
     @Before
     fun init() {
         fakeTodoDao = FakeTodoDao()
-        todoRepository = TodoRepository(fakeTodoDao)
+        todoRepositoryImpl = TodoRepositoryImpl(fakeTodoDao)
     }
 
     @Test
     fun when_null_as_todo_category_id_provided_then_return_flow_with_empty_list() = runTest {
-        todoRepository.getTodosOfTodoCategory(null).test {
+        todoRepositoryImpl.getTodosOfTodoCategory(null).test {
             val todos = awaitItem()
             assertThat(todos).isEmpty()
             awaitComplete()
@@ -40,7 +40,7 @@ internal class TodoRepositoryTest {
         fakeTodoDao.insertTodo(todo1)
         fakeTodoDao.insertTodo(todo2)
 
-        todoRepository.getTodosOfTodoCategory(2).test {
+        todoRepositoryImpl.getTodosOfTodoCategory(2).test {
             val todos = awaitItem()
             assertThat(todos).isEmpty()
             awaitComplete()
@@ -58,7 +58,7 @@ internal class TodoRepositoryTest {
         fakeTodoDao.insertTodo(todo2)
         fakeTodoDao.insertTodo(todo3)
 
-        todoRepository.getTodosOfTodoCategory(todoCategoryId).test {
+        todoRepositoryImpl.getTodosOfTodoCategory(todoCategoryId).test {
             val todos = awaitItem()
             assertThat(todos).contains(todo1)
             assertThat(todos).contains(todo2)

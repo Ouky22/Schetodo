@@ -11,15 +11,15 @@ import org.junit.Before
 import org.junit.Test
 
 @ExperimentalCoroutinesApi
-internal class TodoCategoryRepositoryTest {
+internal class TodoCategoryRepositoryImplTest {
 
     private lateinit var fakeTodoCategoryDao: TodoCategoryDao
-    private lateinit var todoCategoryRepository: TodoCategoryRepository
+    private lateinit var todoCategoryRepositoryImpl: TodoCategoryRepositoryImpl
 
     @Before
     fun init() {
         fakeTodoCategoryDao = FakeTodoCategoryDao()
-        todoCategoryRepository = TodoCategoryRepository(fakeTodoCategoryDao)
+        todoCategoryRepositoryImpl = TodoCategoryRepositoryImpl(fakeTodoCategoryDao)
     }
 
     @Test
@@ -29,7 +29,7 @@ internal class TodoCategoryRepositoryTest {
         fakeTodoCategoryDao.insertTodoCategory(category1)
         fakeTodoCategoryDao.insertTodoCategory(category2)
 
-        todoCategoryRepository.getTodoCategory(category1.categoryId).test {
+        todoCategoryRepositoryImpl.getTodoCategory(category1.categoryId).test {
             val category = awaitItem()
             assertThat(category).isEqualTo(category1)
             awaitComplete()
@@ -43,7 +43,7 @@ internal class TodoCategoryRepositoryTest {
         fakeTodoCategoryDao.insertTodoCategory(category1)
         fakeTodoCategoryDao.insertTodoCategory(category2)
 
-        todoCategoryRepository.getTodoCategory(3).test {
+        todoCategoryRepositoryImpl.getTodoCategory(3).test {
             val category = awaitItem()
             assertThat(category).isEqualTo(null)
             awaitComplete()
@@ -52,7 +52,7 @@ internal class TodoCategoryRepositoryTest {
 
     @Test
     fun test_getting_category_by_id_when_null_as_id_provided() = runTest {
-        todoCategoryRepository.getTodoCategory(null).test {
+        todoCategoryRepositoryImpl.getTodoCategory(null).test {
             val value = awaitItem()
             assertThat(value).isNull()
             awaitComplete()
@@ -68,7 +68,7 @@ internal class TodoCategoryRepositoryTest {
         fakeTodoCategoryDao.insertTodoCategory(topLevelCategory2)
         fakeTodoCategoryDao.insertTodoCategory(childCategory1)
 
-        todoCategoryRepository.getChildTodoCategoriesOf(null).test {
+        todoCategoryRepositoryImpl.getChildTodoCategoriesOf(null).test {
             val categories = awaitItem()
             assertThat(categories.size).isEqualTo(2)
             assertThat(categories).contains(topLevelCategory1)
@@ -79,7 +79,7 @@ internal class TodoCategoryRepositoryTest {
 
     @Test
     fun when_no_categories_exist_then_getting_child_categories_returns_flow_of_empty_list() = runTest {
-        todoCategoryRepository.getChildTodoCategoriesOf(1).test {
+        todoCategoryRepositoryImpl.getChildTodoCategoriesOf(1).test {
             val categories = awaitItem()
             assertThat(categories).isEmpty()
             awaitComplete()
@@ -93,7 +93,7 @@ internal class TodoCategoryRepositoryTest {
         fakeTodoCategoryDao.insertTodoCategory(category1)
         fakeTodoCategoryDao.insertTodoCategory(category2)
 
-        todoCategoryRepository.getChildTodoCategoriesOf(category2.categoryId).test {
+        todoCategoryRepositoryImpl.getChildTodoCategoriesOf(category2.categoryId).test {
             val categories = awaitItem()
             assertThat(categories).isEmpty()
             awaitComplete()
@@ -111,7 +111,7 @@ internal class TodoCategoryRepositoryTest {
         fakeTodoCategoryDao.insertTodoCategory(childCategory2)
         fakeTodoCategoryDao.insertTodoCategory(category)
 
-        todoCategoryRepository.getChildTodoCategoriesOf(parentCategory.categoryId).test {
+        todoCategoryRepositoryImpl.getChildTodoCategoriesOf(parentCategory.categoryId).test {
             val categories = awaitItem()
             assertThat(categories.size).isEqualTo(2)
             assertThat(categories).contains(childCategory1)
