@@ -12,9 +12,8 @@ class TodoCategoryRepositoryImpl @Inject constructor(
     private val todoCategoryDao: TodoCategoryDao
 ) : TodoCategoryRepository {
 
-    override suspend fun insertTodoCategory(todoCategory: TodoCategory) {
+    override suspend fun insertTodoCategory(todoCategory: TodoCategory) =
         todoCategoryDao.insertTodoCategory(todoCategory)
-    }
 
     override fun getChildTodoCategoriesOf(todoCategoryId: Int?): Flow<List<TodoCategory>> {
         return if (todoCategoryId == null)
