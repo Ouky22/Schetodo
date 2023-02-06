@@ -12,7 +12,7 @@ class TodoCategoryRepositoryImpl @Inject constructor(
     private val todoCategoryDao: TodoCategoryDao
 ) : TodoCategoryRepository {
 
-    override fun insertTodoCategory(todoCategory: TodoCategory) {
+    override suspend fun insertTodoCategory(todoCategory: TodoCategory) {
         todoCategoryDao.insertTodoCategory(todoCategory)
     }
 

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TodoDao {
     @Insert
-    fun insertTodo(todo: Todo): Long
+    suspend fun insertTodo(todo: Todo): Long
 
     @Query("SELECT * FROM Todo")
     fun getAllTodos(): Flow<List<Todo>>

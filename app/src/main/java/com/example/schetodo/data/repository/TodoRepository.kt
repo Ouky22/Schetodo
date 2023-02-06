@@ -4,6 +4,6 @@ import com.example.schetodo.data.entity.Todo
 import kotlinx.coroutines.flow.Flow
 
 interface TodoRepository {
-    fun insertTodo(todo: Todo)
+    suspend fun insertTodo(todo: Todo)
     fun getTodosOfTodoCategory(todoCategoryId: Int?): Flow<List<Todo>>
 }

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.flow
 class FakeTodoCategoryDao : TodoCategoryDao {
     private val todoCategories = mutableListOf<TodoCategory>()
 
-    override fun insertTodoCategory(todoCategory: TodoCategory): Long {
+    override suspend fun insertTodoCategory(todoCategory: TodoCategory): Long {
         todoCategories.add(todoCategory)
         return todoCategory.categoryId.toLong()
     }
@@ -35,7 +35,7 @@ class FakeTodoCategoryDao : TodoCategoryDao {
         }
     }
 
-    override fun deleteTodoCategory(todoCategory: TodoCategory) {
+    override suspend fun deleteTodoCategory(todoCategory: TodoCategory) {
         todoCategories.remove(todoCategory)
     }
 }

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.flow
 class FakeTodoDao : TodoDao {
     private val todos = mutableListOf<Todo>()
 
-    override fun insertTodo(todo: Todo): Long {
+    override suspend fun insertTodo(todo: Todo): Long {
         todos.add(todo)
         return todo.todoId.toLong()
     }

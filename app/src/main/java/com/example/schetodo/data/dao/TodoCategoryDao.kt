@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface TodoCategoryDao {
 
     @Insert
-    fun insertTodoCategory(todoCategory: TodoCategory): Long
+    suspend fun insertTodoCategory(todoCategory: TodoCategory): Long
 
     @Query("SELECT * FROM TodoCategory WHERE categoryId = :todoCategoryId")
     fun getTodoCategoryById(todoCategoryId: Int): Flow<TodoCategory?>
@@ -23,5 +23,5 @@ interface TodoCategoryDao {
     fun getDirectChildTodoCategoriesOf(todoCategoryId: Int): Flow<List<TodoCategory>>
 
     @Delete
-    fun deleteTodoCategory(todoCategory: TodoCategory)
+    suspend fun deleteTodoCategory(todoCategory: TodoCategory)
 }

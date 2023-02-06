@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.flow
 class FakeTodoCategoryRepository : TodoCategoryRepository {
     private val todoCategories = mutableListOf<TodoCategory>()
 
-    override fun insertTodoCategory(todoCategory: TodoCategory) {
+    override suspend fun insertTodoCategory(todoCategory: TodoCategory) {
         todoCategories.add(todoCategory)
     }
 
