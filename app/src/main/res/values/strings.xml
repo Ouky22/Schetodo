@@ -6,4 +6,5 @@
     <string name="todos">Todos</string>
 
     <string name="check_off_todos">Check off todos</string>
+    <string name="go_back">go back</string>
 </resources>

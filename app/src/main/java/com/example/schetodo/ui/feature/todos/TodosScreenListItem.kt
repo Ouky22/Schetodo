@@ -1,6 +1,7 @@
 package com.example.schetodo.ui.feature.todos
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -31,11 +32,12 @@ fun TodosScreenListItem(
     iconBackgroundColor: Color,
     cardBackgroundColor: Color,
     icon: ImageVector,
-    text: @Composable () -> Unit
+    text: @Composable () -> Unit,
+    onItemClick: () -> Unit
 ) {
     Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = cardBackgroundColor)
+        modifier = modifier.clickable { onItemClick() },
+        colors = CardDefaults.cardColors(containerColor = cardBackgroundColor),
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -75,7 +77,8 @@ fun TodosScreenListItem(
 @Composable
 fun CategoryItem(
     modifier: Modifier = Modifier,
-    todoCategory: TodoCategory
+    todoCategory: TodoCategory,
+    onItemClick: () -> Unit
 ) {
     TodosScreenListItem(
         modifier = modifier,
@@ -90,14 +93,16 @@ fun CategoryItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-        }
+        },
+        onItemClick = onItemClick
     )
 }
 
 @Composable
 fun TodoItem(
     modifier: Modifier = Modifier,
-    todo: Todo
+    todo: Todo,
+    onItemClick: () -> Unit
 ) {
     val iconBackgroundColor = when (todo.priority) {
         TodoPriority.LOW -> Color(0xFFDAE3D9)
@@ -118,7 +123,8 @@ fun TodoItem(
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis
             )
-        }
+        },
+        onItemClick = onItemClick
     )
 }
 
@@ -134,7 +140,8 @@ fun TodoItem() {
                 TodoPriority.HIGH,
                 TodoFlag.UNDONE,
                 0
-            )
+            ),
+            onItemClick = {}
         )
     }
 }
@@ -145,7 +152,8 @@ fun CategoryItemPreview() {
     SchetodoTheme {
         CategoryItem(
             modifier = Modifier.height(100.dp),
-            todoCategory = TodoCategory(0, "Household", 0xff799FCB, null)
+            todoCategory = TodoCategory(0, "Household", 0xff799FCB, null),
+            onItemClick = {}
         )
     }
 }

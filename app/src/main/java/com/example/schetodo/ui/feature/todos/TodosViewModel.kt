@@ -33,10 +33,11 @@ class TodosViewModel @Inject constructor(
         // add test data
 //        val category1 = TodoCategory(0, "Test Category 1", 0xff799FCB, null)
 //        val category2 = TodoCategory(0, "Test Category 2", 0xA7727D, null)
-//        val category3 = TodoCategory(0, "Test Category 3", 0xD3756B, category1.categoryId)
 //        viewModelScope.launch {
 //            val c1Id = todoCategoryRepository.insertTodoCategory(category1)
 //            val c2Id = todoCategoryRepository.insertTodoCategory(category2)
+//
+//            val category3 = TodoCategory(0, "Test Category 3", 0xD3756B, c1Id.toInt())
 //            todoCategoryRepository.insertTodoCategory(category3)
 //
 //            val todo1 = Todo(0, "Test 1", TodoPriority.LOW, TodoFlag.UNDONE, c1Id.toInt())
@@ -54,7 +55,17 @@ class TodosViewModel @Inject constructor(
     fun onEvent(event: TodosEvent) {
         when (event) {
             is TodosEvent.NavigateToNewTodoCategory -> updateCurrentTodoCategory(event.newTodoCategoryId)
+            is TodosEvent.NavigateToPreviousTodoCategory -> loadPreviousCategory()
         }
+    }
+
+    private fun loadPreviousCategory() {
+        val currentTodoCategoryIsTopLevelCategory = todosState.value.currentCategory == null
+        if (currentTodoCategoryIsTopLevelCategory)
+            return
+
+        val parentCategory = todosState.value.currentCategory?.parentTodoCategoryId
+        updateCurrentTodoCategory(parentCategory)
     }
 
     private fun updateCurrentTodoCategory(currentTodoCategoryId: Int?) {
