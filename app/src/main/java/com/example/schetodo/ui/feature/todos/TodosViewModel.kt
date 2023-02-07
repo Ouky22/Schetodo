@@ -31,13 +31,13 @@ class TodosViewModel @Inject constructor(
         updateCurrentTodoCategory(null)
 
         // add test data
-//        val category1 = TodoCategory(0, "Test Category 1", 0xff799FCB, null)
-//        val category2 = TodoCategory(0, "Test Category 2", 0xA7727D, null)
+//        val category1 = TodoCategory(0, "Test Category 1", 0xff799FCB, null, "")
+//        val category2 = TodoCategory(0, "Test Category 2", 0xA7727D, null, "")
 //        viewModelScope.launch {
 //            val c1Id = todoCategoryRepository.insertTodoCategory(category1)
 //            val c2Id = todoCategoryRepository.insertTodoCategory(category2)
 //
-//            val category3 = TodoCategory(0, "Test Category 3", 0xD3756B, c1Id.toInt())
+//            val category3 = TodoCategory(0, "Test Category 3", 0xD3756B, c1Id.toInt(), "")
 //            todoCategoryRepository.insertTodoCategory(category3)
 //
 //            val todo1 = Todo(0, "Test 1", TodoPriority.LOW, TodoFlag.UNDONE, c1Id.toInt())

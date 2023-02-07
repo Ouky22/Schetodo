@@ -24,8 +24,8 @@ internal class TodoCategoryRepositoryImplTest {
 
     @Test
     fun test_getting_category_by_id_when_existing_id_provided() = runTest {
-        val category1 = TodoCategory(1, "Test", 0L, null)
-        val category2 = TodoCategory(2, "Test", 1L, 1)
+        val category1 = TodoCategory(1, "Test", 0L, null, "")
+        val category2 = TodoCategory(2, "Test", 1L, 1, "")
         fakeTodoCategoryDao.insertTodoCategory(category1)
         fakeTodoCategoryDao.insertTodoCategory(category2)
 
@@ -38,8 +38,8 @@ internal class TodoCategoryRepositoryImplTest {
 
     @Test
     fun test_getting_category_by_id_when_not_existing_id_provided() = runTest {
-        val category1 = TodoCategory(1, "Test", 0L, null)
-        val category2 = TodoCategory(2, "Test", 1L, 1)
+        val category1 = TodoCategory(1, "Test", 0L, null, "")
+        val category2 = TodoCategory(2, "Test", 1L, 1, "")
         fakeTodoCategoryDao.insertTodoCategory(category1)
         fakeTodoCategoryDao.insertTodoCategory(category2)
 
@@ -61,9 +61,9 @@ internal class TodoCategoryRepositoryImplTest {
 
     @Test
     fun when_getting_child_categories_of_null_then_return_top_level_categories() = runTest {
-        val topLevelCategory1 = TodoCategory(1, "", 0L, null)
-        val topLevelCategory2 = TodoCategory(2, "", 0L, null)
-        val childCategory1 = TodoCategory(2, "", 0L, topLevelCategory2.categoryId)
+        val topLevelCategory1 = TodoCategory(1, "", 0L, null, "")
+        val topLevelCategory2 = TodoCategory(2, "", 0L, null, "")
+        val childCategory1 = TodoCategory(2, "", 0L, topLevelCategory2.categoryId, "")
         fakeTodoCategoryDao.insertTodoCategory(topLevelCategory1)
         fakeTodoCategoryDao.insertTodoCategory(topLevelCategory2)
         fakeTodoCategoryDao.insertTodoCategory(childCategory1)
@@ -78,18 +78,19 @@ internal class TodoCategoryRepositoryImplTest {
     }
 
     @Test
-    fun when_no_categories_exist_then_getting_child_categories_returns_flow_of_empty_list() = runTest {
-        todoCategoryRepositoryImpl.getChildTodoCategoriesOf(1).test {
-            val categories = awaitItem()
-            assertThat(categories).isEmpty()
-            awaitComplete()
+    fun when_no_categories_exist_then_getting_child_categories_returns_flow_of_empty_list() =
+        runTest {
+            todoCategoryRepositoryImpl.getChildTodoCategoriesOf(1).test {
+                val categories = awaitItem()
+                assertThat(categories).isEmpty()
+                awaitComplete()
+            }
         }
-    }
 
     @Test
     fun when_category_has_no_child_categories_then_return_flow_of_empty_list() = runTest {
-        val category1 = TodoCategory(1, "", 0L, null)
-        val category2 = TodoCategory(2, "", 0L, category1.categoryId)
+        val category1 = TodoCategory(1, "", 0L, null, "")
+        val category2 = TodoCategory(2, "", 0L, category1.categoryId, "")
         fakeTodoCategoryDao.insertTodoCategory(category1)
         fakeTodoCategoryDao.insertTodoCategory(category2)
 
@@ -102,10 +103,10 @@ internal class TodoCategoryRepositoryImplTest {
 
     @Test
     fun test_getting_the_direct_child_categories_of_a_category() = runTest {
-        val parentCategory = TodoCategory(1, "", 0L, null)
-        val childCategory1 = TodoCategory(2, "", 0L, parentCategory.categoryId)
-        val childCategory2 = TodoCategory(3, "", 0L, parentCategory.categoryId)
-        val category = TodoCategory(4, "", 0L, childCategory1.categoryId)
+        val parentCategory = TodoCategory(1, "", 0L, null, "")
+        val childCategory1 = TodoCategory(2, "", 0L, parentCategory.categoryId, "")
+        val childCategory2 = TodoCategory(3, "", 0L, parentCategory.categoryId, "")
+        val category = TodoCategory(4, "", 0L, childCategory1.categoryId, "")
         fakeTodoCategoryDao.insertTodoCategory(parentCategory)
         fakeTodoCategoryDao.insertTodoCategory(childCategory1)
         fakeTodoCategoryDao.insertTodoCategory(childCategory2)

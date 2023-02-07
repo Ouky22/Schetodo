@@ -25,9 +25,9 @@ internal class TodosViewModelTest {
 
     @Test
     fun when_current_category_changes_then_load_categories_and_todos_of_new_category() = runTest {
-        val topLevelTodoCategory1 = TodoCategory(1, "C1", 0xFFFFFF, null)
-        val topLevelTodoCategory2 = TodoCategory(2, "C2", 0xFFFFFF, null)
-        val childCategory1 = TodoCategory(3, "C3", 0xAAAAAA, topLevelTodoCategory1.categoryId)
+        val topLevelTodoCategory1 = TodoCategory(1, "C1", 0xFFFFFF, null, "")
+        val topLevelTodoCategory2 = TodoCategory(2, "C2", 0xFFFFFF, null, "")
+        val childCategory1 = TodoCategory(3, "C3", 0xAAAAAA, topLevelTodoCategory1.categoryId, "")
         val todoOfChildCategory =
             Todo(1, "t1", TodoPriority.MEDIUM, TodoFlag.UNDONE, childCategory1.categoryId)
         val todoOfTopLevelCategory1 =
@@ -52,9 +52,9 @@ internal class TodosViewModelTest {
 
     @Test
     fun when_there_are_top_level_categories_then_view_model_loads_them_at_start() = runTest {
-        val topLevelTodoCategory1 = TodoCategory(1, "C1", 0xFFFFFF, null)
-        val topLevelTodoCategory2 = TodoCategory(2, "C2", 0xFFFFFF, null)
-        val childCategory1 = TodoCategory(3, "C3", 0xAAAAAA, topLevelTodoCategory1.categoryId)
+        val topLevelTodoCategory1 = TodoCategory(1, "C1", 0xFFFFFF, null, "")
+        val topLevelTodoCategory2 = TodoCategory(2, "C2", 0xFFFFFF, null, "")
+        val childCategory1 = TodoCategory(3, "C3", 0xAAAAAA, topLevelTodoCategory1.categoryId, "")
         fakeTodoCategoryRepository.insertTodoCategory(topLevelTodoCategory1)
         fakeTodoCategoryRepository.insertTodoCategory(topLevelTodoCategory2)
         fakeTodoCategoryRepository.insertTodoCategory(childCategory1)

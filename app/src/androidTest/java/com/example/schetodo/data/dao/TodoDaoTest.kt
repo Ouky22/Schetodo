@@ -39,8 +39,8 @@ class TodoDaoTest {
 
     @Test
     fun test_get_all_todos_of_todo_category() = runTest {
-        val category1 = TodoCategory(1, "c1", 0, null)
-        val category2 = TodoCategory(2, "c2", 0, 1)
+        val category1 = TodoCategory(1, "c1", 0, null, "")
+        val category2 = TodoCategory(2, "c2", 0, 1, "")
         todoCategoryDao.insertTodoCategory(category1)
         todoCategoryDao.insertTodoCategory(category2)
 
@@ -67,8 +67,8 @@ class TodoDaoTest {
 
     @Test
     fun when_deleting_category_then_all_containing_todos_are_deleted() = runTest {
-        val category1 = TodoCategory(1, "c1", 0, null)
-        val category2 = TodoCategory(2, "c2", 0, 1)
+        val category1 = TodoCategory(1, "c1", 0, null, "")
+        val category2 = TodoCategory(2, "c2", 0, 1, "")
         todoCategoryDao.insertTodoCategory(category1)
         todoCategoryDao.insertTodoCategory(category2)
 

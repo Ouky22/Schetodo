@@ -152,7 +152,7 @@ fun CategoryItemPreview() {
     SchetodoTheme {
         CategoryItem(
             modifier = Modifier.height(100.dp),
-            todoCategory = TodoCategory(0, "Household", 0xff799FCB, null),
+            todoCategory = TodoCategory(0, "Household", 0xff799FCB, null, Icons.Filled.House.name),
             onItemClick = {}
         )
     }

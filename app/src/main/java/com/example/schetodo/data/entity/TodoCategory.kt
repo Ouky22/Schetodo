@@ -19,5 +19,6 @@ data class TodoCategory(
     @PrimaryKey(autoGenerate = true) val categoryId: Int,
     val name: String,
     val color: Long,
-    val parentTodoCategoryId: Int?
+    val parentTodoCategoryId: Int?,
+    val iconName: String
 )
