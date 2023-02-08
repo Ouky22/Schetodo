@@ -10,12 +10,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.schetodo.ui.navigation.MainSchetodoDestination
 import com.example.schetodo.ui.navigation.SchetodoDestination
 
 @Composable
 fun BottomNavBar(
-    destinations: List<SchetodoDestination>,
-    currentDestination: SchetodoDestination,
+    destinations: List<MainSchetodoDestination>,
+    currentDestination: MainSchetodoDestination,
     onItemClick: (SchetodoDestination) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -38,7 +39,7 @@ fun BottomNavBar(
 @Composable
 fun BottomNavIconWithLabel(
     modifier: Modifier = Modifier,
-    destination: SchetodoDestination,
+    destination: MainSchetodoDestination,
     selected: Boolean
 ) {
     Column(

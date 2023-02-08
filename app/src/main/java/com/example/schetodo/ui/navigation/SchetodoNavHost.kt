@@ -23,14 +23,14 @@ import com.example.schetodo.ui.feature.todos.TodosViewModel
 fun SchetodoNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
-        startDestination = SchetodoDestination.Schedule.route,
+        startDestination = Schedule.route,
         modifier = modifier
     ) {
-        composable(route = SchetodoDestination.Schedule.route) {
+        composable(route = Schedule.route) {
             ScheduleScreen()
         }
         todosNavGraph(navController)
-        composable(route = SchetodoDestination.Statistics.route) {
+        composable(route = Statistics.route) {
             StatisticsScreen()
         }
     }
@@ -40,10 +40,10 @@ fun SchetodoNavHost(navController: NavHostController, modifier: Modifier = Modif
 @ExperimentalMaterial3Api
 fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
     navigation(
-        startDestination = SchetodoDestination.Todos.route,
+        startDestination = Todos.route,
         route = Graph.TODOS
     ) {
-        composable(route = SchetodoDestination.Todos.route) { backStackEntry ->
+        composable(route = Todos.route) { backStackEntry ->
             val parentEntry = remember(backStackEntry) {
                 navController.getBackStackEntry(Graph.TODOS)
             }
