@@ -47,7 +47,10 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
 
             val viewModel = hiltViewModel<AddEditTodoCategoryViewModel>()
             viewModel.setParentTodoCategoryForAdding(parentTodoCategoryId)
-            AddEditTodoCategoryScreen(viewModel = viewModel)
+            AddEditTodoCategoryScreen(
+                viewModel = viewModel,
+                onCancelClicked = { navController.popBackStack() }
+            )
         }
         composable(
             route = EditTodoCategory.routeWithArgs,
@@ -58,7 +61,10 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
 
             val viewModel = hiltViewModel<AddEditTodoCategoryViewModel>()
             viewModel.setTodoCategoryForEditing(todoCategoryId)
-            AddEditTodoCategoryScreen(viewModel = viewModel)
+            AddEditTodoCategoryScreen(
+                viewModel = viewModel,
+                onCancelClicked = { navController.popBackStack() }
+            )
         }
     }
 }
