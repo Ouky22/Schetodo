@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -17,6 +18,7 @@ import com.example.schetodo.ui.feature.todos.TodosViewModel
 
 
 @Composable
+@ExperimentalLifecycleComposeApi
 @ExperimentalMaterial3Api
 fun SchetodoNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
@@ -34,6 +36,7 @@ fun SchetodoNavHost(navController: NavHostController, modifier: Modifier = Modif
     }
 }
 
+@ExperimentalLifecycleComposeApi
 @ExperimentalMaterial3Api
 fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
     navigation(

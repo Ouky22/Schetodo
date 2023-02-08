@@ -7,4 +7,11 @@
 
     <string name="check_off_todos">Check off todos</string>
     <string name="go_back">go back</string>
+    <string name="todoCategoryName">Todo Category Name</string>
+    <string name="category_color">Color: </string>
+    <string name="choose_color">choose color</string>
+    <string name="choose_icon">choose icon</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="add">Add</string>
 </resources>

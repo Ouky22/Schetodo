@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.schetodo.ui.components.BottomNavBar
@@ -22,6 +23,7 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
+@ExperimentalLifecycleComposeApi
 @ExperimentalMaterial3Api
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +35,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
+@ExperimentalLifecycleComposeApi
 @ExperimentalMaterial3Api
 fun SchetodoApp() {
     SchetodoTheme {
@@ -63,6 +66,7 @@ fun SchetodoApp() {
 
 @Preview(showBackground = true)
 @Composable
+@ExperimentalLifecycleComposeApi
 @ExperimentalMaterial3Api
 fun SchetodoAppPreview() {
     SchetodoTheme {

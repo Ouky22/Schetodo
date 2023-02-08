@@ -16,11 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
 import com.example.schetodo.ui.components.TopAppBar
 
 @ExperimentalMaterial3Api
+@ExperimentalLifecycleComposeApi
 @Composable
 fun TodosScreen(
     modifier: Modifier = Modifier,
