@@ -16,8 +16,14 @@ class AddEditTodoCategoryViewModel @Inject constructor() : ViewModel() {
     var todoCategoryColor by mutableStateOf(0L)
         private set
 
-    var todoCategoryIcon by mutableStateOf("")
+    var todoCategoryIconName by mutableStateOf("")
         private set
 
-
+    fun onEvent(event: AddEditTodoCategoryEvent) {
+        when (event) {
+            is AddEditTodoCategoryEvent.ChangeTodoCategoryName -> todoCategoryName = event.name
+            is AddEditTodoCategoryEvent.ChangeTodoCategoryColor -> todoCategoryColor = event.color
+            is AddEditTodoCategoryEvent.ChangeTodoCategoryIcon -> todoCategoryIconName = event.name
+        }
+    }
 }

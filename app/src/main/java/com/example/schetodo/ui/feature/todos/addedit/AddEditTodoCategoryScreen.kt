@@ -2,6 +2,7 @@ package com.example.schetodo.ui.feature.todos.addedit
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,7 +33,22 @@ fun AddEditTodoCategoryScreen(
         modifier = modifier,
         todoCategoryName = viewModel.todoCategoryName,
         todoCategoryColor = Color(viewModel.todoCategoryColor),
-        todoCategoryIcon = getIconByName(viewModel.todoCategoryIcon) ?: Icons.Filled.Category
+        todoCategoryIcon = getIconByName(viewModel.todoCategoryIconName) ?: Icons.Filled.Category,
+        onTodoCategoryNameChanged = { newName ->
+            viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryName(newName))
+        },
+        onTodoCategoryColorChanged = { newColor ->
+            viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryColor(newColor))
+        },
+        onTodoCategoryIconChanged = { newIconName ->
+            viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryIcon(newIconName))
+        },
+        onCancelClicked = {
+            // TODO
+        },
+        onAddClicked = {
+            // TODO
+        }
     )
 }
 
@@ -40,7 +57,12 @@ fun AddEditTodoCategoryScreen(
     modifier: Modifier = Modifier,
     todoCategoryName: String,
     todoCategoryColor: Color,
-    todoCategoryIcon: ImageVector
+    todoCategoryIcon: ImageVector,
+    onTodoCategoryNameChanged: (String) -> Unit,
+    onTodoCategoryColorChanged: (Long) -> Unit,
+    onTodoCategoryIconChanged: (String) -> Unit,
+    onCancelClicked: () -> Unit,
+    onAddClicked: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -51,7 +73,7 @@ fun AddEditTodoCategoryScreen(
     ) {
         OutlinedTextField(
             value = todoCategoryName,
-            onValueChange = {},
+            onValueChange = onTodoCategoryNameChanged,
             label = { Text(stringResource(R.string.todoCategoryName)) },
             maxLines = 1,
             modifier = Modifier.fillMaxWidth()
@@ -65,12 +87,6 @@ fun AddEditTodoCategoryScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             SelectIcon(
-                color = todoCategoryColor,
-                icon = Icons.Outlined.Palette,
-                modifier = Modifier.fillMaxHeight(),
-                contentDescription = stringResource(R.string.choose_color)
-            )
-            SelectIcon(
                 color = Color.White,
                 icon = todoCategoryIcon,
                 modifier = Modifier
@@ -80,7 +96,23 @@ fun AddEditTodoCategoryScreen(
                         color = Color.Black,
                         shape = CircleShape
                     ),
-                contentDescription = stringResource(R.string.choose_icon)
+                contentDescription = stringResource(R.string.choose_icon),
+                onClick = {
+                    // TODO open color picker
+                    val newColor = Color.Red.toArgb()
+                    onTodoCategoryColorChanged(newColor.toLong())
+                }
+            )
+            SelectIcon(
+                color = todoCategoryColor,
+                icon = Icons.Outlined.Palette,
+                modifier = Modifier.fillMaxHeight(),
+                contentDescription = stringResource(R.string.choose_color),
+                onClick = {
+                    // TODO open icon picker
+                    val newIcon = Icons.Filled.House.name
+                    onTodoCategoryIconChanged(newIcon)
+                }
             )
         }
 
@@ -92,7 +124,7 @@ fun AddEditTodoCategoryScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                onClick = { /*TODO*/ }
+                onClick = { onCancelClicked() }
             ) {
                 Text(text = stringResource(R.string.cancel))
             }
@@ -101,7 +133,7 @@ fun AddEditTodoCategoryScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                onClick = { /*TODO*/ }
+                onClick = { onAddClicked() }
             ) {
                 Text(text = stringResource(R.string.add))
             }
@@ -114,13 +146,15 @@ fun SelectIcon(
     modifier: Modifier = Modifier,
     color: Color,
     icon: ImageVector,
-    contentDescription: String
+    contentDescription: String,
+    onClick: () -> Unit
 ) {
     Box(
         modifier = modifier
             .clip(CircleShape)
             .aspectRatio(1f)
             .background(color)
+            .clickable { onClick() }
     ) {
         Icon(
             modifier = Modifier
@@ -140,7 +174,12 @@ fun AddEditTodoCategoryScreenPreview() {
             modifier = Modifier.height(500.dp),
             todoCategoryName = "My TodoCategory Name",
             todoCategoryColor = Color(0xff6096B4),
-            todoCategoryIcon = Icons.Filled.House
+            todoCategoryIcon = Icons.Filled.House,
+            onTodoCategoryNameChanged = {},
+            onTodoCategoryIconChanged = {},
+            onTodoCategoryColorChanged = {},
+            onCancelClicked = {},
+            onAddClicked = {}
         )
     }
 }
