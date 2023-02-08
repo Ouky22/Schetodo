@@ -4,11 +4,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.schetodo.data.repository.TodoCategoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddEditTodoCategoryViewModel @Inject constructor() : ViewModel() {
+class AddEditTodoCategoryViewModel @Inject constructor(
+    private val todoCategoryRepository: TodoCategoryRepository
+) : ViewModel() {
 
     var todoCategoryName by mutableStateOf("")
         private set
@@ -37,7 +43,14 @@ class AddEditTodoCategoryViewModel @Inject constructor() : ViewModel() {
 
     fun setTodoCategoryForEditing(todoCategoryId: Int) {
         this.todoCategoryId = todoCategoryId
-        // TODO load TodoCategory from repo
+
+        viewModelScope.launch {
+            val category = todoCategoryRepository.getTodoCategory(todoCategoryId).first()
+                ?: throw NoSuchElementException("There is no TodoCategory with id $todoCategoryId")
+            todoCategoryName = category.name
+            todoCategoryColor = category.color
+            todoCategoryIconName = category.iconName
+        }
     }
 
     fun setParentTodoCategoryForAdding(todoCategoryId: Int) {

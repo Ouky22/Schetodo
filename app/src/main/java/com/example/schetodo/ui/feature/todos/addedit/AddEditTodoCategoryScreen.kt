@@ -98,9 +98,9 @@ fun AddEditTodoCategoryScreen(
                     ),
                 contentDescription = stringResource(R.string.choose_icon),
                 onClick = {
-                    // TODO open color picker
-                    val newColor = Color.Red.toArgb()
-                    onTodoCategoryColorChanged(newColor.toLong())
+                    // TODO open icon picker
+                    val newIcon = Icons.Filled.House.name
+                    onTodoCategoryIconChanged(newIcon)
                 }
             )
             SelectIcon(
@@ -108,10 +108,11 @@ fun AddEditTodoCategoryScreen(
                 icon = Icons.Outlined.Palette,
                 modifier = Modifier.fillMaxHeight(),
                 contentDescription = stringResource(R.string.choose_color),
+
                 onClick = {
-                    // TODO open icon picker
-                    val newIcon = Icons.Filled.House.name
-                    onTodoCategoryIconChanged(newIcon)
+                    // TODO open color picker
+                    val newColor = Color.Red.toArgb()
+                    onTodoCategoryColorChanged(newColor.toLong())
                 }
             )
         }

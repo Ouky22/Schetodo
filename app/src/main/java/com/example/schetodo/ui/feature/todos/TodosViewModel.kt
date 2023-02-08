@@ -1,5 +1,9 @@
 package com.example.schetodo.ui.feature.todos
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Face3
+import androidx.compose.material.icons.filled.Grade
+import androidx.compose.material.icons.filled.SportsBaseball
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.schetodo.data.entity.Todo
@@ -31,13 +35,13 @@ class TodosViewModel @Inject constructor(
         updateCurrentTodoCategory(null)
 
         // add test data
-//        val category1 = TodoCategory(0, "Test Category 1", 0xff799FCB, null, "")
-//        val category2 = TodoCategory(0, "Test Category 2", 0xA7727D, null, "")
+//        val category1 = TodoCategory(0, "Test Category 1", 0xff799FCB, null, sportIcons.values.toList()[0].name)
+//        val category2 = TodoCategory(0, "Test Category 2", 0xffA7727D, null, sportIcons.values.toList()[1].name)
 //        viewModelScope.launch {
 //            val c1Id = todoCategoryRepository.insertTodoCategory(category1)
 //            val c2Id = todoCategoryRepository.insertTodoCategory(category2)
 //
-//            val category3 = TodoCategory(0, "Test Category 3", 0xD3756B, c1Id.toInt(), "")
+//            val category3 = TodoCategory(0, "Test Category 3", 0xffD3756B, c1Id.toInt(), sportIcons.values.toList()[2].name)
 //            todoCategoryRepository.insertTodoCategory(category3)
 //
 //            val todo1 = Todo(0, "Test 1", TodoPriority.LOW, TodoFlag.UNDONE, c1Id.toInt())
