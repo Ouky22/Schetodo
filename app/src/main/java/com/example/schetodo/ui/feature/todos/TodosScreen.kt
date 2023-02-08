@@ -1,15 +1,20 @@
 package com.example.schetodo.ui.feature.todos
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Checklist
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -21,12 +26,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
 import com.example.schetodo.ui.components.TopAppBar
 
+@ExperimentalFoundationApi
 @ExperimentalMaterial3Api
 @ExperimentalLifecycleComposeApi
 @Composable
 fun TodosScreen(
     modifier: Modifier = Modifier,
-    onCheckOffCompletedTodos: () -> Unit = {},
+    onCheckOffCompletedTodos: () -> Unit,
+    onAddTodoCategory: (parentCategory: Int) -> Unit,
+    onEditTodoCategory: (categoryToEdit: Int) -> Unit,
     viewModel: TodosViewModel
 ) {
     val state by viewModel.todosState.collectAsStateWithLifecycle()
@@ -34,56 +42,76 @@ fun TodosScreen(
     if (state.currentCategoryIsChildCategory)
         BackHandler(onBack = { viewModel.onEvent(TodosEvent.NavigateToPreviousTodoCategory) })
 
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        TopAppBar(
-            title = state.currentCategory?.name ?: stringResource(id = R.string.todos),
-            showBackButton = state.currentCategoryIsChildCategory,
-            onBackButtonClick = {
-                viewModel.onEvent(TodosEvent.NavigateToPreviousTodoCategory)
-            }
-        )
-
-        LazyColumn(modifier = Modifier.weight(1f)) {
-            items(state.childCategories) { todoCategory ->
-                CategoryItem(
-                    modifier = Modifier
-                        .height(125.dp)
-                        .padding(vertical = 8.dp, horizontal = 16.dp),
-                    todoCategory = todoCategory,
-                    onItemClick = {
-                        viewModel.onEvent(
-                            TodosEvent.NavigateToNewTodoCategory(todoCategory.categoryId)
-                        )
-                    }
-                )
-            }
-            items(state.todos) { todo ->
-                TodoItem(
-                    modifier = Modifier
-                        .height(125.dp)
-                        .padding(vertical = 8.dp, horizontal = 16.dp),
-                    todo = todo,
-                    onItemClick = {}
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = state.currentCategory?.name ?: stringResource(id = R.string.todos),
+                showBackButton = state.currentCategoryIsChildCategory,
+                onBackButtonClick = {
+                    viewModel.onEvent(TodosEvent.NavigateToPreviousTodoCategory)
+                }
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { onAddTodoCategory(state.currentCategory?.categoryId ?: -1) }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = stringResource(R.string.add_new_todo_category)
                 )
             }
         }
-
-        Button(
-            modifier = Modifier
-                .fillMaxWidth(0.75f)
-                .padding(16.dp),
-            onClick = onCheckOffCompletedTodos,
+    ) { contentPadding ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(contentPadding),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                imageVector = Icons.Outlined.Checklist,
-                contentDescription = null,
-                Modifier.padding(end = 10.dp)
-            )
-            Text(text = stringResource(id = R.string.check_off_todos))
+            LazyColumn(modifier = Modifier.weight(1f)) {
+                items(state.childCategories) { todoCategory ->
+                    CategoryItem(
+                        modifier = Modifier
+                            .height(125.dp)
+                            .padding(vertical = 8.dp, horizontal = 16.dp)
+                            .combinedClickable(
+                                onClick = {
+                                    viewModel.onEvent(
+                                        TodosEvent.NavigateToNewTodoCategory(todoCategory.categoryId)
+                                    )
+                                },
+                                onLongClick = {
+                                    onEditTodoCategory(todoCategory.categoryId)
+                                }
+                            ),
+                        todoCategory = todoCategory
+                    )
+                }
+                items(state.todos) { todo ->
+                    TodoItem(
+                        modifier = Modifier
+                            .height(125.dp)
+                            .padding(vertical = 8.dp, horizontal = 16.dp),
+                        todo = todo
+                    )
+                }
+            }
+
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth(0.55f)
+                    .padding(16.dp),
+                onClick = onCheckOffCompletedTodos,
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Checklist,
+                    contentDescription = null,
+                    Modifier.padding(end = 10.dp)
+                )
+                Text(text = stringResource(id = R.string.check_off_todos))
+            }
         }
     }
 }

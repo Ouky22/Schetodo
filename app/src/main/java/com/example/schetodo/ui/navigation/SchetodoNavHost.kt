@@ -1,5 +1,6 @@
 package com.example.schetodo.ui.navigation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -15,8 +16,11 @@ import com.example.schetodo.ui.feature.schedule.ScheduleScreen
 import com.example.schetodo.ui.feature.statistics.StatisticsScreen
 import com.example.schetodo.ui.feature.todos.TodosScreen
 import com.example.schetodo.ui.feature.todos.TodosViewModel
+import com.example.schetodo.ui.feature.todos.addedit.AddEditTodoCategoryScreen
+import com.example.schetodo.ui.feature.todos.addedit.AddEditTodoCategoryViewModel
 
 
+@ExperimentalFoundationApi
 @Composable
 @ExperimentalLifecycleComposeApi
 @ExperimentalMaterial3Api
@@ -32,23 +36,6 @@ fun SchetodoNavHost(navController: NavHostController, modifier: Modifier = Modif
         todosNavGraph(navController)
         composable(route = Statistics.route) {
             StatisticsScreen()
-        }
-    }
-}
-
-@ExperimentalLifecycleComposeApi
-@ExperimentalMaterial3Api
-fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
-    navigation(
-        startDestination = Todos.route,
-        route = Graph.TODOS
-    ) {
-        composable(route = Todos.route) { backStackEntry ->
-            val parentEntry = remember(backStackEntry) {
-                navController.getBackStackEntry(Graph.TODOS)
-            }
-            val todosViewModel = hiltViewModel<TodosViewModel>(parentEntry)
-            TodosScreen(viewModel = todosViewModel)
         }
     }
 }

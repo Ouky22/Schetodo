@@ -32,11 +32,10 @@ fun TodosScreenListItem(
     iconBackgroundColor: Color,
     cardBackgroundColor: Color,
     icon: ImageVector,
-    text: @Composable () -> Unit,
-    onItemClick: () -> Unit
+    text: @Composable () -> Unit
 ) {
     Card(
-        modifier = modifier.clickable { onItemClick() },
+        modifier = modifier,
         colors = CardDefaults.cardColors(containerColor = cardBackgroundColor),
     ) {
         Row(
@@ -77,8 +76,7 @@ fun TodosScreenListItem(
 @Composable
 fun CategoryItem(
     modifier: Modifier = Modifier,
-    todoCategory: TodoCategory,
-    onItemClick: () -> Unit
+    todoCategory: TodoCategory
 ) {
     TodosScreenListItem(
         modifier = modifier,
@@ -93,16 +91,14 @@ fun CategoryItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-        },
-        onItemClick = onItemClick
+        }
     )
 }
 
 @Composable
 fun TodoItem(
     modifier: Modifier = Modifier,
-    todo: Todo,
-    onItemClick: () -> Unit
+    todo: Todo
 ) {
     val iconBackgroundColor = when (todo.priority) {
         TodoPriority.LOW -> Color(0xFFDAE3D9)
@@ -123,8 +119,7 @@ fun TodoItem(
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis
             )
-        },
-        onItemClick = onItemClick
+        }
     )
 }
 
@@ -140,8 +135,7 @@ fun TodoItem() {
                 TodoPriority.HIGH,
                 TodoFlag.UNDONE,
                 0
-            ),
-            onItemClick = {}
+            )
         )
     }
 }
@@ -152,8 +146,7 @@ fun CategoryItemPreview() {
     SchetodoTheme {
         CategoryItem(
             modifier = Modifier.height(100.dp),
-            todoCategory = TodoCategory(0, "Household", 0xff799FCB, null, Icons.Filled.House.name),
-            onItemClick = {}
+            todoCategory = TodoCategory(0, "Household", 0xff799FCB, null, Icons.Filled.House.name)
         )
     }
 }

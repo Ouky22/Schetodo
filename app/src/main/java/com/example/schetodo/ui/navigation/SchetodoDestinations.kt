@@ -5,6 +5,8 @@ import androidx.compose.material.icons.outlined.PieChart
 import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.TaskAlt
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.example.schetodo.R
 
 interface SchetodoDestination {
@@ -34,8 +36,30 @@ object Statistics : MainSchetodoDestination {
     override val titleResourceId = R.string.statistics
 }
 
-object AddEditTodoCategory : SchetodoDestination {
-    override val route = "add_edit_todo_category"
+object AddTodoCategory : SchetodoDestination {
+    override val route = "add_todo_category"
+    const val parentTodoCategoryIdArg = "parent_todo_category_id"
+
+    val routeWithArgs = "$route/{$parentTodoCategoryIdArg}"
+
+    val args = listOf(
+        navArgument(parentTodoCategoryIdArg) {
+            type = NavType.IntType
+        }
+    )
+}
+
+object EditTodoCategory : SchetodoDestination {
+    override val route = "edit_todo_category"
+    const val todoCategoryIdArg = "todo_category_id"
+
+    val routeWithArgs = "$route/{$todoCategoryIdArg}"
+
+    val args = listOf(
+        navArgument(todoCategoryIdArg) {
+            type = NavType.IntType
+        }
+    )
 }
 
 val bottomNavDestinations = listOf(
