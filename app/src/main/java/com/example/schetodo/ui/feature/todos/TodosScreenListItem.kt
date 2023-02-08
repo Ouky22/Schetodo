@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.outlined.RestartAlt
 import androidx.compose.material.icons.outlined.TaskAlt
@@ -82,7 +83,7 @@ fun CategoryItem(
         modifier = modifier,
         cardBackgroundColor = Color(todoCategory.color).copy(alpha = 0.2f),
         iconBackgroundColor = Color(todoCategory.color),
-        icon = Icons.Filled.House,
+        icon = getIconByName(todoCategory.iconName) ?: Icons.Filled.Category,
         text = {
             Text(
                 text = todoCategory.name,
