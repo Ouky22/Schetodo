@@ -35,6 +35,7 @@ fun AddEditTodoCategoryScreen(
         todoCategoryName = viewModel.todoCategoryName,
         todoCategoryColor = Color(viewModel.todoCategoryColor),
         todoCategoryIcon = getIconByName(viewModel.todoCategoryIconName) ?: Icons.Filled.Category,
+        inEditingMode = viewModel.inEditingMode,
         onTodoCategoryNameChanged = { newName ->
             viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryName(newName))
         },
@@ -45,7 +46,7 @@ fun AddEditTodoCategoryScreen(
             viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryIcon(newIconName))
         },
         onCancelClicked = { onCancelClickedNavigation() },
-        onAddClicked = {
+        onSaveClicked = {
             viewModel.onEvent(AddEditTodoCategoryEvent.SaveTodoCategory)
             onCancelClickedNavigation()
         }
@@ -58,18 +59,19 @@ fun AddEditTodoCategoryScreen(
     todoCategoryName: String,
     todoCategoryColor: Color,
     todoCategoryIcon: ImageVector,
+    inEditingMode: Boolean,
     onTodoCategoryNameChanged: (String) -> Unit,
     onTodoCategoryColorChanged: (Long) -> Unit,
     onTodoCategoryIconChanged: (String) -> Unit,
     onCancelClicked: () -> Unit,
-    onAddClicked: () -> Unit
+    onSaveClicked: () -> Unit
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 32.dp),
+            .padding(start = 32.dp, top = 96.dp, end = 32.dp, bottom = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceAround
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
         OutlinedTextField(
             value = todoCategoryName,
@@ -134,9 +136,12 @@ fun AddEditTodoCategoryScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                onClick = { onAddClicked() }
+                onClick = { onSaveClicked() }
             ) {
-                Text(text = stringResource(R.string.add))
+                if (inEditingMode)
+                    Text(text = stringResource(id = R.string.save))
+                else
+                    Text(text = stringResource(R.string.add))
             }
         }
     }
@@ -176,11 +181,12 @@ fun AddEditTodoCategoryScreenPreview() {
             todoCategoryName = "My TodoCategory Name",
             todoCategoryColor = Color(0xff6096B4),
             todoCategoryIcon = Icons.Filled.House,
+            inEditingMode = false,
             onTodoCategoryNameChanged = {},
             onTodoCategoryIconChanged = {},
             onTodoCategoryColorChanged = {},
             onCancelClicked = {},
-            onAddClicked = {}
+            onSaveClicked = {}
         )
     }
 }
