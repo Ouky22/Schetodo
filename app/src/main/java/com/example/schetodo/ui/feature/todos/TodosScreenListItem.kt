@@ -65,8 +65,8 @@ fun TodosScreenListItem(
             Column(
                 modifier = Modifier
                     .weight(3f)
-                    .padding(end = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(horizontal = 8.dp),
+                horizontalAlignment = Alignment.Start
             ) {
                 text()
             }
