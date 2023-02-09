@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.feature.todos
+package com.example.schetodo.ui.feature.todos.list
 
 sealed class TodosEvent {
     data class NavigateToNewTodoCategory(val newTodoCategoryId: Int?) : TodosEvent()

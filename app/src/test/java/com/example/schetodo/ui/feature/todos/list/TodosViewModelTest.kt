@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.feature.todos
+package com.example.schetodo.ui.feature.todos.list
 
 import com.example.schetodo.data.entity.Todo
 import com.example.schetodo.data.entity.TodoCategory
@@ -6,6 +6,8 @@ import com.example.schetodo.data.entity.TodoFlag
 import com.example.schetodo.data.entity.TodoPriority
 import com.example.schetodo.data.repository.FakeTodoCategoryRepository
 import com.example.schetodo.data.repository.FakeTodoRepository
+import com.example.schetodo.ui.feature.todos.list.TodosEvent
+import com.example.schetodo.ui.feature.todos.list.TodosViewModel
 import com.example.schetodo.util.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.feature.todos
+package com.example.schetodo.ui.feature.todos.list
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi

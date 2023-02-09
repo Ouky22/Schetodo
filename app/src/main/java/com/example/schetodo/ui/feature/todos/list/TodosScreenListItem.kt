@@ -1,7 +1,6 @@
-package com.example.schetodo.ui.feature.todos
+package com.example.schetodo.ui.feature.todos.list
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -24,6 +23,7 @@ import com.example.schetodo.data.entity.Todo
 import com.example.schetodo.data.entity.TodoCategory
 import com.example.schetodo.data.entity.TodoFlag
 import com.example.schetodo.data.entity.TodoPriority
+import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.theme.SchetodoTheme
 
 

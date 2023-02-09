@@ -1,21 +1,12 @@
-package com.example.schetodo.ui.feature.todos
+package com.example.schetodo.ui.feature.todos.list
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face3
-import androidx.compose.material.icons.filled.Grade
-import androidx.compose.material.icons.filled.SportsBaseball
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.schetodo.data.entity.Todo
-import com.example.schetodo.data.entity.TodoCategory
-import com.example.schetodo.data.entity.TodoFlag
-import com.example.schetodo.data.entity.TodoPriority
 import com.example.schetodo.data.repository.TodoCategoryRepository
 import com.example.schetodo.data.repository.TodoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel

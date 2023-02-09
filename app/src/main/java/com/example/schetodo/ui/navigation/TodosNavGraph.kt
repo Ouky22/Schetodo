@@ -9,8 +9,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.example.schetodo.ui.feature.todos.TodosScreen
-import com.example.schetodo.ui.feature.todos.TodosViewModel
+import com.example.schetodo.ui.feature.todos.list.TodosScreen
+import com.example.schetodo.ui.feature.todos.list.TodosViewModel
 import com.example.schetodo.ui.feature.todos.addedit.AddEditTodoCategoryScreen
 import com.example.schetodo.ui.feature.todos.addedit.AddEditTodoCategoryViewModel
 
