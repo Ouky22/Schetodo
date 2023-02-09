@@ -21,7 +21,7 @@ class TodosViewModel @Inject constructor(
 
     private var stateJob: Job? = null
 
-
+    
     init {
         updateCurrentTodoCategory(null)
 

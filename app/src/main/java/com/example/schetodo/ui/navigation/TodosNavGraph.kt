@@ -8,10 +8,11 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.navigation
 import com.example.schetodo.ui.feature.todos.list.TodosScreen
 import com.example.schetodo.ui.feature.todos.list.TodosViewModel
-import com.example.schetodo.ui.feature.todos.addedit.AddEditTodoCategoryScreen
+import com.example.schetodo.ui.feature.todos.addedit.AddEditTodoCategoryDialogContent
 import com.example.schetodo.ui.feature.todos.addedit.AddEditTodoCategoryViewModel
 
 @ExperimentalFoundationApi
@@ -38,7 +39,7 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(
+        dialog(
             route = AddTodoCategory.routeWithArgs,
             arguments = AddTodoCategory.args
         ) { navBackStackEntry ->
@@ -47,23 +48,23 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
 
             val viewModel = hiltViewModel<AddEditTodoCategoryViewModel>()
             viewModel.setParentTodoCategoryForAdding(parentTodoCategoryId)
-            AddEditTodoCategoryScreen(
+            AddEditTodoCategoryDialogContent(
                 viewModel = viewModel,
-                closeScreen = { navController.popBackStack() }
+                onCloseDialog = { navController.popBackStack() }
             )
         }
-        composable(
+        dialog(
             route = EditTodoCategory.routeWithArgs,
             arguments = EditTodoCategory.args
         ) { navBackStackEntry ->
             val todoCategoryId = navBackStackEntry.arguments
-                ?.getInt(EditTodoCategory.todoCategoryIdArg) ?: return@composable
+                ?.getInt(EditTodoCategory.todoCategoryIdArg) ?: return@dialog
 
             val viewModel = hiltViewModel<AddEditTodoCategoryViewModel>()
             viewModel.setTodoCategoryForEditing(todoCategoryId)
-            AddEditTodoCategoryScreen(
+            AddEditTodoCategoryDialogContent(
                 viewModel = viewModel,
-                closeScreen = { navController.popBackStack() }
+                onCloseDialog = { navController.popBackStack() }
             )
         }
     }

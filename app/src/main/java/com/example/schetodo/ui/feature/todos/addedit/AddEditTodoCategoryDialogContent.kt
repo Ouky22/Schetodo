@@ -21,24 +21,25 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.example.schetodo.R
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.theme.SchetodoTheme
 
 @Composable
-fun AddEditTodoCategoryScreen(
+fun AddEditTodoCategoryDialogContent(
     modifier: Modifier = Modifier,
     viewModel: AddEditTodoCategoryViewModel,
-    closeScreen: () -> Unit
+    onCloseDialog: () -> Unit
 ) {
     LaunchedEffect(key1 = true) {
         viewModel.todoCategorySuccessfullySaved.collect { successfullySaved ->
             if (successfullySaved)
-                closeScreen()
+                onCloseDialog()
         }
     }
 
-    AddEditTodoCategoryScreen(
+    AddEditTodoCategoryDialogContent(
         modifier = modifier,
         todoCategoryName = viewModel.todoCategoryName,
         todoCategoryColor = Color(viewModel.todoCategoryColor),
@@ -54,13 +55,13 @@ fun AddEditTodoCategoryScreen(
         onTodoCategoryIconChanged = { newIconName ->
             viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryIcon(newIconName))
         },
-        onCancelClicked = { closeScreen() },
+        onCloseDialog = { onCloseDialog() },
         onSaveClicked = { viewModel.onEvent(AddEditTodoCategoryEvent.SaveTodoCategory) }
     )
 }
 
 @Composable
-fun AddEditTodoCategoryScreen(
+fun AddEditTodoCategoryDialogContent(
     modifier: Modifier = Modifier,
     todoCategoryName: String,
     todoCategoryColor: Color,
@@ -70,93 +71,94 @@ fun AddEditTodoCategoryScreen(
     onTodoCategoryNameChanged: (String) -> Unit,
     onTodoCategoryColorChanged: (Long) -> Unit,
     onTodoCategoryIconChanged: (String) -> Unit,
-    onCancelClicked: () -> Unit,
+    onCloseDialog: () -> Unit,
     onSaveClicked: () -> Unit
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(start = 32.dp, top = 96.dp, end = 32.dp, bottom = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column {
-            OutlinedTextField(
-                value = todoCategoryName,
-                onValueChange = onTodoCategoryNameChanged,
-                label = { Text(stringResource(R.string.todoCategoryName)) },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                isError = showInvalidTodoCategoryNameError
-            )
-            if (showInvalidTodoCategoryNameError)
-                Text(
-                    "Please enter a name",
-                    color = Color.Red
+    Surface {
+        Column(
+            modifier = modifier
+                .wrapContentHeight()
+                .padding(32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Column {
+                OutlinedTextField(
+                    value = todoCategoryName,
+                    onValueChange = onTodoCategoryNameChanged,
+                    label = { Text(stringResource(R.string.todoCategoryName)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = showInvalidTodoCategoryNameError
                 )
-        }
-
-        Row(
-            modifier = Modifier
-                .height(80.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            SelectIcon(
-                color = Color.White,
-                icon = todoCategoryIcon,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .border(
-                        width = 1.dp,
-                        color = Color.Black,
-                        shape = CircleShape
-                    ),
-                contentDescription = stringResource(R.string.choose_icon),
-                onClick = {
-                    // TODO open icon picker
-                    val newIcon = Icons.Filled.House.name
-                    onTodoCategoryIconChanged(newIcon)
-                }
-            )
-            SelectIcon(
-                color = todoCategoryColor,
-                icon = Icons.Outlined.Palette,
-                modifier = Modifier.fillMaxHeight(),
-                contentDescription = stringResource(R.string.choose_color),
-
-                onClick = {
-                    // TODO open color picker
-                    val newColor = Color.Red.toArgb()
-                    onTodoCategoryColorChanged(newColor.toLong())
-                }
-            )
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            OutlinedButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                onClick = { onCancelClicked() }
-            ) {
-                Text(text = stringResource(R.string.cancel))
+                if (showInvalidTodoCategoryNameError)
+                    Text(
+                        "Please enter a name",
+                        color = Color.Red
+                    )
             }
-            Spacer(modifier = Modifier.size(16.dp))
-            Button(
+            Spacer(modifier = Modifier.size(64.dp))
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                onClick = { onSaveClicked() }
+                    .height(80.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                if (inEditingMode)
-                    Text(text = stringResource(id = R.string.save))
-                else
-                    Text(text = stringResource(R.string.add))
+                SelectIcon(
+                    color = Color.White,
+                    icon = todoCategoryIcon,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .border(
+                            width = 1.dp,
+                            color = Color.Black,
+                            shape = CircleShape
+                        ),
+                    contentDescription = stringResource(R.string.choose_icon),
+                    onClick = {
+                        // TODO open icon picker
+                        val newIcon = Icons.Filled.House.name
+                        onTodoCategoryIconChanged(newIcon)
+                    }
+                )
+                SelectIcon(
+                    color = todoCategoryColor,
+                    icon = Icons.Outlined.Palette,
+                    modifier = Modifier.fillMaxHeight(),
+                    contentDescription = stringResource(R.string.choose_color),
+
+                    onClick = {
+                        // TODO open color picker
+                        val newColor = Color.Red.toArgb()
+                        onTodoCategoryColorChanged(newColor.toLong())
+                    }
+                )
+            }
+            Spacer(modifier = Modifier.size(64.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                OutlinedButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    onClick = { onCloseDialog() }
+                ) {
+                    Text(text = stringResource(R.string.cancel))
+                }
+                Spacer(modifier = Modifier.size(16.dp))
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    onClick = { onSaveClicked() }
+                ) {
+                    if (inEditingMode)
+                        Text(text = stringResource(id = R.string.save))
+                    else
+                        Text(text = stringResource(R.string.add))
+                }
             }
         }
     }
@@ -189,9 +191,9 @@ fun SelectIcon(
 
 @Preview(showBackground = true)
 @Composable
-fun AddEditTodoCategoryScreenPreview() {
+fun AddEditTodoCategoryDialogPreview() {
     SchetodoTheme {
-        AddEditTodoCategoryScreen(
+        AddEditTodoCategoryDialogContent(
             modifier = Modifier.height(500.dp),
             todoCategoryName = "My TodoCategory Name",
             todoCategoryColor = Color(0xff6096B4),
@@ -201,7 +203,7 @@ fun AddEditTodoCategoryScreenPreview() {
             onTodoCategoryNameChanged = {},
             onTodoCategoryIconChanged = {},
             onTodoCategoryColorChanged = {},
-            onCancelClicked = {},
+            onCloseDialog = {},
             onSaveClicked = {}
         )
     }
