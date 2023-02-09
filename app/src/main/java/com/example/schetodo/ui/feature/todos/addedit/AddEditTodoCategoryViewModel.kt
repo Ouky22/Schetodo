@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.schetodo.data.entity.TodoCategory
 import com.example.schetodo.data.repository.TodoCategoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
@@ -38,6 +39,7 @@ class AddEditTodoCategoryViewModel @Inject constructor(
             is AddEditTodoCategoryEvent.ChangeTodoCategoryName -> todoCategoryName = event.name
             is AddEditTodoCategoryEvent.ChangeTodoCategoryColor -> todoCategoryColor = event.color
             is AddEditTodoCategoryEvent.ChangeTodoCategoryIcon -> todoCategoryIconName = event.name
+            is AddEditTodoCategoryEvent.SaveTodoCategory -> saveTodoCategory()
         }
     }
 
@@ -50,6 +52,7 @@ class AddEditTodoCategoryViewModel @Inject constructor(
             todoCategoryName = category.name
             todoCategoryColor = category.color
             todoCategoryIconName = category.iconName
+            parentTodoCategoryId = category.parentTodoCategoryId
         }
     }
 
@@ -59,5 +62,18 @@ class AddEditTodoCategoryViewModel @Inject constructor(
                 null
             else
                 todoCategoryId
+    }
+
+    private fun saveTodoCategory() {
+        viewModelScope.launch {
+            val todoCategory = TodoCategory(
+                todoCategoryId,
+                todoCategoryName,
+                todoCategoryColor,
+                parentTodoCategoryId,
+                todoCategoryIconName
+            )
+            todoCategoryRepository.insertOrUpdateTodoCategory(todoCategory)
+        }
     }
 }

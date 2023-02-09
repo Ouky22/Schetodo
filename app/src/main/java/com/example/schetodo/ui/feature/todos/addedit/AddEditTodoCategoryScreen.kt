@@ -28,7 +28,7 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 fun AddEditTodoCategoryScreen(
     modifier: Modifier = Modifier,
     viewModel: AddEditTodoCategoryViewModel,
-    onCancelClicked: () -> Unit
+    onCancelClickedNavigation: () -> Unit
 ) {
     AddEditTodoCategoryScreen(
         modifier = modifier,
@@ -44,9 +44,10 @@ fun AddEditTodoCategoryScreen(
         onTodoCategoryIconChanged = { newIconName ->
             viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryIcon(newIconName))
         },
-        onCancelClicked = { onCancelClicked() },
+        onCancelClicked = { onCancelClickedNavigation() },
         onAddClicked = {
-            // TODO
+            viewModel.onEvent(AddEditTodoCategoryEvent.SaveTodoCategory)
+            onCancelClickedNavigation()
         }
     )
 }

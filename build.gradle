@@ -7,7 +7,7 @@ buildscript {
         hilt_version = '2.44.2'
         lifecycle_version = '2.5.1'
         nav_version = '2.5.3'
-        room_version = '2.4.3'
+        room_version = '2.5.0'
         testRunner_version = '1.5.2'
         turbine_version = '0.12.1'
         truth_version = '1.1.3'
