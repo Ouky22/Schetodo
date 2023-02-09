@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import com.example.schetodo.R
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.theme.SchetodoTheme
@@ -76,12 +75,11 @@ fun AddEditTodoCategoryDialogContent(
 ) {
     Surface {
         Column(
-            modifier = modifier
-                .wrapContentHeight()
-                .padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = modifier.padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column {
+            Column(modifier = Modifier.padding(top = 32.dp)) {
                 OutlinedTextField(
                     value = todoCategoryName,
                     onValueChange = onTodoCategoryNameChanged,
@@ -95,71 +93,105 @@ fun AddEditTodoCategoryDialogContent(
                         "Please enter a name",
                         color = Color.Red
                     )
+                else
+                    Text(text = "")
             }
-            Spacer(modifier = Modifier.size(64.dp))
-            Row(
+
+            SelectColorAndIconArea(
+                todoCategoryIcon = todoCategoryIcon,
+                todoCategoryColor = todoCategoryColor,
+                onTodoCategoryIconChanged = onTodoCategoryIconChanged,
+                onTodoCategoryColorChanged = onTodoCategoryColorChanged,
                 modifier = Modifier
                     .height(80.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                SelectIcon(
-                    color = Color.White,
-                    icon = todoCategoryIcon,
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .border(
-                            width = 1.dp,
-                            color = Color.Black,
-                            shape = CircleShape
-                        ),
-                    contentDescription = stringResource(R.string.choose_icon),
-                    onClick = {
-                        // TODO open icon picker
-                        val newIcon = Icons.Filled.House.name
-                        onTodoCategoryIconChanged(newIcon)
-                    }
-                )
-                SelectIcon(
-                    color = todoCategoryColor,
-                    icon = Icons.Outlined.Palette,
-                    modifier = Modifier.fillMaxHeight(),
-                    contentDescription = stringResource(R.string.choose_color),
+                    .fillMaxWidth()
+            )
 
-                    onClick = {
-                        // TODO open color picker
-                        val newColor = Color.Red.toArgb()
-                        onTodoCategoryColorChanged(newColor.toLong())
-                    }
-                )
+            PositiveNegativeButtonRow(
+                positiveButtonText = if (inEditingMode) stringResource(id = R.string.save)
+                else stringResource(R.string.add),
+                negativeButtonText = stringResource(id = R.string.cancel),
+                onPositiveClick = { onSaveClicked() },
+                onNegativeClick = { onCloseDialog() },
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Composable
+fun SelectColorAndIconArea(
+    todoCategoryIcon: ImageVector,
+    todoCategoryColor: Color,
+    onTodoCategoryIconChanged: (newIconName: String) -> Unit,
+    onTodoCategoryColorChanged: (Long) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        SelectIcon(
+            color = Color.White,
+            icon = todoCategoryIcon,
+            modifier = Modifier
+                .fillMaxHeight()
+                .border(
+                    width = 1.dp,
+                    color = Color.Black,
+                    shape = CircleShape
+                ),
+            contentDescription = stringResource(R.string.choose_icon),
+            onClick = {
+                // TODO open icon picker
+                val newIcon = Icons.Filled.House.name
+                onTodoCategoryIconChanged(newIcon)
             }
-            Spacer(modifier = Modifier.size(64.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                OutlinedButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    onClick = { onCloseDialog() }
-                ) {
-                    Text(text = stringResource(R.string.cancel))
-                }
-                Spacer(modifier = Modifier.size(16.dp))
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    onClick = { onSaveClicked() }
-                ) {
-                    if (inEditingMode)
-                        Text(text = stringResource(id = R.string.save))
-                    else
-                        Text(text = stringResource(R.string.add))
-                }
+        )
+        SelectIcon(
+            color = todoCategoryColor,
+            icon = Icons.Outlined.Palette,
+            modifier = Modifier.fillMaxHeight(),
+            contentDescription = stringResource(R.string.choose_color),
+
+            onClick = {
+                // TODO open color picker
+                val newColor = Color.Red.toArgb()
+                onTodoCategoryColorChanged(newColor.toLong())
             }
+        )
+    }
+}
+
+@Composable
+fun PositiveNegativeButtonRow(
+    positiveButtonText: String,
+    negativeButtonText: String,
+    onPositiveClick: () -> Unit,
+    onNegativeClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        OutlinedButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            onClick = { onNegativeClick() }
+        ) {
+            Text(text = negativeButtonText)
+        }
+        Spacer(modifier = Modifier.size(16.dp))
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            onClick = { onPositiveClick() }
+        ) {
+            Text(text = positiveButtonText)
         }
     }
 }

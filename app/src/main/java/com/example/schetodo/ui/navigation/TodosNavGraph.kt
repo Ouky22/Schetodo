@@ -1,8 +1,11 @@
 package com.example.schetodo.ui.navigation
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.navigation.NavGraphBuilder
@@ -39,7 +42,7 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
                 }
             )
         }
-        dialog(
+        composable(
             route = AddTodoCategory.routeWithArgs,
             arguments = AddTodoCategory.args
         ) { navBackStackEntry ->
@@ -50,21 +53,23 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
             viewModel.setParentTodoCategoryForAdding(parentTodoCategoryId)
             AddEditTodoCategoryDialogContent(
                 viewModel = viewModel,
-                onCloseDialog = { navController.popBackStack() }
+                onCloseDialog = { navController.popBackStack() },
+                modifier = Modifier.fillMaxSize()
             )
         }
-        dialog(
+        composable(
             route = EditTodoCategory.routeWithArgs,
             arguments = EditTodoCategory.args
         ) { navBackStackEntry ->
             val todoCategoryId = navBackStackEntry.arguments
-                ?.getInt(EditTodoCategory.todoCategoryIdArg) ?: return@dialog
+                ?.getInt(EditTodoCategory.todoCategoryIdArg) ?: return@composable
 
             val viewModel = hiltViewModel<AddEditTodoCategoryViewModel>()
             viewModel.setTodoCategoryForEditing(todoCategoryId)
             AddEditTodoCategoryDialogContent(
                 viewModel = viewModel,
-                onCloseDialog = { navController.popBackStack() }
+                onCloseDialog = { navController.popBackStack() },
+                modifier = Modifier.fillMaxSize()
             )
         }
     }
