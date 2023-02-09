@@ -77,7 +77,7 @@ fun AddEditTodoCategoryScreen(
             value = todoCategoryName,
             onValueChange = onTodoCategoryNameChanged,
             label = { Text(stringResource(R.string.todoCategoryName)) },
-            maxLines = 1,
+            singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
 

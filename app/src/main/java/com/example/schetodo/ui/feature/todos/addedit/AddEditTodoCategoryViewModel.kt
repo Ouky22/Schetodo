@@ -36,7 +36,8 @@ class AddEditTodoCategoryViewModel @Inject constructor(
 
     fun onEvent(event: AddEditTodoCategoryEvent) {
         when (event) {
-            is AddEditTodoCategoryEvent.ChangeTodoCategoryName -> todoCategoryName = event.name
+            is AddEditTodoCategoryEvent.ChangeTodoCategoryName ->
+                todoCategoryName = event.name.replace("\n", "").trimStart()
             is AddEditTodoCategoryEvent.ChangeTodoCategoryColor -> todoCategoryColor = event.color
             is AddEditTodoCategoryEvent.ChangeTodoCategoryIcon -> todoCategoryIconName = event.name
             is AddEditTodoCategoryEvent.SaveTodoCategory -> saveTodoCategory()
