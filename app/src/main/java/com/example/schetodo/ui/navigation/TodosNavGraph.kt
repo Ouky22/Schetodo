@@ -49,7 +49,7 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
             viewModel.setParentTodoCategoryForAdding(parentTodoCategoryId)
             AddEditTodoCategoryScreen(
                 viewModel = viewModel,
-                onCancelClickedNavigation = { navController.popBackStack() }
+                closeScreen = { navController.popBackStack() }
             )
         }
         composable(
@@ -63,7 +63,7 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
             viewModel.setTodoCategoryForEditing(todoCategoryId)
             AddEditTodoCategoryScreen(
                 viewModel = viewModel,
-                onCancelClickedNavigation = { navController.popBackStack() }
+                closeScreen = { navController.popBackStack() }
             )
         }
     }

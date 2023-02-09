@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,14 +29,22 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 fun AddEditTodoCategoryScreen(
     modifier: Modifier = Modifier,
     viewModel: AddEditTodoCategoryViewModel,
-    onCancelClickedNavigation: () -> Unit
+    closeScreen: () -> Unit
 ) {
+    LaunchedEffect(key1 = true) {
+        viewModel.todoCategorySuccessfullySaved.collect { successfullySaved ->
+            if (successfullySaved)
+                closeScreen()
+        }
+    }
+
     AddEditTodoCategoryScreen(
         modifier = modifier,
         todoCategoryName = viewModel.todoCategoryName,
         todoCategoryColor = Color(viewModel.todoCategoryColor),
         todoCategoryIcon = getIconByName(viewModel.todoCategoryIconName) ?: Icons.Filled.Category,
         inEditingMode = viewModel.inEditingMode,
+        showInvalidTodoCategoryNameError = viewModel.showInvalidTodoCategoryNameError,
         onTodoCategoryNameChanged = { newName ->
             viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryName(newName))
         },
@@ -45,11 +54,8 @@ fun AddEditTodoCategoryScreen(
         onTodoCategoryIconChanged = { newIconName ->
             viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryIcon(newIconName))
         },
-        onCancelClicked = { onCancelClickedNavigation() },
-        onSaveClicked = {
-            viewModel.onEvent(AddEditTodoCategoryEvent.SaveTodoCategory)
-            onCancelClickedNavigation()
-        }
+        onCancelClicked = { closeScreen() },
+        onSaveClicked = { viewModel.onEvent(AddEditTodoCategoryEvent.SaveTodoCategory) }
     )
 }
 
@@ -60,6 +66,7 @@ fun AddEditTodoCategoryScreen(
     todoCategoryColor: Color,
     todoCategoryIcon: ImageVector,
     inEditingMode: Boolean,
+    showInvalidTodoCategoryNameError: Boolean,
     onTodoCategoryNameChanged: (String) -> Unit,
     onTodoCategoryColorChanged: (Long) -> Unit,
     onTodoCategoryIconChanged: (String) -> Unit,
@@ -73,13 +80,21 @@ fun AddEditTodoCategoryScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        OutlinedTextField(
-            value = todoCategoryName,
-            onValueChange = onTodoCategoryNameChanged,
-            label = { Text(stringResource(R.string.todoCategoryName)) },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth()
-        )
+        Column {
+            OutlinedTextField(
+                value = todoCategoryName,
+                onValueChange = onTodoCategoryNameChanged,
+                label = { Text(stringResource(R.string.todoCategoryName)) },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                isError = showInvalidTodoCategoryNameError
+            )
+            if (showInvalidTodoCategoryNameError)
+                Text(
+                    "Please enter a name",
+                    color = Color.Red
+                )
+        }
 
         Row(
             modifier = Modifier
@@ -182,6 +197,7 @@ fun AddEditTodoCategoryScreenPreview() {
             todoCategoryColor = Color(0xff6096B4),
             todoCategoryIcon = Icons.Filled.House,
             inEditingMode = false,
+            showInvalidTodoCategoryNameError = false,
             onTodoCategoryNameChanged = {},
             onTodoCategoryIconChanged = {},
             onTodoCategoryColorChanged = {},

@@ -25,6 +25,21 @@ internal class AddEditTodoCategoryViewModelTest {
     private val fakeTodoCategoryRepository = FakeTodoCategoryRepository()
 
     @Test
+    fun when_saving_and_invalid_category_name_do_not_save_and_show_error() = runTest {
+        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
+        val todoCategory = TodoCategory(1, "Test", 0xffeeddaa, null, "Icon")
+        viewModel.setTodoCategoryForEditing(todoCategory.categoryId)
+
+        viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryName("  "))
+        viewModel.onEvent(AddEditTodoCategoryEvent.SaveTodoCategory)
+
+        assertThat(viewModel.showInvalidTodoCategoryNameError).isTrue()
+        assertThat(
+            fakeTodoCategoryRepository.getTodoCategory(todoCategory.categoryId).first()
+        ).isNull()
+    }
+
+    @Test
     fun when_add_and_save_category_it_is_added_accordingly() = runTest {
         val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
         val parentCategory = TodoCategory(1, "Test", 0xffeeddaa, null, "Icon")
