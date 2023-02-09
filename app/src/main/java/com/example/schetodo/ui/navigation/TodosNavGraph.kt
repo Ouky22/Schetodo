@@ -53,7 +53,7 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
             viewModel.setParentTodoCategoryForAdding(parentTodoCategoryId)
             AddEditTodoCategoryDialogContent(
                 viewModel = viewModel,
-                onCloseDialog = { navController.popBackStack() },
+                navController = navController,
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -68,7 +68,7 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
             viewModel.setTodoCategoryForEditing(todoCategoryId)
             AddEditTodoCategoryDialogContent(
                 viewModel = viewModel,
-                onCloseDialog = { navController.popBackStack() },
+                navController = navController,
                 modifier = Modifier.fillMaxSize()
             )
         }

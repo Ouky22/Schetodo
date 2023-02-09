@@ -15,4 +15,5 @@
     <string name="save">Save</string>
     <string name="add">Add</string>
     <string name="add_new_todo_category">Add new todo category</string>
+    <string name="todo_category_color">Todo Category Color</string>
 </resources>

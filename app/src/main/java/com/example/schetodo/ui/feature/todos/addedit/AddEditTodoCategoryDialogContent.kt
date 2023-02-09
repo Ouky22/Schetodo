@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.schetodo.R
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.theme.SchetodoTheme
@@ -29,12 +30,12 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 fun AddEditTodoCategoryDialogContent(
     modifier: Modifier = Modifier,
     viewModel: AddEditTodoCategoryViewModel,
-    onCloseDialog: () -> Unit
+    navController: NavController
 ) {
     LaunchedEffect(key1 = true) {
         viewModel.todoCategorySuccessfullySaved.collect { successfullySaved ->
             if (successfullySaved)
-                onCloseDialog()
+                navController.popBackStack()
         }
     }
 
@@ -45,17 +46,26 @@ fun AddEditTodoCategoryDialogContent(
         todoCategoryIcon = getIconByName(viewModel.todoCategoryIconName) ?: Icons.Filled.Category,
         inEditingMode = viewModel.inEditingMode,
         showInvalidTodoCategoryNameError = viewModel.showInvalidTodoCategoryNameError,
+        showColorPicker = viewModel.showColorPicker,
         onTodoCategoryNameChanged = { newName ->
             viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryName(newName))
         },
-        onTodoCategoryColorChanged = { newColor ->
-            viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryColor(newColor))
+        onColorSelected = { newColor ->
+            viewModel.onEvent(
+                AddEditTodoCategoryEvent.ChangeTodoCategoryColor(newColor.toArgb().toLong())
+            )
         },
-        onTodoCategoryIconChanged = { newIconName ->
-            viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryIcon(newIconName))
+        onIconSelected = { newIconName ->
+            viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryIcon(newIconName.name))
         },
-        onCloseDialog = { onCloseDialog() },
-        onSaveClicked = { viewModel.onEvent(AddEditTodoCategoryEvent.SaveTodoCategory) }
+        onCloseDialog = { navController.popBackStack() },
+        onSaveClicked = { viewModel.onEvent(AddEditTodoCategoryEvent.SaveTodoCategory) },
+        onIconSelectionClick = {
+            // TODO
+        },
+        onColorSelectionClick = {
+            viewModel.onEvent(AddEditTodoCategoryEvent.ShowColorPicker)
+        }
     )
 }
 
@@ -67,11 +77,14 @@ fun AddEditTodoCategoryDialogContent(
     todoCategoryIcon: ImageVector,
     inEditingMode: Boolean,
     showInvalidTodoCategoryNameError: Boolean,
+    showColorPicker: Boolean,
     onTodoCategoryNameChanged: (String) -> Unit,
-    onTodoCategoryColorChanged: (Long) -> Unit,
-    onTodoCategoryIconChanged: (String) -> Unit,
+    onSaveClicked: () -> Unit,
     onCloseDialog: () -> Unit,
-    onSaveClicked: () -> Unit
+    onColorSelectionClick: () -> Unit,
+    onColorSelected: (Color) -> Unit,
+    onIconSelectionClick: () -> Unit,
+    onIconSelected: (ImageVector) -> Unit
 ) {
     Surface {
         Column(
@@ -100,8 +113,8 @@ fun AddEditTodoCategoryDialogContent(
             SelectColorAndIconArea(
                 todoCategoryIcon = todoCategoryIcon,
                 todoCategoryColor = todoCategoryColor,
-                onTodoCategoryIconChanged = onTodoCategoryIconChanged,
-                onTodoCategoryColorChanged = onTodoCategoryColorChanged,
+                onIconSelectionClick = onIconSelectionClick,
+                onColorSelectionClick = onColorSelectionClick,
                 modifier = Modifier
                     .height(80.dp)
                     .fillMaxWidth()
@@ -116,6 +129,13 @@ fun AddEditTodoCategoryDialogContent(
                 modifier = Modifier.fillMaxWidth()
             )
         }
+
+        if (showColorPicker)
+            ColorPicker(
+                modifier = Modifier.fillMaxHeight(0.7f),
+                onSelectColor = { selectedColor -> onColorSelected(selectedColor) },
+                onDismiss = { onColorSelected(todoCategoryColor) }
+            )
     }
 }
 
@@ -123,8 +143,8 @@ fun AddEditTodoCategoryDialogContent(
 fun SelectColorAndIconArea(
     todoCategoryIcon: ImageVector,
     todoCategoryColor: Color,
-    onTodoCategoryIconChanged: (newIconName: String) -> Unit,
-    onTodoCategoryColorChanged: (Long) -> Unit,
+    onIconSelectionClick: () -> Unit,
+    onColorSelectionClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -143,23 +163,14 @@ fun SelectColorAndIconArea(
                     shape = CircleShape
                 ),
             contentDescription = stringResource(R.string.choose_icon),
-            onClick = {
-                // TODO open icon picker
-                val newIcon = Icons.Filled.House.name
-                onTodoCategoryIconChanged(newIcon)
-            }
+            onClick = { onIconSelectionClick() }
         )
         SelectIcon(
             color = todoCategoryColor,
             icon = Icons.Outlined.Palette,
             modifier = Modifier.fillMaxHeight(),
             contentDescription = stringResource(R.string.choose_color),
-
-            onClick = {
-                // TODO open color picker
-                val newColor = Color.Red.toArgb()
-                onTodoCategoryColorChanged(newColor.toLong())
-            }
+            onClick = { onColorSelectionClick() }
         )
     }
 }
@@ -232,11 +243,14 @@ fun AddEditTodoCategoryDialogPreview() {
             todoCategoryIcon = Icons.Filled.House,
             inEditingMode = false,
             showInvalidTodoCategoryNameError = false,
+            showColorPicker = false,
             onTodoCategoryNameChanged = {},
-            onTodoCategoryIconChanged = {},
-            onTodoCategoryColorChanged = {},
+            onIconSelected = {},
+            onColorSelected = {},
             onCloseDialog = {},
-            onSaveClicked = {}
+            onSaveClicked = {},
+            onIconSelectionClick = {},
+            onColorSelectionClick = {}
         )
     }
 }
