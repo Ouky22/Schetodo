@@ -15,10 +15,7 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.schetodo.ui.components.BottomNavBar
-import com.example.schetodo.ui.navigation.Schedule
-import com.example.schetodo.ui.navigation.SchetodoNavHost
-import com.example.schetodo.ui.navigation.bottomNavDestinations
-import com.example.schetodo.ui.navigation.navigateSingleTopTo
+import com.example.schetodo.ui.navigation.*
 import com.example.schetodo.ui.theme.SchetodoTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -47,15 +44,19 @@ fun SchetodoApp() {
             currentBackStack?.destination?.route == schetodoDestination.route
         } ?: Schedule
 
+        val shouldShowBottomNavigation =
+            currentBackStack?.destination?.route in bottomNavDestinations.map { it.route }
+
         Scaffold(
             bottomBar = {
-                BottomNavBar(
-                    destinations = bottomNavDestinations,
-                    currentDestination = currentDestination,
-                    onItemClick = { selectedDestination ->
-                        navController.navigateSingleTopTo(selectedDestination.route)
-                    }
-                )
+                if (shouldShowBottomNavigation)
+                    BottomNavBar(
+                        destinations = bottomNavDestinations,
+                        currentDestination = currentDestination,
+                        onItemClick = { selectedDestination ->
+                            navController.navigateSingleTopTo(selectedDestination.route)
+                        }
+                    )
             }
         ) { innerPadding ->
             SchetodoNavHost(
