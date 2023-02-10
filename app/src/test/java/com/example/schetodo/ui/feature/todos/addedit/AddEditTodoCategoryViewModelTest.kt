@@ -4,8 +4,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Architecture
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.House
+import androidx.lifecycle.SavedStateHandle
 import com.example.schetodo.data.entity.TodoCategory
 import com.example.schetodo.data.repository.FakeTodoCategoryRepository
+import com.example.schetodo.ui.navigation.AddTodoCategory
+import com.example.schetodo.ui.navigation.EditTodoCategory
 import com.example.schetodo.util.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,10 +29,30 @@ internal class AddEditTodoCategoryViewModelTest {
     private val fakeTodoCategoryRepository = FakeTodoCategoryRepository()
 
     @Test
-    fun when_saving_and_invalid_category_name_do_not_save_and_show_error() = runTest {
-        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
+    fun when_deleting_todo_category_then_todo_category_is_deleted_and_screen_closed() = runTest {
         val todoCategory = TodoCategory(1, "Test", 0xffeeddaa, null, "Icon")
-        viewModel.setTodoCategoryForEditing(todoCategory.categoryId)
+        fakeTodoCategoryRepository.insertTodoCategory(todoCategory)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(EditTodoCategory.todoCategoryIdArg to todoCategory.categoryId)
+        )
+        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository, savedStateHandle)
+
+        viewModel.onEvent(AddEditTodoCategoryEvent.DeleteTodoCategory)
+
+        assertThat(
+            fakeTodoCategoryRepository.getTodoCategory(todoCategory.categoryId).first()
+        ).isNull()
+        assertThat(viewModel.closeAddEditTodoCategoryScreen.first()).isTrue()
+    }
+
+    @Test
+    fun when_saving_and_invalid_category_name_do_not_save_and_show_error() = runTest {
+        val todoCategory = TodoCategory(1, "Test", 0xffeeddaa, null, "Icon")
+        fakeTodoCategoryRepository.insertTodoCategory(todoCategory)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(EditTodoCategory.todoCategoryIdArg to todoCategory.categoryId)
+        )
+        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository, savedStateHandle)
 
         viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryName("  "))
         viewModel.onEvent(AddEditTodoCategoryEvent.SaveTodoCategory)
@@ -37,15 +60,17 @@ internal class AddEditTodoCategoryViewModelTest {
         assertThat(viewModel.showInvalidTodoCategoryNameError).isTrue()
         assertThat(
             fakeTodoCategoryRepository.getTodoCategory(todoCategory.categoryId).first()
-        ).isNull()
+        ).isEqualTo(todoCategory)
     }
 
     @Test
     fun when_add_and_save_category_it_is_added_accordingly() = runTest {
-        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
         val parentCategory = TodoCategory(1, "Test", 0xffeeddaa, null, "Icon")
         fakeTodoCategoryRepository.insertTodoCategory(parentCategory)
-        viewModel.setParentTodoCategoryForAdding(parentCategory.categoryId)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(AddTodoCategory.parentTodoCategoryIdArg to parentCategory.categoryId)
+        )
+        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository, savedStateHandle)
 
         val categoryName = "Category Name"
         val categoryIcon = Icons.Filled.Architecture.name
@@ -68,10 +93,12 @@ internal class AddEditTodoCategoryViewModelTest {
 
     @Test
     fun when_edit_and_save_category_it_is_edited_accordingly() = runTest {
-        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
         val category = TodoCategory(1, "Test", 0xffeeddaa, 10, "Icon")
         fakeTodoCategoryRepository.insertTodoCategory(category)
-        viewModel.setTodoCategoryForEditing(category.categoryId)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(EditTodoCategory.todoCategoryIdArg to category.categoryId)
+        )
+        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository, savedStateHandle)
 
         val newCategoryName = "New Category Name"
         val newCategoryIcon = Icons.Filled.House.name
@@ -92,11 +119,12 @@ internal class AddEditTodoCategoryViewModelTest {
 
     @Test
     fun when_valid_id_of_category_for_editing_set_then_load_data_of_category() = runTest {
-        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
         val category = TodoCategory(1, "Test", 0xffeeddaa, 10, "Icon")
         fakeTodoCategoryRepository.insertTodoCategory(category)
-
-        viewModel.setTodoCategoryForEditing(category.categoryId)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(EditTodoCategory.todoCategoryIdArg to category.categoryId)
+        )
+        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository, savedStateHandle)
 
         advanceUntilIdle()
 
@@ -108,7 +136,8 @@ internal class AddEditTodoCategoryViewModelTest {
 
     @Test
     fun when_todo_category_name_changed_then_it_is_updated() {
-        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
+        val savedStateHandle = createSavedStateHandleForAddingCategory()
+        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository, savedStateHandle)
         val newName = "New Category Name"
         viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryName(newName))
         assertThat(viewModel.todoCategoryName).isEqualTo(newName)
@@ -116,7 +145,8 @@ internal class AddEditTodoCategoryViewModelTest {
 
     @Test
     fun when_todo_category_color_changed_then_it_is_updated() {
-        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
+        val savedStateHandle = createSavedStateHandleForAddingCategory()
+        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository, savedStateHandle)
         val newColor = 0xffaaddff
         viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryColor(newColor))
         assertThat(viewModel.todoCategoryColor).isEqualTo(newColor)
@@ -124,7 +154,8 @@ internal class AddEditTodoCategoryViewModelTest {
 
     @Test
     fun when_todo_category_icon_changed_then_it_is_updated() {
-        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
+        val savedStateHandle = createSavedStateHandleForAddingCategory()
+        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository, savedStateHandle)
         val newIconName = Icons.Filled.House.name
         viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryIcon(newIconName))
         assertThat(viewModel.todoCategoryIconName).isEqualTo(newIconName)
@@ -132,7 +163,8 @@ internal class AddEditTodoCategoryViewModelTest {
 
     @Test
     fun when_todo_category_icon_selected_do_not_show_icon_picker_anymore() {
-        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
+        val savedStateHandle = createSavedStateHandleForAddingCategory()
+        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository, savedStateHandle)
         viewModel.onEvent(AddEditTodoCategoryEvent.ShowColorPicker)
         viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryIcon(Icons.Filled.Category.name))
         assertThat(viewModel.showIconPicker).isFalse()
@@ -140,7 +172,8 @@ internal class AddEditTodoCategoryViewModelTest {
 
     @Test
     fun when_todo_category_color_selected_do_not_show_color_picker_anymore() {
-        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
+        val savedStateHandle = createSavedStateHandleForAddingCategory()
+        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository, savedStateHandle)
         viewModel.onEvent(AddEditTodoCategoryEvent.ShowColorPicker)
         viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryColor(0xaaffeedd))
         assertThat(viewModel.showColorPicker).isFalse()
@@ -148,7 +181,8 @@ internal class AddEditTodoCategoryViewModelTest {
 
     @Test
     fun on_show_todo_category_icon_selection_only_show_icon_picker() {
-        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
+        val savedStateHandle = createSavedStateHandleForAddingCategory()
+        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository, savedStateHandle)
         viewModel.onEvent(AddEditTodoCategoryEvent.ShowColorPicker)
         viewModel.onEvent(AddEditTodoCategoryEvent.ShowIconPicker)
         assertThat(viewModel.showIconPicker).isTrue()
@@ -157,10 +191,17 @@ internal class AddEditTodoCategoryViewModelTest {
 
     @Test
     fun on_open_todo_category_color_selection_only_show_color_picker() {
-        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
+        val savedStateHandle = createSavedStateHandleForAddingCategory()
+        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository, savedStateHandle)
         viewModel.onEvent(AddEditTodoCategoryEvent.ShowIconPicker)
         viewModel.onEvent(AddEditTodoCategoryEvent.ShowColorPicker)
         assertThat(viewModel.showColorPicker).isTrue()
         assertThat(viewModel.showIconPicker).isFalse()
     }
+
+    private fun createSavedStateHandleForAddingCategory() = SavedStateHandle(
+        mapOf(
+            AddTodoCategory.parentTodoCategoryIdArg to -1
+        )
+    )
 }

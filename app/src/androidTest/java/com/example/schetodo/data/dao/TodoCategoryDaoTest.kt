@@ -8,6 +8,7 @@ import com.example.schetodo.data.SchetodoDatabase
 import com.example.schetodo.data.entity.TodoCategory
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
@@ -30,6 +31,20 @@ class TodoCategoryDaoTest {
     @Throws(IOException::class)
     fun closeDb() {
         db.close()
+    }
+
+    @Test
+    fun when_deleting_non_existing_category_by_id_then_nothing_happens() = runTest {
+        todoCategoryDao.deleteTodoCategoryById(1)
+    }
+
+    @Test
+    fun when_deleting_existing_category_by_id_then_it_is_deleted() = runTest {
+        val category = TodoCategory(1, "c1", 0, null, "")
+        todoCategoryDao.insertTodoCategory(category)
+        todoCategoryDao.deleteTodoCategoryById(category.categoryId)
+
+        assertThat(todoCategoryDao.getTodoCategoryById(category.categoryId).first()).isNull()
     }
 
     @Test

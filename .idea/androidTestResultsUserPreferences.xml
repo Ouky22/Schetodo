@@ -36,7 +36,9 @@
                 <map>
                   <entry key="Duration" value="90" />
                   <entry key="Pixel_3a_API_33" value="120" />
+                  <entry key="RF8M712DG6R" value="120" />
                   <entry key="Tests" value="360" />
+                  <entry key="samsung&#10; SM-G973F" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>
@@ -76,6 +78,48 @@
                   <entry key="Duration" value="90" />
                   <entry key="Pixel_3a_API_33" value="120" />
                   <entry key="Tests" value="360" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="574125976">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung" value="120" />
+                  <entry key="samsung&#10; SM-G973F" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="645108258">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="RF8M712DG6R" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung&#10; SM-G973F" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1103582587">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="RF8M712DG6R" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="samsung&#10; SM-G973F" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>

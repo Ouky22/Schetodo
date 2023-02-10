@@ -50,4 +50,8 @@ class FakeTodoCategoryDao : TodoCategoryDao {
     override suspend fun deleteTodoCategory(todoCategory: TodoCategory) {
         todoCategories.remove(todoCategory)
     }
+
+    override suspend fun deleteTodoCategoryById(todoCategoryId: Int) {
+        todoCategories.removeIf { it.categoryId == todoCategoryId }
+    }
 }

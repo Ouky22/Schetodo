@@ -1,6 +1,7 @@
 package com.example.schetodo.ui.components
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -22,7 +23,8 @@ fun SchetodoTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
     showBackButton: Boolean,
-    onBackButtonClick: () -> Unit
+    onBackButtonClick: () -> Unit,
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
     Row(
         modifier = modifier.fillMaxWidth()
@@ -43,7 +45,8 @@ fun SchetodoTopAppBar(
                             contentDescription = stringResource(R.string.go_back)
                         )
                     }
-            }
+            },
+            actions = actions
         )
     }
 }

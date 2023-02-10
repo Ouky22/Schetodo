@@ -24,4 +24,7 @@ interface TodoCategoryDao {
 
     @Delete
     suspend fun deleteTodoCategory(todoCategory: TodoCategory)
+
+    @Query("DELETE FROM TodoCategory WHERE categoryId = :todoCategoryId")
+    suspend fun deleteTodoCategoryById(todoCategoryId: Int)
 }

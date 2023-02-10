@@ -24,6 +24,10 @@ class FakeTodoCategoryRepository : TodoCategoryRepository {
             todoCategories.add(todoCategory.copy(categoryId = todoCategories.size))
     }
 
+    override suspend fun deleteTodoCategory(todoCategory: Int) {
+        todoCategories.removeIf { it.categoryId == todoCategory }
+    }
+
     override fun getChildTodoCategoriesOf(todoCategoryId: Int?): Flow<List<TodoCategory>> {
         return flow {
             val childCategories = todoCategories.filter { todoCategory ->

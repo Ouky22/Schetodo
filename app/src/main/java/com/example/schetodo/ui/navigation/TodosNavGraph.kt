@@ -3,6 +3,7 @@ package com.example.schetodo.ui.navigation
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,12 +44,8 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
         composable(
             route = AddTodoCategory.routeWithArgs,
             arguments = AddTodoCategory.args
-        ) { navBackStackEntry ->
-            val parentTodoCategoryId = navBackStackEntry.arguments
-                ?.getInt(AddTodoCategory.parentTodoCategoryIdArg) ?: -1
-
+        ) {
             val viewModel = hiltViewModel<AddEditTodoCategoryViewModel>()
-            viewModel.setParentTodoCategoryForAdding(parentTodoCategoryId)
             AddEditTodoCategoryScreen(
                 viewModel = viewModel,
                 navController = navController,
@@ -58,12 +55,8 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
         composable(
             route = EditTodoCategory.routeWithArgs,
             arguments = EditTodoCategory.args
-        ) { navBackStackEntry ->
-            val todoCategoryId = navBackStackEntry.arguments
-                ?.getInt(EditTodoCategory.todoCategoryIdArg) ?: return@composable
-
+        ) {
             val viewModel = hiltViewModel<AddEditTodoCategoryViewModel>()
-            viewModel.setTodoCategoryForEditing(todoCategoryId)
             AddEditTodoCategoryScreen(
                 viewModel = viewModel,
                 navController = navController,

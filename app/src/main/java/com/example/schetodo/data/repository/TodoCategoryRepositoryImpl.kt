@@ -18,6 +18,10 @@ class TodoCategoryRepositoryImpl @Inject constructor(
     override suspend fun insertOrUpdateTodoCategory(todoCategory: TodoCategory) =
         todoCategoryDao.insertOrUpdateTodoCategory(todoCategory)
 
+    override suspend fun deleteTodoCategory(todoCategory: Int) {
+        todoCategoryDao.deleteTodoCategoryById(todoCategory)
+    }
+
     override fun getChildTodoCategoriesOf(todoCategoryId: Int?): Flow<List<TodoCategory>> {
         return if (todoCategoryId == null)
             todoCategoryDao.getTopLevelTodoCategories()

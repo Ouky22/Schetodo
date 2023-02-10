@@ -3,10 +3,13 @@ package com.example.schetodo.ui.feature.todos.addedit
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.schetodo.data.entity.TodoCategory
 import com.example.schetodo.data.repository.TodoCategoryRepository
+import com.example.schetodo.ui.navigation.AddTodoCategory
+import com.example.schetodo.ui.navigation.EditTodoCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -15,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddEditTodoCategoryViewModel @Inject constructor(
-    private val todoCategoryRepository: TodoCategoryRepository
+    private val todoCategoryRepository: TodoCategoryRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     var todoCategoryName by mutableStateOf("")
@@ -33,7 +37,7 @@ class AddEditTodoCategoryViewModel @Inject constructor(
     var showInvalidTodoCategoryNameError by mutableStateOf(false)
         private set
 
-    var todoCategorySuccessfullySaved = MutableStateFlow(false)
+    var closeAddEditTodoCategoryScreen = MutableStateFlow(false)
 
     var showColorPicker by mutableStateOf(false)
         private set
@@ -45,6 +49,18 @@ class AddEditTodoCategoryViewModel @Inject constructor(
 
     private var parentTodoCategoryId: Int? = null
 
+    init {
+        val categoryIdForEditing = savedStateHandle.get<Int>(EditTodoCategory.todoCategoryIdArg)
+        if (categoryIdForEditing != null) {
+            setTodoCategoryForEditing(categoryIdForEditing)
+        } else {
+            val parentCategoryId =
+                savedStateHandle.get<Int>(AddTodoCategory.parentTodoCategoryIdArg)
+                    ?: throw Exception("No parent category id provided")
+            setParentTodoCategoryForAdding(parentCategoryId)
+        }
+    }
+
 
     fun onEvent(event: AddEditTodoCategoryEvent) {
         when (event) {
@@ -54,10 +70,11 @@ class AddEditTodoCategoryViewModel @Inject constructor(
             is AddEditTodoCategoryEvent.SaveTodoCategory -> saveTodoCategory()
             is AddEditTodoCategoryEvent.ShowColorPicker -> onShowColorPicker()
             is AddEditTodoCategoryEvent.ShowIconPicker -> onShowIconPicker()
+            is AddEditTodoCategoryEvent.DeleteTodoCategory -> onDeleteTodoCategory()
         }
     }
 
-    fun setTodoCategoryForEditing(todoCategoryId: Int) {
+    private fun setTodoCategoryForEditing(todoCategoryId: Int) {
         this.todoCategoryId = todoCategoryId
 
         viewModelScope.launch {
@@ -70,7 +87,7 @@ class AddEditTodoCategoryViewModel @Inject constructor(
         }
     }
 
-    fun setParentTodoCategoryForAdding(todoCategoryId: Int) {
+    private fun setParentTodoCategoryForAdding(todoCategoryId: Int) {
         parentTodoCategoryId =
             if (todoCategoryId <= 0)
                 null
@@ -103,6 +120,16 @@ class AddEditTodoCategoryViewModel @Inject constructor(
         showInvalidTodoCategoryNameError = false
     }
 
+    private fun onDeleteTodoCategory() {
+        if (!inEditingMode)
+            return
+
+        viewModelScope.launch {
+            todoCategoryRepository.deleteTodoCategory(todoCategoryId)
+            closeAddEditTodoCategoryScreen.value = true
+        }
+    }
+
     private fun saveTodoCategory() {
         if (!validNameEntered()) {
             showInvalidTodoCategoryNameError = true
@@ -118,7 +145,7 @@ class AddEditTodoCategoryViewModel @Inject constructor(
                 todoCategoryIconName
             )
             todoCategoryRepository.insertOrUpdateTodoCategory(todoCategory)
-            todoCategorySuccessfullySaved.value = true
+            closeAddEditTodoCategoryScreen.value = true
         }
     }
 

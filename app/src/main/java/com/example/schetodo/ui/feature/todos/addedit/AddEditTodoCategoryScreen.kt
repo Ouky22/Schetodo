@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,8 +42,8 @@ fun AddEditTodoCategoryScreen(
     navController: NavController
 ) {
     LaunchedEffect(key1 = true) {
-        viewModel.todoCategorySuccessfullySaved.collect { successfullySaved ->
-            if (successfullySaved)
+        viewModel.closeAddEditTodoCategoryScreen.collect { closeScreen ->
+            if (closeScreen)
                 navController.popBackStack()
         }
     }
@@ -69,6 +70,7 @@ fun AddEditTodoCategoryScreen(
         },
         onCloseDialog = { navController.popBackStack() },
         onSaveClicked = { viewModel.onEvent(AddEditTodoCategoryEvent.SaveTodoCategory) },
+        onDeleteClick = { viewModel.onEvent(AddEditTodoCategoryEvent.DeleteTodoCategory) },
         onIconSelectionClick = { viewModel.onEvent(AddEditTodoCategoryEvent.ShowIconPicker) },
         onColorSelectionClick = { viewModel.onEvent(AddEditTodoCategoryEvent.ShowColorPicker) }
     )
@@ -87,6 +89,7 @@ fun AddEditTodoCategoryScreen(
     showIconPicker: Boolean,
     onTodoCategoryNameChanged: (String) -> Unit,
     onSaveClicked: () -> Unit,
+    onDeleteClick: () -> Unit,
     onCloseDialog: () -> Unit,
     onColorSelectionClick: () -> Unit,
     onColorSelected: (Color) -> Unit,
@@ -99,15 +102,18 @@ fun AddEditTodoCategoryScreen(
 
     Scaffold(
         topBar = {
-            SchetodoTopAppBar(
+            AddEditTodoCategoryTopAppBar(
                 title = topAppBarTitle,
-                showBackButton = true,
-                onBackButtonClick = { onCloseDialog() }
+                onCloseDialog = onCloseDialog,
+                showDeleteIconButton = inEditingMode,
+                onDeleteClick = onDeleteClick
             )
         }
     ) { contentPadding ->
         Column(
-            modifier = modifier.padding(contentPadding).padding(24.dp),
+            modifier = modifier
+                .padding(contentPadding)
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
@@ -163,6 +169,32 @@ fun AddEditTodoCategoryScreen(
             )
         }
     }
+}
+
+@ExperimentalMaterial3Api
+@Composable
+fun AddEditTodoCategoryTopAppBar(
+    modifier: Modifier = Modifier,
+    title: String,
+    showDeleteIconButton: Boolean,
+    onCloseDialog: () -> Unit,
+    onDeleteClick: () -> Unit
+) {
+    SchetodoTopAppBar(
+        modifier = modifier,
+        title = title,
+        showBackButton = true,
+        onBackButtonClick = { onCloseDialog() },
+        actions = {
+            if (showDeleteIconButton)
+                IconButton(onClick = onDeleteClick) {
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = stringResource(id = R.string.delete)
+                    )
+                }
+        }
+    )
 }
 
 @Composable
@@ -284,7 +316,7 @@ fun AddEditTodoCategoryDialogPreview() {
             todoCategoryName = "My TodoCategory Name",
             todoCategoryColor = Color(0xff6096B4),
             todoCategoryIcon = Icons.Filled.House,
-            inEditingMode = false,
+            inEditingMode = true,
             showInvalidTodoCategoryNameError = false,
             showColorPicker = false,
             showIconPicker = false,
@@ -293,6 +325,7 @@ fun AddEditTodoCategoryDialogPreview() {
             onColorSelected = {},
             onCloseDialog = {},
             onSaveClicked = {},
+            onDeleteClick = {},
             onIconSelectionClick = {},
             onColorSelectionClick = {}
         )
