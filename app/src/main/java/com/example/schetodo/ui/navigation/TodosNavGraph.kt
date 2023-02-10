@@ -1,7 +1,6 @@
 package com.example.schetodo.ui.navigation
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.remember
@@ -11,11 +10,10 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.dialog
 import androidx.navigation.navigation
 import com.example.schetodo.ui.feature.todos.list.TodosScreen
 import com.example.schetodo.ui.feature.todos.list.TodosViewModel
-import com.example.schetodo.ui.feature.todos.addedit.AddEditTodoCategoryDialogContent
+import com.example.schetodo.ui.feature.todos.addedit.AddEditTodoCategoryScreen
 import com.example.schetodo.ui.feature.todos.addedit.AddEditTodoCategoryViewModel
 
 @ExperimentalFoundationApi
@@ -51,7 +49,7 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
 
             val viewModel = hiltViewModel<AddEditTodoCategoryViewModel>()
             viewModel.setParentTodoCategoryForAdding(parentTodoCategoryId)
-            AddEditTodoCategoryDialogContent(
+            AddEditTodoCategoryScreen(
                 viewModel = viewModel,
                 navController = navController,
                 modifier = Modifier.fillMaxSize()
@@ -66,7 +64,7 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
 
             val viewModel = hiltViewModel<AddEditTodoCategoryViewModel>()
             viewModel.setTodoCategoryForEditing(todoCategoryId)
-            AddEditTodoCategoryDialogContent(
+            AddEditTodoCategoryScreen(
                 viewModel = viewModel,
                 navController = navController,
                 modifier = Modifier.fillMaxSize()

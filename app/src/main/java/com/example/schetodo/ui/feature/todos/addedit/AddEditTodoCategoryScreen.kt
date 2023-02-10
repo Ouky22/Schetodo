@@ -35,7 +35,7 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 
 @ExperimentalMaterial3Api
 @Composable
-fun AddEditTodoCategoryDialogContent(
+fun AddEditTodoCategoryScreen(
     modifier: Modifier = Modifier,
     viewModel: AddEditTodoCategoryViewModel,
     navController: NavController
@@ -47,7 +47,7 @@ fun AddEditTodoCategoryDialogContent(
         }
     }
 
-    AddEditTodoCategoryDialogContent(
+    AddEditTodoCategoryScreen(
         modifier = modifier,
         todoCategoryName = viewModel.todoCategoryName,
         todoCategoryColor = Color(viewModel.todoCategoryColor),
@@ -76,7 +76,7 @@ fun AddEditTodoCategoryDialogContent(
 
 @ExperimentalMaterial3Api
 @Composable
-fun AddEditTodoCategoryDialogContent(
+fun AddEditTodoCategoryScreen(
     modifier: Modifier = Modifier,
     todoCategoryName: String,
     todoCategoryColor: Color,
@@ -279,7 +279,7 @@ fun IconPicker(
 @Composable
 fun AddEditTodoCategoryDialogPreview() {
     SchetodoTheme {
-        AddEditTodoCategoryDialogContent(
+        AddEditTodoCategoryScreen(
             modifier = Modifier.height(500.dp),
             todoCategoryName = "My TodoCategory Name",
             todoCategoryColor = Color(0xff6096B4),
