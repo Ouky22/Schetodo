@@ -2,6 +2,7 @@ package com.example.schetodo.ui.feature.todos.addedit
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Architecture
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.House
 import com.example.schetodo.data.entity.TodoCategory
 import com.example.schetodo.data.repository.FakeTodoCategoryRepository
@@ -66,7 +67,7 @@ internal class AddEditTodoCategoryViewModelTest {
     }
 
     @Test
-    fun when_edit_and_save_category_it_is_edited_accordingly() = runTest() {
+    fun when_edit_and_save_category_it_is_edited_accordingly() = runTest {
         val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
         val category = TodoCategory(1, "Test", 0xffeeddaa, 10, "Icon")
         fakeTodoCategoryRepository.insertTodoCategory(category)
@@ -127,5 +128,39 @@ internal class AddEditTodoCategoryViewModelTest {
         val newIconName = Icons.Filled.House.name
         viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryIcon(newIconName))
         assertThat(viewModel.todoCategoryIconName).isEqualTo(newIconName)
+    }
+
+    @Test
+    fun when_todo_category_icon_selected_do_not_show_icon_picker_anymore() {
+        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
+        viewModel.onEvent(AddEditTodoCategoryEvent.ShowColorPicker)
+        viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryIcon(Icons.Filled.Category.name))
+        assertThat(viewModel.showIconPicker).isFalse()
+    }
+
+    @Test
+    fun when_todo_category_color_selected_do_not_show_color_picker_anymore() {
+        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
+        viewModel.onEvent(AddEditTodoCategoryEvent.ShowColorPicker)
+        viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryColor(0xaaffeedd))
+        assertThat(viewModel.showColorPicker).isFalse()
+    }
+
+    @Test
+    fun on_show_todo_category_icon_selection_only_show_icon_picker() {
+        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
+        viewModel.onEvent(AddEditTodoCategoryEvent.ShowColorPicker)
+        viewModel.onEvent(AddEditTodoCategoryEvent.ShowIconPicker)
+        assertThat(viewModel.showIconPicker).isTrue()
+        assertThat(viewModel.showColorPicker).isFalse()
+    }
+
+    @Test
+    fun on_open_todo_category_color_selection_only_show_color_picker() {
+        val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository)
+        viewModel.onEvent(AddEditTodoCategoryEvent.ShowIconPicker)
+        viewModel.onEvent(AddEditTodoCategoryEvent.ShowColorPicker)
+        assertThat(viewModel.showColorPicker).isTrue()
+        assertThat(viewModel.showIconPicker).isFalse()
     }
 }

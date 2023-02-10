@@ -1,8 +1,7 @@
-package com.example.schetodo.ui.feature.todos.addedit
+package com.example.schetodo.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -16,21 +15,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.Popup
-import androidx.compose.ui.window.PopupProperties
-import com.example.schetodo.R
-import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
 
 @Composable
-fun ColorPicker(
+fun <T> ElementPickerDialog(
     modifier: Modifier = Modifier,
-    onSelectColor: (Color) -> Unit,
-    onDismiss: () -> Unit
+    title: String,
+    elements: List<T>,
+    onDismiss: () -> Unit,
+    itemSelector: @Composable (T) -> Unit
 ) {
     Dialog(
         onDismissRequest = { onDismiss() }
@@ -41,7 +37,7 @@ fun ColorPicker(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = stringResource(R.string.todo_category_color),
+                    text = title,
                     style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier.padding(8.dp)
                 )
@@ -52,19 +48,8 @@ fun ColorPicker(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(todoCategoryColors) { color ->
-                        Box(
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .aspectRatio(1f)
-                                .background(color)
-                                .border(
-                                    width = 1.dp,
-                                    color = Color.Black,
-                                    shape = CircleShape
-                                )
-                                .clickable { onSelectColor(color) }
-                        )
+                    items(elements) { element ->
+                        itemSelector(element)
                     }
                 }
             }
@@ -74,12 +59,22 @@ fun ColorPicker(
 
 @Preview(showBackground = true)
 @Composable
-fun ColorPickerPreview() {
+fun ElementPickerDialogPreview() {
     SchetodoTheme {
-        ColorPicker(
-            modifier = Modifier.fillMaxSize(),
-            onSelectColor = {},
-            onDismiss = {}
-        )
+        ElementPickerDialog(
+            title = "Select Element",
+            elements = (1..20).toList(),
+            onDismiss = { }
+        ) { number ->
+            Box(
+                Modifier
+                    .clip(CircleShape)
+                    .aspectRatio(1f)
+                    .background(Color.Green),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = number.toString())
+            }
+        }
     }
 }

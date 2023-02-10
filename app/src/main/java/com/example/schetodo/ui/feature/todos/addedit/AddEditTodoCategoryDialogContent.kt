@@ -23,7 +23,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.schetodo.R
+import com.example.schetodo.ui.components.ElementPickerDialog
+import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.feature.todos.getIconByName
+import com.example.schetodo.ui.feature.todos.householdIcons
+import com.example.schetodo.ui.feature.todos.sportIcons
+import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
 
 @Composable
@@ -47,6 +52,7 @@ fun AddEditTodoCategoryDialogContent(
         inEditingMode = viewModel.inEditingMode,
         showInvalidTodoCategoryNameError = viewModel.showInvalidTodoCategoryNameError,
         showColorPicker = viewModel.showColorPicker,
+        showIconPicker = viewModel.showIconPicker,
         onTodoCategoryNameChanged = { newName ->
             viewModel.onEvent(AddEditTodoCategoryEvent.ChangeTodoCategoryName(newName))
         },
@@ -60,12 +66,8 @@ fun AddEditTodoCategoryDialogContent(
         },
         onCloseDialog = { navController.popBackStack() },
         onSaveClicked = { viewModel.onEvent(AddEditTodoCategoryEvent.SaveTodoCategory) },
-        onIconSelectionClick = {
-            // TODO
-        },
-        onColorSelectionClick = {
-            viewModel.onEvent(AddEditTodoCategoryEvent.ShowColorPicker)
-        }
+        onIconSelectionClick = { viewModel.onEvent(AddEditTodoCategoryEvent.ShowIconPicker) },
+        onColorSelectionClick = { viewModel.onEvent(AddEditTodoCategoryEvent.ShowColorPicker) }
     )
 }
 
@@ -78,6 +80,7 @@ fun AddEditTodoCategoryDialogContent(
     inEditingMode: Boolean,
     showInvalidTodoCategoryNameError: Boolean,
     showColorPicker: Boolean,
+    showIconPicker: Boolean,
     onTodoCategoryNameChanged: (String) -> Unit,
     onSaveClicked: () -> Unit,
     onCloseDialog: () -> Unit,
@@ -136,6 +139,13 @@ fun AddEditTodoCategoryDialogContent(
                 onSelectColor = { selectedColor -> onColorSelected(selectedColor) },
                 onDismiss = { onColorSelected(todoCategoryColor) }
             )
+        else if (showIconPicker) {
+            IconPicker(
+                modifier = Modifier.fillMaxHeight(0.7f),
+                onSelectIcon = onIconSelected,
+                onDismiss = { onIconSelected(todoCategoryIcon) }
+            )
+        }
     }
 }
 
@@ -152,7 +162,7 @@ fun SelectColorAndIconArea(
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        SelectIcon(
+        SelectorCircle(
             color = Color.White,
             icon = todoCategoryIcon,
             modifier = Modifier
@@ -165,7 +175,7 @@ fun SelectColorAndIconArea(
             contentDescription = stringResource(R.string.choose_icon),
             onClick = { onIconSelectionClick() }
         )
-        SelectIcon(
+        SelectorCircle(
             color = todoCategoryColor,
             icon = Icons.Outlined.Palette,
             modifier = Modifier.fillMaxHeight(),
@@ -176,42 +186,10 @@ fun SelectColorAndIconArea(
 }
 
 @Composable
-fun PositiveNegativeButtonRow(
-    positiveButtonText: String,
-    negativeButtonText: String,
-    onPositiveClick: () -> Unit,
-    onNegativeClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceAround
-    ) {
-        OutlinedButton(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            onClick = { onNegativeClick() }
-        ) {
-            Text(text = negativeButtonText)
-        }
-        Spacer(modifier = Modifier.size(16.dp))
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            onClick = { onPositiveClick() }
-        ) {
-            Text(text = positiveButtonText)
-        }
-    }
-}
-
-@Composable
-fun SelectIcon(
+fun SelectorCircle(
     modifier: Modifier = Modifier,
     color: Color,
-    icon: ImageVector,
+    icon: ImageVector?,
     contentDescription: String,
     onClick: () -> Unit
 ) {
@@ -221,13 +199,61 @@ fun SelectIcon(
             .aspectRatio(1f)
             .background(color)
             .clickable { onClick() }
+            .border(
+                width = 1.dp,
+                color = Color.Black,
+                shape = CircleShape
+            ),
     ) {
-        Icon(
-            modifier = Modifier
-                .fillMaxSize(0.7f)
-                .align(Alignment.Center),
-            imageVector = icon,
-            contentDescription = contentDescription
+        if (icon != null)
+            Icon(
+                modifier = Modifier
+                    .fillMaxSize(0.7f)
+                    .align(Alignment.Center),
+                imageVector = icon,
+                contentDescription = contentDescription
+            )
+    }
+}
+
+@Composable
+fun ColorPicker(
+    modifier: Modifier = Modifier,
+    onSelectColor: (Color) -> Unit,
+    onDismiss: () -> Unit
+) {
+    ElementPickerDialog(
+        modifier = modifier,
+        title = stringResource(id = R.string.todo_category_color),
+        elements = todoCategoryColors,
+        onDismiss = onDismiss,
+    ) { color ->
+        SelectorCircle(
+            color = color,
+            icon = null,
+            contentDescription = color.toString(),
+            onClick = { onSelectColor(color) }
+        )
+    }
+}
+
+@Composable
+fun IconPicker(
+    modifier: Modifier = Modifier,
+    onSelectIcon: (ImageVector) -> Unit,
+    onDismiss: () -> Unit
+) {
+    ElementPickerDialog(
+        modifier = modifier,
+        title = stringResource(R.string.todo_category_icon),
+        elements = listOf(sportIcons.values, householdIcons.values).flatten(),
+        onDismiss = onDismiss
+    ) { icon ->
+        SelectorCircle(
+            color = Color.White,
+            icon = icon,
+            contentDescription = icon.name,
+            onClick = { onSelectIcon(icon) }
         )
     }
 }
@@ -244,6 +270,7 @@ fun AddEditTodoCategoryDialogPreview() {
             inEditingMode = false,
             showInvalidTodoCategoryNameError = false,
             showColorPicker = false,
+            showIconPicker = false,
             onTodoCategoryNameChanged = {},
             onIconSelected = {},
             onColorSelected = {},
@@ -251,6 +278,30 @@ fun AddEditTodoCategoryDialogPreview() {
             onSaveClicked = {},
             onIconSelectionClick = {},
             onColorSelectionClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun IconPickerPreview() {
+    SchetodoTheme {
+        IconPicker(
+            modifier = Modifier.height(400.dp),
+            onSelectIcon = {},
+            onDismiss = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ColorPickerPreview() {
+    SchetodoTheme {
+        ColorPicker(
+            modifier = Modifier.height(400.dp),
+            onSelectColor = {},
+            onDismiss = {}
         )
     }
 }

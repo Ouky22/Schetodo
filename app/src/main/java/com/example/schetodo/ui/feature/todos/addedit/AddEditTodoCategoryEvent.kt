@@ -6,4 +6,5 @@ sealed class AddEditTodoCategoryEvent {
     data class ChangeTodoCategoryColor(val color: Long): AddEditTodoCategoryEvent()
     object SaveTodoCategory: AddEditTodoCategoryEvent()
     object ShowColorPicker: AddEditTodoCategoryEvent()
+    object ShowIconPicker: AddEditTodoCategoryEvent()
 }

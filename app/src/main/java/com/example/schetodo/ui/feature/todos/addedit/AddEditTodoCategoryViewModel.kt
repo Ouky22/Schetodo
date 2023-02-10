@@ -38,6 +38,9 @@ class AddEditTodoCategoryViewModel @Inject constructor(
     var showColorPicker by mutableStateOf(false)
         private set
 
+    var showIconPicker by mutableStateOf(false)
+        private set
+
     private var todoCategoryId: Int = 0
 
     private var parentTodoCategoryId: Int? = null
@@ -47,9 +50,10 @@ class AddEditTodoCategoryViewModel @Inject constructor(
         when (event) {
             is AddEditTodoCategoryEvent.ChangeTodoCategoryName -> onTodoCategoryNameChanged(event.name)
             is AddEditTodoCategoryEvent.ChangeTodoCategoryColor -> onTodoCategoryColorChanged(event.color)
-            is AddEditTodoCategoryEvent.ChangeTodoCategoryIcon -> todoCategoryIconName = event.name
+            is AddEditTodoCategoryEvent.ChangeTodoCategoryIcon -> onTodoCategoryIconChanged(event.name)
             is AddEditTodoCategoryEvent.SaveTodoCategory -> saveTodoCategory()
-            is AddEditTodoCategoryEvent.ShowColorPicker -> showColorPicker = true
+            is AddEditTodoCategoryEvent.ShowColorPicker -> onShowColorPicker()
+            is AddEditTodoCategoryEvent.ShowIconPicker -> onShowIconPicker()
         }
     }
 
@@ -72,6 +76,21 @@ class AddEditTodoCategoryViewModel @Inject constructor(
                 null
             else
                 todoCategoryId
+    }
+
+    private fun onShowColorPicker() {
+        showColorPicker = true
+        showIconPicker = false
+    }
+
+    private fun onShowIconPicker() {
+        showIconPicker = true
+        showColorPicker = false
+    }
+
+    private fun onTodoCategoryIconChanged(newIconName: String) {
+        todoCategoryIconName = newIconName
+        showIconPicker = false
     }
 
     private fun onTodoCategoryColorChanged(newColor: Long) {

@@ -15,7 +15,7 @@ val sportIcons = mapOf(
     mapEntryOf(Icons.Filled.SportsHockey),
 )
 
-val household = mapOf(
+val householdIcons = mapOf(
     mapEntryOf(Icons.Filled.House),
     mapEntryOf(Icons.Filled.Chair),
     mapEntryOf(Icons.Filled.Kitchen),
@@ -27,7 +27,7 @@ val household = mapOf(
 fun mapEntryOf(vector: ImageVector) = vector.name to vector
 
 fun getIconByName(iconName: String): ImageVector? {
-    val allIconMaps = listOf(sportIcons, household)
+    val allIconMaps = listOf(sportIcons, householdIcons)
 
     for (iconMap in allIconMaps) {
         val icon = iconMap[iconName]
