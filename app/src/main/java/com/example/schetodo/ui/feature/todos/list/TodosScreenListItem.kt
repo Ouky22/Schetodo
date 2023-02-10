@@ -57,7 +57,8 @@ fun TodosScreenListItem(
                             .fillMaxSize(0.6f)
                             .align(Alignment.Center),
                         imageVector = icon,
-                        contentDescription = null
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.scrim
                     )
                 }
             }

@@ -5,6 +5,7 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material3.NavigationBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,9 +21,8 @@ fun BottomNavBar(
     onItemClick: (SchetodoDestination) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    BottomNavigation(
-        modifier = modifier,
-        elevation = 5.dp,
+    NavigationBar(
+        modifier = modifier
     ) {
         destinations.forEach { destination ->
             val selected = destination == currentDestination

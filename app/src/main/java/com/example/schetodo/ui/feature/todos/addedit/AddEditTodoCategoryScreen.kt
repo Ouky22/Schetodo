@@ -5,7 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Delete
@@ -117,23 +117,21 @@ fun AddEditTodoCategoryScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(modifier = Modifier.padding(top = 32.dp)) {
-                OutlinedTextField(
-                    value = todoCategoryName,
-                    onValueChange = onTodoCategoryNameChanged,
-                    label = { Text(stringResource(R.string.todoCategoryName)) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                    isError = showInvalidTodoCategoryNameError
-                )
-                if (showInvalidTodoCategoryNameError)
-                    Text(
-                        "Please enter a name",
-                        color = Color.Red
-                    )
-                else
-                    Text(text = "")
-            }
+            OutlinedTextField(
+                value = todoCategoryName,
+                onValueChange = onTodoCategoryNameChanged,
+                label = { Text(stringResource(R.string.todoCategoryName)) },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+                isError = showInvalidTodoCategoryNameError,
+                supportingText = {
+                    if (showInvalidTodoCategoryNameError)
+                        Text(
+                            "Please enter a name",
+                            color = Color.Red
+                        )
+                }
+            )
 
             SelectColorAndIconArea(
                 todoCategoryIcon = todoCategoryIcon,
@@ -211,15 +209,8 @@ fun SelectColorAndIconArea(
         verticalAlignment = Alignment.CenterVertically
     ) {
         SelectorCircle(
-            color = Color.White,
             icon = todoCategoryIcon,
-            modifier = Modifier
-                .fillMaxHeight()
-                .border(
-                    width = 1.dp,
-                    color = Color.Black,
-                    shape = CircleShape
-                ),
+            modifier = Modifier.fillMaxHeight(),
             contentDescription = stringResource(R.string.choose_icon),
             onClick = { onIconSelectionClick() }
         )
@@ -236,7 +227,7 @@ fun SelectColorAndIconArea(
 @Composable
 fun SelectorCircle(
     modifier: Modifier = Modifier,
-    color: Color,
+    color: Color = MaterialTheme.colorScheme.surface,
     icon: ImageVector?,
     contentDescription: String,
     onClick: () -> Unit
@@ -249,7 +240,7 @@ fun SelectorCircle(
             .clickable { onClick() }
             .border(
                 width = 1.dp,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onBackground,
                 shape = CircleShape
             ),
     ) {
@@ -298,7 +289,6 @@ fun IconPicker(
         onDismiss = onDismiss
     ) { icon ->
         SelectorCircle(
-            color = Color.White,
             icon = icon,
             contentDescription = icon.name,
             onClick = { onSelectIcon(icon) }
