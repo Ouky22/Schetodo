@@ -20,4 +20,11 @@
     <string name="add_todo_category">Add Todo Category</string>
     <string name="edit_todo_category">Edit Todo Category</string>
     <string name="delete">Delete</string>
+    <string name="todo_name">Todo Name</string>
+    <string name="priority">Priority</string>
+    <string name="low_priority">Low Priority</string>
+    <string name="medium_priority">Medium Priority</string>
+    <string name="high_priority">High Priority</string>
+    <string name="very_high_priority">Very High Priority</string>
+    <string name="recurring">Recurring</string>
 </resources>

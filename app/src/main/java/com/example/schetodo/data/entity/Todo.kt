@@ -31,6 +31,15 @@ enum class TodoFlag {
     UNDONE, IN_PROGRESS, DONE, RECURRING
 }
 
-enum class TodoPriority {
-    LOW, MEDIUM, HIGH, VERY_HIGH
+enum class TodoPriority(val priorityNumber: Int) {
+    LOW(1),
+    MEDIUM(2),
+    HIGH(3),
+    VERY_HIGH(4);
+
+    companion object {
+        fun getByPriorityNumber(priorityNumber: Int): TodoPriority =
+            values().find { it.priorityNumber == priorityNumber }
+                ?: throw NoSuchElementException("There is no TodoPriority with priorityNumber $priorityNumber")
+    }
 }

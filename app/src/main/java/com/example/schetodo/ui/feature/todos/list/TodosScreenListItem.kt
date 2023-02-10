@@ -78,16 +78,18 @@ fun TodosScreenListItem(
 @Composable
 fun CategoryItem(
     modifier: Modifier = Modifier,
-    todoCategory: TodoCategory
+    todoCategoryName: String,
+    todoCategoryColor: Color,
+    todoCategoryIcon: ImageVector
 ) {
     TodosScreenListItem(
         modifier = modifier,
-        cardBackgroundColor = Color(todoCategory.color).copy(alpha = 0.2f),
-        iconBackgroundColor = Color(todoCategory.color),
-        icon = getIconByName(todoCategory.iconName) ?: Icons.Filled.Category,
+        cardBackgroundColor = todoCategoryColor.copy(alpha = 0.2f),
+        iconBackgroundColor = todoCategoryColor,
+        icon = todoCategoryIcon,
         text = {
             Text(
-                text = todoCategory.name,
+                text = todoCategoryName,
                 style = MaterialTheme.typography.headlineMedium,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
@@ -148,7 +150,9 @@ fun CategoryItemPreview() {
     SchetodoTheme {
         CategoryItem(
             modifier = Modifier.height(100.dp),
-            todoCategory = TodoCategory(0, "Household", 0xff799FCB, null, Icons.Filled.House.name)
+            todoCategoryName = "Household",
+            todoCategoryColor = Color(0xff799FCB),
+            todoCategoryIcon = Icons.Filled.House
         )
     }
 }

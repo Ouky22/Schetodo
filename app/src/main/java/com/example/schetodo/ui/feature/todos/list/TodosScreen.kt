@@ -11,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.outlined.Checklist
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -19,12 +20,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
 import com.example.schetodo.ui.components.SchetodoTopAppBar
+import com.example.schetodo.ui.feature.todos.getIconByName
 
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
@@ -86,7 +89,10 @@ fun TodosScreen(
                                     onEditTodoCategory(todoCategory.categoryId)
                                 }
                             ),
-                        todoCategory = todoCategory
+                        todoCategoryName = todoCategory.name,
+                        todoCategoryColor = Color(todoCategory.color),
+                        todoCategoryIcon = getIconByName(todoCategory.iconName)
+                            ?: Icons.Filled.Category
                     )
                 }
                 items(state.todos) { todo ->

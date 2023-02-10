@@ -28,6 +28,7 @@ import com.example.schetodo.R
 import com.example.schetodo.ui.components.ElementPickerDialog
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.SchetodoTopAppBar
+import com.example.schetodo.ui.feature.todos.components.AddEditTopBar
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.householdIcons
 import com.example.schetodo.ui.feature.todos.sportIcons
@@ -102,11 +103,11 @@ fun AddEditTodoCategoryScreen(
 
     Scaffold(
         topBar = {
-            AddEditTodoCategoryTopAppBar(
+            AddEditTopBar(
                 title = topAppBarTitle,
-                onCloseDialog = onCloseDialog,
                 showDeleteIconButton = inEditingMode,
-                onDeleteClick = onDeleteClick
+                onDeleteClick = onDeleteClick,
+                onCloseDialog = onCloseDialog
             )
         }
     ) { contentPadding ->
@@ -167,32 +168,6 @@ fun AddEditTodoCategoryScreen(
             )
         }
     }
-}
-
-@ExperimentalMaterial3Api
-@Composable
-fun AddEditTodoCategoryTopAppBar(
-    modifier: Modifier = Modifier,
-    title: String,
-    showDeleteIconButton: Boolean,
-    onCloseDialog: () -> Unit,
-    onDeleteClick: () -> Unit
-) {
-    SchetodoTopAppBar(
-        modifier = modifier,
-        title = title,
-        showBackButton = true,
-        onBackButtonClick = { onCloseDialog() },
-        actions = {
-            if (showDeleteIconButton)
-                IconButton(onClick = onDeleteClick) {
-                    Icon(
-                        imageVector = Icons.Filled.Delete,
-                        contentDescription = stringResource(id = R.string.delete)
-                    )
-                }
-        }
-    )
 }
 
 @Composable
