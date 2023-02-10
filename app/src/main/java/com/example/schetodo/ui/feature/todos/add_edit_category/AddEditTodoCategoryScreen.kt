@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.feature.todos.addedit
+package com.example.schetodo.ui.feature.todos.add_edit_category
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

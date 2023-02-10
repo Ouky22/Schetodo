@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.feature.todos.addedit
+package com.example.schetodo.ui.feature.todos.add_edit_category
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Architecture

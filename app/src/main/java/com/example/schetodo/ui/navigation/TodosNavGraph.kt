@@ -3,7 +3,6 @@ package com.example.schetodo.ui.navigation
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -14,8 +13,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.schetodo.ui.feature.todos.list.TodosScreen
 import com.example.schetodo.ui.feature.todos.list.TodosViewModel
-import com.example.schetodo.ui.feature.todos.addedit.AddEditTodoCategoryScreen
-import com.example.schetodo.ui.feature.todos.addedit.AddEditTodoCategoryViewModel
+import com.example.schetodo.ui.feature.todos.add_edit_category.AddEditTodoCategoryScreen
+import com.example.schetodo.ui.feature.todos.add_edit_category.AddEditTodoCategoryViewModel
 
 @ExperimentalFoundationApi
 @ExperimentalLifecycleComposeApi
