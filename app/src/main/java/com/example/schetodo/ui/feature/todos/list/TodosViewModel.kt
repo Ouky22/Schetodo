@@ -7,6 +7,7 @@ import com.example.schetodo.data.repository.TodoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,38 +20,50 @@ class TodosViewModel @Inject constructor(
     val todosState: StateFlow<TodosState>
         get() = _todosState.asStateFlow()
 
+    private val _navigateToAddTodoCategoryScreen = MutableSharedFlow<Boolean>()
+    val navigateToAddTodoCategoryScreen: SharedFlow<Boolean>
+        get() = _navigateToAddTodoCategoryScreen.asSharedFlow()
+
+    private val _navigateToAddTodoScreen = MutableSharedFlow<Boolean>()
+    val navigateToAddTodoScreen: SharedFlow<Boolean>
+        get() = _navigateToAddTodoScreen.asSharedFlow()
+
     private var stateJob: Job? = null
 
-    
     init {
-        updateCurrentTodoCategory(null)
-
-        // add test data
-//        val category1 = TodoCategory(0, "Test Category 1", 0xff799FCB, null, sportIcons.values.toList()[0].name)
-//        val category2 = TodoCategory(0, "Test Category 2", 0xffA7727D, null, sportIcons.values.toList()[1].name)
-//        viewModelScope.launch {
-//            val c1Id = todoCategoryRepository.insertTodoCategory(category1)
-//            val c2Id = todoCategoryRepository.insertTodoCategory(category2)
-//
-//            val category3 = TodoCategory(0, "Test Category 3", 0xffD3756B, c1Id.toInt(), sportIcons.values.toList()[2].name)
-//            todoCategoryRepository.insertTodoCategory(category3)
-//
-//            val todo1 = Todo(0, "Test 1", TodoPriority.LOW, TodoFlag.UNDONE, c1Id.toInt())
-//            val todo2 =
-//                Todo(0, "Test 2", TodoPriority.HIGH, TodoFlag.RECURRING, c1Id.toInt())
-//            val todo3 =
-//                Todo(0, "Test 3", TodoPriority.MEDIUM, TodoFlag.UNDONE, c2Id.toInt())
-//
-//            todoRepository.insertTodo(todo1)
-//            todoRepository.insertTodo(todo2)
-//            todoRepository.insertTodo(todo3)
-//        }
+        setCurrentTodoCategory(null)
     }
 
     fun onEvent(event: TodosEvent) {
         when (event) {
-            is TodosEvent.NavigateToNewTodoCategory -> updateCurrentTodoCategory(event.newTodoCategoryId)
+            is TodosEvent.NavigateToNewTodoCategory -> setCurrentTodoCategory(event.newTodoCategoryId)
             is TodosEvent.NavigateToPreviousTodoCategory -> loadPreviousCategory()
+            is TodosEvent.ShowAddCategoryOrTodoDialog -> onShowAddCategoryOrTodoDialog()
+            is TodosEvent.CloseAddCategoryOrTodoDialog -> onCloseAddCategoryOrTodoDialog()
+            is TodosEvent.NavigateToAddTodoCategoryScreen -> onNavigateToAddTodoCategoryScreen()
+            is TodosEvent.NavigateToAddTodoScreen -> onNavigateToAddTodoScreen()
+        }
+    }
+
+    private fun onCloseAddCategoryOrTodoDialog() {
+        _todosState.value = _todosState.value.copy(showAddCategoryOrTodoDialog = false)
+    }
+
+    private fun onShowAddCategoryOrTodoDialog() {
+        _todosState.value = _todosState.value.copy(showAddCategoryOrTodoDialog = true)
+    }
+
+    private fun onNavigateToAddTodoScreen() {
+        _todosState.value = _todosState.value.copy(showAddCategoryOrTodoDialog = false)
+        viewModelScope.launch {
+            _navigateToAddTodoScreen.emit(true)
+        }
+    }
+
+    private fun onNavigateToAddTodoCategoryScreen() {
+        _todosState.value = _todosState.value.copy(showAddCategoryOrTodoDialog = false)
+        viewModelScope.launch {
+            _navigateToAddTodoCategoryScreen.emit(true)
         }
     }
 
@@ -60,10 +73,10 @@ class TodosViewModel @Inject constructor(
             return
 
         val parentCategory = todosState.value.currentCategory?.parentTodoCategoryId
-        updateCurrentTodoCategory(parentCategory)
+        setCurrentTodoCategory(parentCategory)
     }
 
-    private fun updateCurrentTodoCategory(currentTodoCategoryId: Int?) {
+    private fun setCurrentTodoCategory(currentTodoCategoryId: Int?) {
         stateJob?.cancel()
         stateJob = combine(
             todoCategoryRepository.getTodoCategory(currentTodoCategoryId),

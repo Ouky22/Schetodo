@@ -36,6 +36,32 @@ object Statistics : MainSchetodoDestination {
     override val titleResourceId = R.string.statistics
 }
 
+object AddTodo : SchetodoDestination {
+    override val route = "add_todo"
+    const val parentTodoCategoryIdArg = "parent_todo_category_id"
+
+    val routeWithArgs = "$route/{$parentTodoCategoryIdArg}"
+
+    val args = listOf(
+        navArgument(parentTodoCategoryIdArg) {
+            type = NavType.IntType
+        }
+    )
+}
+
+object EditTodo : SchetodoDestination {
+    override val route = "edit_todo"
+    const val todoId = "todo_id"
+
+    val routeWithArgs = "$route/{$todoId}"
+
+    val args = listOf(
+        navArgument(todoId) {
+            type = NavType.IntType
+        }
+    )
+}
+
 object AddTodoCategory : SchetodoDestination {
     override val route = "add_todo_category"
     const val parentTodoCategoryIdArg = "parent_todo_category_id"

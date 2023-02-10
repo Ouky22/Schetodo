@@ -15,6 +15,8 @@ import com.example.schetodo.ui.feature.todos.list.TodosScreen
 import com.example.schetodo.ui.feature.todos.list.TodosViewModel
 import com.example.schetodo.ui.feature.todos.add_edit_category.AddEditTodoCategoryScreen
 import com.example.schetodo.ui.feature.todos.add_edit_category.AddEditTodoCategoryViewModel
+import com.example.schetodo.ui.feature.todos.add_edit_todo.AddEditTodoScreen
+import com.example.schetodo.ui.feature.todos.add_edit_todo.AddEditTodoViewModel
 
 @ExperimentalFoundationApi
 @ExperimentalLifecycleComposeApi
@@ -32,11 +34,17 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
             TodosScreen(
                 viewModel = todosViewModel,
                 onCheckOffCompletedTodos = {},
-                onAddTodoCategory = { parentCategory ->
-                    navController.navigateToAddTodoCategoryScreen(parentCategory)
+                onAddTodoCategory = { parentCategoryId ->
+                    navController.navigateToAddTodoCategoryScreen(parentCategoryId)
                 },
                 onEditTodoCategory = { todoCategoryId ->
                     navController.navigateToEditTodoCategoryScreen(todoCategoryId)
+                },
+                onAddTodo = { parentCategoryId ->
+                    navController.navigateToAddTodoScreen(parentCategoryId)
+                },
+                onEditTodo = { todoId ->
+                    navController.navigateToEditTodoScreen(todoId)
                 }
             )
         }
@@ -62,7 +70,37 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
                 modifier = Modifier.fillMaxSize()
             )
         }
+        composable(
+            route = AddTodo.routeWithArgs,
+            arguments = AddTodo.args
+        ) {
+            val viewModel = hiltViewModel<AddEditTodoViewModel>()
+            AddEditTodoScreen(
+                viewModel = viewModel,
+                navController = navController,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        composable(
+            route = EditTodo.routeWithArgs,
+            arguments = EditTodo.args
+        ) {
+            val viewModel = hiltViewModel<AddEditTodoViewModel>()
+            AddEditTodoScreen(
+                viewModel = viewModel,
+                navController = navController,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
+}
+
+fun NavHostController.navigateToAddTodoScreen(parentTodoCategory: Int) {
+    navigate("${AddTodo.route}/$parentTodoCategory")
+}
+
+fun NavHostController.navigateToEditTodoScreen(todoId: Int) {
+    navigate("${EditTodo.route}/$todoId")
 }
 
 fun NavHostController.navigateToAddTodoCategoryScreen(parentTodoCategory: Int) {

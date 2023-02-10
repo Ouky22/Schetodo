@@ -27,4 +27,7 @@
     <string name="high_priority">High Priority</string>
     <string name="very_high_priority">Very High Priority</string>
     <string name="recurring">Recurring</string>
+    <string name="add_todo">Add Todo</string>
+    <string name="todo_category">Todo Category</string>
+    <string name="todo">Todo</string>
 </resources>
