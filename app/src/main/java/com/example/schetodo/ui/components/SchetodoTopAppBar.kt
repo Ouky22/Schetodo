@@ -18,7 +18,7 @@ import com.example.schetodo.R
 
 @Composable
 @ExperimentalMaterial3Api
-fun TopAppBar(
+fun SchetodoTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
     showBackButton: Boolean,

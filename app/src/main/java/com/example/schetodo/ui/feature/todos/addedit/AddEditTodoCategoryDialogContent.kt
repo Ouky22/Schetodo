@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -25,12 +26,14 @@ import androidx.navigation.NavController
 import com.example.schetodo.R
 import com.example.schetodo.ui.components.ElementPickerDialog
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
+import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.householdIcons
 import com.example.schetodo.ui.feature.todos.sportIcons
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
 
+@ExperimentalMaterial3Api
 @Composable
 fun AddEditTodoCategoryDialogContent(
     modifier: Modifier = Modifier,
@@ -71,6 +74,7 @@ fun AddEditTodoCategoryDialogContent(
     )
 }
 
+@ExperimentalMaterial3Api
 @Composable
 fun AddEditTodoCategoryDialogContent(
     modifier: Modifier = Modifier,
@@ -89,9 +93,21 @@ fun AddEditTodoCategoryDialogContent(
     onIconSelectionClick: () -> Unit,
     onIconSelected: (ImageVector) -> Unit
 ) {
-    Surface {
+    val topAppBarTitle =
+        if (inEditingMode) stringResource(R.string.edit_todo_category)
+        else stringResource(R.string.add_todo_category)
+
+    Scaffold(
+        topBar = {
+            SchetodoTopAppBar(
+                title = topAppBarTitle,
+                showBackButton = true,
+                onBackButtonClick = { onCloseDialog() }
+            )
+        }
+    ) { contentPadding ->
         Column(
-            modifier = modifier.padding(24.dp),
+            modifier = modifier.padding(contentPadding).padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
@@ -258,6 +274,7 @@ fun IconPicker(
     }
 }
 
+@ExperimentalMaterial3Api
 @Preview(showBackground = true)
 @Composable
 fun AddEditTodoCategoryDialogPreview() {

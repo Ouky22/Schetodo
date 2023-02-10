@@ -17,4 +17,6 @@
     <string name="add_new_todo_category">Add new todo category</string>
     <string name="todo_category_color">Todo Category Color</string>
     <string name="todo_category_icon">Todo Category Icon</string>
+    <string name="add_todo_category">Add Todo Category</string>
+    <string name="edit_todo_category">Edit Todo Category</string>
 </resources>

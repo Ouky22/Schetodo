@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
-import com.example.schetodo.ui.components.TopAppBar
+import com.example.schetodo.ui.components.SchetodoTopAppBar
 
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
@@ -44,7 +44,7 @@ fun TodosScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
+            SchetodoTopAppBar(
                 title = state.currentCategory?.name ?: stringResource(id = R.string.todos),
                 showBackButton = state.currentCategoryIsChildCategory,
                 onBackButtonClick = {
