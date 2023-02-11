@@ -47,6 +47,11 @@ fun CheckOffTodosScreen(
     CheckOffTodosScreen(
         todoCategoryTodoPairs = todosInProgress,
         modifier = modifier,
+        onMarkTodoForCheckOff = { viewModel.onEvent(CheckOffTodosEvent.MarkTodoForCheckOff(it)) },
+        onUndoMarkTodoForCheckOff = {
+            viewModel.onEvent(CheckOffTodosEvent.UndoMarkTodoForCheckOff(it))
+        },
+        onCheckOffTodos = { viewModel.onEvent(CheckOffTodosEvent.CheckOffMarkedTodos) },
         onBackButtonClick = { navController.popBackStack() }
     )
 }
@@ -57,6 +62,9 @@ fun CheckOffTodosScreen(
 fun CheckOffTodosScreen(
     modifier: Modifier = Modifier,
     todoCategoryTodoPairs: List<TodoCategoryTodoPair>,
+    onMarkTodoForCheckOff: (todoId: Int) -> Unit,
+    onUndoMarkTodoForCheckOff: (todoId: Int) -> Unit,
+    onCheckOffTodos: () -> Unit,
     onBackButtonClick: () -> Unit
 ) {
     Scaffold(
@@ -83,12 +91,18 @@ fun CheckOffTodosScreen(
                         parentTodoCategoryName = todoCategoryTodoPair.todoCategory.name,
                         parentTodoCategoryIcon = getIconByName(todoCategoryTodoPair.todoCategory.iconName)
                             ?: Icons.Filled.Category,
-                        parentTodoCategoryColor = Color(todoCategoryTodoPair.todoCategory.color)
+                        parentTodoCategoryColor = Color(todoCategoryTodoPair.todoCategory.color),
+                        checkedOff = todoCategoryTodoPair.checkedOff,
+                        onCheck = { checkedOff ->
+                            val todoId = todoCategoryTodoPair.todo.todoId
+                            if (checkedOff) onMarkTodoForCheckOff(todoId)
+                            else onUndoMarkTodoForCheckOff(todoId)
+                        }
                     )
                 }
             }
             Button(
-                onClick = { /*TODO*/ },
+                onClick = onCheckOffTodos,
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .padding(vertical = 16.dp)
@@ -110,7 +124,9 @@ fun CheckOffTodoItem(
     todoDescription: String,
     parentTodoCategoryName: String,
     parentTodoCategoryIcon: ImageVector,
-    parentTodoCategoryColor: Color
+    parentTodoCategoryColor: Color,
+    checkedOff: Boolean,
+    onCheck: (checkedOff: Boolean) -> Unit
 ) {
     Card(modifier = modifier) {
         Row(
@@ -148,8 +164,8 @@ fun CheckOffTodoItem(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Checkbox(
-                    checked = false,
-                    onCheckedChange = {}
+                    checked = checkedOff,
+                    onCheckedChange = onCheck
                 )
             }
         }
@@ -178,6 +194,9 @@ fun CheckOffTodosScreenPreview() {
         CheckOffTodosScreen(
             modifier = Modifier.fillMaxSize(),
             todoCategoryTodoPairs = todoCategoryTodoPairs,
+            onCheckOffTodos = {},
+            onUndoMarkTodoForCheckOff = {},
+            onMarkTodoForCheckOff = {},
             onBackButtonClick = {}
         )
     }

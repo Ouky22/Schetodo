@@ -38,4 +38,8 @@ class TodoRepositoryImpl @Inject constructor(
 
     override fun getTodosInProgress(): Flow<List<Todo>> =
         todoDao.getAllTodosWithFlag(TodoFlag.IN_PROGRESS)
+
+    override suspend fun updateTodo(todo: Todo) {
+        todoDao.updateTodo(todo)
+    }
 }

@@ -13,6 +13,9 @@ interface TodoDao {
     @Upsert
     suspend fun insertOrUpdateTodo(todo: Todo): Long
 
+    @Update
+    suspend fun updateTodo(todo: Todo)
+
     @Query("DELETE FROM Todo WHERE todoId = :todoId")
     suspend fun deleteTodoById(todoId: Int)
 

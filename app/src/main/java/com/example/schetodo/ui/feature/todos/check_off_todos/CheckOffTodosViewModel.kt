@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.schetodo.data.entity.Todo
 import com.example.schetodo.data.entity.TodoCategory
+import com.example.schetodo.data.entity.TodoFlag
+import com.example.schetodo.data.entity.TodoPriority
 import com.example.schetodo.data.repository.TodoCategoryRepository
 import com.example.schetodo.data.repository.TodoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,9 +35,46 @@ class CheckOffTodosViewModel @Inject constructor(
             }
         }
     }
+
+    fun onEvent(event: CheckOffTodosEvent) {
+        when (event) {
+            is CheckOffTodosEvent.MarkTodoForCheckOff -> onMarkTodoForCheckOff(event.todoId)
+            is CheckOffTodosEvent.UndoMarkTodoForCheckOff -> onUndoMarkTodoForCheckOff(event.todoId)
+            is CheckOffTodosEvent.CheckOffMarkedTodos -> onCheckOffTodos()
+        }
+    }
+
+    private fun onCheckOffTodos() {
+        viewModelScope.launch {
+            _todosInProgress.value.filter { it.checkedOff }.forEach { todoCategoryTodoPair ->
+                todoRepository.updateTodo(
+                    todoCategoryTodoPair.todo.copy(flag = TodoFlag.DONE)
+                )
+            }
+        }
+    }
+
+    private fun onUndoMarkTodoForCheckOff(todoId: Int) {
+        _todosInProgress.value = _todosInProgress.value.map {
+            if (todoId == it.todo.todoId)
+                it.copy(checkedOff = false)
+            else
+                it
+        }
+    }
+
+    private fun onMarkTodoForCheckOff(todoId: Int) {
+        _todosInProgress.value = _todosInProgress.value.map {
+            if (todoId == it.todo.todoId)
+                it.copy(checkedOff = true)
+            else
+                it
+        }
+    }
 }
 
 data class TodoCategoryTodoPair(
     val todo: Todo,
-    val todoCategory: TodoCategory
+    val todoCategory: TodoCategory,
+    var checkedOff: Boolean = false
 )
