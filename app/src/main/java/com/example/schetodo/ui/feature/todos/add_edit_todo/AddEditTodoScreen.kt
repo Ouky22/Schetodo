@@ -78,13 +78,12 @@ fun AddEditTodoScreen(
         Column(
             modifier = modifier
                 .padding(contentPadding)
-                .padding(24.dp),
+                .padding(24.dp)
+                .verticalScroll(rememberScrollState(), reverseScrolling = true),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState())
-            ) {
+            Column {
                 CategoryItem(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -116,11 +115,10 @@ fun AddEditTodoScreen(
                 OutlinedTextField(
                     value = todoDescription,
                     onValueChange = onTodoDescriptionChanged,
-                    label = { stringResource(R.string.todo_name) },
+                    label = { Text(text = stringResource(R.string.description)) },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-
 
             PositiveNegativeButtonRow(
                 positiveButtonText =
