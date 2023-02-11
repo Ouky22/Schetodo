@@ -9,4 +9,5 @@ interface TodoRepository {
     suspend fun deleteTodoById(todoId: Int)
     suspend fun getTodoById(todoId: Int) : Flow<Todo?>
     fun getTodosOfTodoCategory(todoCategoryId: Int?): Flow<List<Todo>>
+    fun getTodosInProgress(): Flow<List<Todo>>
 }

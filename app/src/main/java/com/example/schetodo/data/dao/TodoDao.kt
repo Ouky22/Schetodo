@@ -2,6 +2,7 @@ package com.example.schetodo.data.dao
 
 import androidx.room.*
 import com.example.schetodo.data.entity.Todo
+import com.example.schetodo.data.entity.TodoFlag
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -23,4 +24,7 @@ interface TodoDao {
 
     @Query("SELECT * FROM Todo WHERE categoryId = :todoCategoryId ORDER BY priority DESC")
     fun getAllTodosOfTodoCategory(todoCategoryId: Int): Flow<List<Todo>>
+
+    @Query("SELECT * FROM Todo WHERE flag = :todoFlag ORDER by priority DESC")
+    fun getAllTodosWithFlag(todoFlag: TodoFlag): Flow<List<Todo>>
 }

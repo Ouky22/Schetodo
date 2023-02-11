@@ -1,6 +1,7 @@
 package com.example.schetodo.data.repository
 
 import com.example.schetodo.data.entity.Todo
+import com.example.schetodo.data.entity.TodoFlag
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -36,6 +37,13 @@ class FakeTodoRepository : TodoRepository {
         return flow {
             val todosOfCategory = todos.filter { it.categoryId == todoCategoryId }
             emit(todosOfCategory)
+        }
+    }
+
+    override fun getTodosInProgress(): Flow<List<Todo>> {
+        return flow {
+            val todos = todos.filter { it.flag == TodoFlag.IN_PROGRESS }
+            emit(todos)
         }
     }
 }

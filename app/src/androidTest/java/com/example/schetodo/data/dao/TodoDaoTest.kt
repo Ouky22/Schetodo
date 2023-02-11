@@ -39,6 +39,25 @@ class TodoDaoTest {
     }
 
     @Test
+    fun test_getting_todos_in_progress() = runTest {
+        val category = TodoCategory(1, "c1", 0, null, "")
+        val todo1 = Todo(1, "test 1", TodoPriority.LOW, TodoFlag.IN_PROGRESS, category.categoryId)
+        val todo2 = Todo(2, "test 2", TodoPriority.HIGH, TodoFlag.IN_PROGRESS, category.categoryId)
+        val todo3 = Todo(3, "test 3", TodoPriority.MEDIUM, TodoFlag.UNDONE, category.categoryId)
+        val todo4 = Todo(4, "test 4", TodoPriority.VERY_HIGH, TodoFlag.DONE, category.categoryId)
+        todoCategoryDao.insertTodoCategory(category)
+        todoDao.insertTodo(todo1)
+        todoDao.insertTodo(todo2)
+        todoDao.insertTodo(todo3)
+        todoDao.insertTodo(todo4)
+
+        val todosInProgress = todoDao.getAllTodosWithFlag(TodoFlag.IN_PROGRESS).first()
+        assertThat(todosInProgress.size).isEqualTo(2)
+        assertThat(todosInProgress.contains(todo1)).isTrue()
+        assertThat(todosInProgress.contains(todo2)).isTrue()
+    }
+
+    @Test
     fun when_deleting_todo_by_id_and_id_not_exists_do_nothing() = runTest {
         todoDao.deleteTodoById(1)
     }

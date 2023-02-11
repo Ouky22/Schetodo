@@ -4,35 +4,47 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.outlined.Checklist
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
 import com.example.schetodo.data.entity.Todo
+import com.example.schetodo.data.entity.TodoCategory
 import com.example.schetodo.data.entity.TodoFlag
 import com.example.schetodo.data.entity.TodoPriority
 import com.example.schetodo.ui.components.SchetodoTopAppBar
+import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.list.CategoryItem
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
 
 
+@ExperimentalLifecycleComposeApi
 @ExperimentalMaterial3Api
 @Composable
 fun CheckOffTodosScreen(
+    viewModel: CheckOffTodosViewModel,
     modifier: Modifier = Modifier
 ) {
+    val todosInProgress by viewModel.todosInProgress.collectAsStateWithLifecycle()
+
     CheckOffTodosScreen(
-        todos = emptyList(),
+        todoCategoryTodoPairs = todosInProgress,
         modifier = modifier
     )
 }
@@ -42,7 +54,7 @@ fun CheckOffTodosScreen(
 @Composable
 fun CheckOffTodosScreen(
     modifier: Modifier = Modifier,
-    todos: List<Todo>
+    todoCategoryTodoPairs: List<TodoCategoryTodoPair>
 ) {
     Scaffold(
         topBar = {
@@ -59,21 +71,24 @@ fun CheckOffTodosScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LazyColumn(modifier = modifier.weight(1f)) {
-                items(todos) { todo ->
+                items(todoCategoryTodoPairs) { todoCategoryTodoPair ->
                     CheckOffTodoItem(
                         modifier = Modifier
                             .height(175.dp)
                             .padding(vertical = 8.dp, horizontal = 16.dp),
-                        todoDescription = todo.description,
-                        parentTodoCategoryName = "Household",
-                        parentTodoCategoryIcon = Icons.Filled.House,
-                        parentTodoCategoryColor = todoCategoryColors[0]
+                        todoDescription = todoCategoryTodoPair.todo.description,
+                        parentTodoCategoryName = todoCategoryTodoPair.todoCategory.name,
+                        parentTodoCategoryIcon = getIconByName(todoCategoryTodoPair.todoCategory.iconName)
+                            ?: Icons.Filled.Category,
+                        parentTodoCategoryColor = Color(todoCategoryTodoPair.todoCategory.color)
                     )
                 }
             }
             Button(
                 onClick = { /*TODO*/ },
-                modifier = Modifier.fillMaxWidth(0.8f).padding(vertical = 16.dp)
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .padding(vertical = 16.dp)
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Checklist,
@@ -148,11 +163,17 @@ fun CheckOffTodosScreenPreview() {
         Todo(1, "test 2", TodoPriority.LOW, TodoFlag.DONE, 1),
         Todo(1, "test 3", TodoPriority.LOW, TodoFlag.DONE, 1)
     )
+    val todoCategoryTodoPairs = testTodos.map { todo ->
+        val category = TodoCategory(
+            1, "Household", todoCategoryColors[1].toArgb().toLong(), null, Icons.Filled.House.name
+        )
+        TodoCategoryTodoPair(todo, category)
+    }
 
     SchetodoTheme {
         CheckOffTodosScreen(
             modifier = Modifier.fillMaxSize(),
-            todos = testTodos
+            todoCategoryTodoPairs = todoCategoryTodoPairs
         )
     }
 }

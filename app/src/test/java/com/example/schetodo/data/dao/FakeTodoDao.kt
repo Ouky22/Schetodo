@@ -1,6 +1,7 @@
 package com.example.schetodo.data.dao
 
 import com.example.schetodo.data.entity.Todo
+import com.example.schetodo.data.entity.TodoFlag
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -49,6 +50,13 @@ class FakeTodoDao : TodoDao {
             emit(todos.filter {
                 it.categoryId == todoCategoryId
             })
+        }
+    }
+
+    override fun getAllTodosWithFlag(todoFlag: TodoFlag): Flow<List<Todo>> {
+        return flow {
+            val todos = todos.filter { it.flag == todoFlag }
+            emit(todos)
         }
     }
 }

@@ -2,6 +2,7 @@ package com.example.schetodo.data.repository
 
 import com.example.schetodo.data.dao.TodoDao
 import com.example.schetodo.data.entity.Todo
+import com.example.schetodo.data.entity.TodoFlag
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -34,4 +35,7 @@ class TodoRepositoryImpl @Inject constructor(
         else
             todoDao.getAllTodosOfTodoCategory(todoCategoryId)
     }
+
+    override fun getTodosInProgress(): Flow<List<Todo>> =
+        todoDao.getAllTodosWithFlag(TodoFlag.IN_PROGRESS)
 }
