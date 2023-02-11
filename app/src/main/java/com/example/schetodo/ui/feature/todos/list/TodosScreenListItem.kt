@@ -1,8 +1,10 @@
 package com.example.schetodo.ui.feature.todos.list
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.House
@@ -24,6 +26,7 @@ import com.example.schetodo.data.entity.TodoCategory
 import com.example.schetodo.data.entity.TodoFlag
 import com.example.schetodo.data.entity.TodoPriority
 import com.example.schetodo.ui.feature.todos.getIconByName
+import com.example.schetodo.ui.feature.todos.getTodoPriorityColorOf
 import com.example.schetodo.ui.theme.SchetodoTheme
 
 
@@ -104,22 +107,19 @@ fun TodoItem(
     modifier: Modifier = Modifier,
     todo: Todo
 ) {
-    val iconBackgroundColor = when (todo.priority) {
-        TodoPriority.LOW -> Color(0xFFDAE3D9)
-        TodoPriority.MEDIUM -> Color(0xFFFFFAAE)
-        TodoPriority.HIGH -> Color(0xFFFFC29F)
-        TodoPriority.VERY_HIGH -> Color(0xFFF9665E)
-    }
-
     TodosScreenListItem(
-        modifier = modifier,
+        modifier = modifier.border(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.onBackground,
+            shape = RoundedCornerShape(10.dp)
+        ),
         icon = if (todo.flag == TodoFlag.RECURRING) Icons.Outlined.RestartAlt else Icons.Outlined.TaskAlt,
-        cardBackgroundColor = Color.LightGray,
-        iconBackgroundColor = iconBackgroundColor,
+        cardBackgroundColor = MaterialTheme.colorScheme.surface,
+        iconBackgroundColor = getTodoPriorityColorOf(todo.priority),
         text = {
             Text(
                 text = todo.description,
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Start,
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis
             )
