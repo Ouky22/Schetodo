@@ -78,7 +78,7 @@ class AddEditTodoViewModel @Inject constructor(
             todoRepository.insertOrUpdateTodo(
                 Todo(
                     todoId = todoId,
-                    description = _addEditTodoState.value.todoDescription,
+                    description = _addEditTodoState.value.todoDescription.trim(),
                     priority = _addEditTodoState.value.todoPriority,
                     flag = _addEditTodoState.value.todoFlag,
                     categoryId = parentTodoCategoryId
