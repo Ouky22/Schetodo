@@ -1,6 +1,5 @@
 package com.example.schetodo.ui.feature.todos.add_edit_todo
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -10,9 +9,12 @@ import androidx.compose.material.icons.filled.House
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,6 +36,7 @@ fun AddEditTodoScreen(
     navController: NavController
 ) {
     val state = viewModel.addEditTodoState.value
+    val keyBoardController = LocalFocusManager.current
 
     AddEditTodoScreen(
         todoCategoryName = state.parentTodoCategoryName,
@@ -46,6 +49,10 @@ fun AddEditTodoScreen(
         onTodoDescriptionChanged = { viewModel.onEvent(AddEditTodoEvent.ChangeTodoDescription(it)) },
         onTodoPriorityChanged = { viewModel.onEvent(AddEditTodoEvent.ChangeTodoPriority(it)) },
         onTodoIsRecurringChanged = { viewModel.onEvent(AddEditTodoEvent.ChangeTodoIsRecurring(it)) },
+        onClose = {
+            keyBoardController.clearFocus()
+            navController.popBackStack()
+        },
         modifier = modifier
     )
 }
@@ -63,7 +70,8 @@ fun AddEditTodoScreen(
     isRecurringTodo: Boolean,
     onTodoDescriptionChanged: (String) -> Unit,
     onTodoPriorityChanged: (TodoPriority) -> Unit,
-    onTodoIsRecurringChanged: (Boolean) -> Unit
+    onTodoIsRecurringChanged: (Boolean) -> Unit,
+    onClose: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -71,7 +79,7 @@ fun AddEditTodoScreen(
                 title = if (inEditingMode) stringResource(R.string.edit_todo) else stringResource(id = R.string.add_todo),
                 showDeleteIconButton = inEditingMode,
                 onDeleteClick = {},
-                onCloseDialog = {}
+                onCloseDialog = onClose
             )
         }
     ) { contentPadding ->
@@ -126,7 +134,7 @@ fun AddEditTodoScreen(
                 else stringResource(id = R.string.add),
                 negativeButtonText = stringResource(id = R.string.cancel),
                 onPositiveClick = { /*TODO*/ },
-                onNegativeClick = { /*TODO*/ },
+                onNegativeClick = onClose,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp)
@@ -187,7 +195,8 @@ fun AddEditTodoScreenPreview() {
             inEditingMode = true,
             onTodoDescriptionChanged = {},
             onTodoPriorityChanged = {},
-            onTodoIsRecurringChanged = {}
+            onTodoIsRecurringChanged = {},
+            onClose = {}
         )
     }
 }
