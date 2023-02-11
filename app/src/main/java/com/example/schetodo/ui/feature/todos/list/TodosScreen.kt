@@ -2,6 +2,7 @@ package com.example.schetodo.ui.feature.todos.list
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,11 +28,11 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
+import com.example.schetodo.data.entity.Todo
+import com.example.schetodo.data.entity.TodoCategory
 import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.theme.SchetodoTheme
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
@@ -103,37 +104,16 @@ fun TodosScreen(
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(state.childCategories) { todoCategory ->
-                    CategoryItem(
-                        modifier = Modifier
-                            .height(125.dp)
-                            .padding(vertical = 8.dp, horizontal = 16.dp)
-                            .combinedClickable(
-                                onClick = {
-                                    viewModel.onEvent(
-                                        TodosEvent.NavigateToNewTodoCategory(todoCategory.categoryId)
-                                    )
-                                },
-                                onLongClick = {
-                                    onEditTodoCategory(todoCategory.categoryId)
-                                }
-                            ),
-                        todoCategoryName = todoCategory.name,
-                        todoCategoryColor = Color(todoCategory.color),
-                        todoCategoryIcon = getIconByName(todoCategory.iconName)
-                            ?: Icons.Filled.Category
-                    )
-                }
-                items(state.todos) { todo ->
-                    TodoItem(
-                        modifier = Modifier
-                            .height(125.dp)
-                            .padding(vertical = 8.dp, horizontal = 16.dp),
-                        todo = todo
-                    )
-                }
-            }
+            TodoCategoryTodoList(
+                modifier = Modifier.weight(1f),
+                categories = state.childCategories,
+                todos = state.todos,
+                onClickOnTodoCategory = { todoCategory ->
+                    viewModel.onEvent(TodosEvent.NavigateToNewTodoCategory(todoCategory.categoryId))
+                },
+                onLongClickOnTodoCategory = { todoCategory -> onEditTodoCategory(todoCategory.categoryId) },
+                onClickOnTodo = { todo -> onEditTodo(todo.todoId) }
+            )
 
             Button(
                 modifier = Modifier
@@ -148,6 +128,43 @@ fun TodosScreen(
                 )
                 Text(text = stringResource(id = R.string.check_off_todos))
             }
+        }
+    }
+}
+
+@ExperimentalFoundationApi
+@Composable
+fun TodoCategoryTodoList(
+    modifier: Modifier = Modifier,
+    categories: List<TodoCategory>,
+    todos: List<Todo>,
+    onClickOnTodoCategory: (TodoCategory) -> Unit,
+    onLongClickOnTodoCategory: (TodoCategory) -> Unit,
+    onClickOnTodo: (Todo) -> Unit
+) {
+    LazyColumn(modifier = modifier) {
+        items(categories) { todoCategory ->
+            CategoryItem(
+                modifier = Modifier
+                    .height(125.dp)
+                    .padding(vertical = 8.dp, horizontal = 16.dp)
+                    .combinedClickable(
+                        onClick = { onClickOnTodoCategory(todoCategory) },
+                        onLongClick = { onLongClickOnTodoCategory(todoCategory) }
+                    ),
+                todoCategoryName = todoCategory.name,
+                todoCategoryColor = Color(todoCategory.color),
+                todoCategoryIcon = getIconByName(todoCategory.iconName) ?: Icons.Filled.Category
+            )
+        }
+        items(todos) { todo ->
+            TodoItem(
+                modifier = Modifier
+                    .height(125.dp)
+                    .padding(vertical = 8.dp, horizontal = 16.dp)
+                    .clickable { onClickOnTodo(todo) },
+                todo = todo
+            )
         }
     }
 }
