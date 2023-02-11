@@ -13,6 +13,14 @@ class FakeTodoDao : TodoDao {
         return todo.todoId.toLong()
     }
 
+    override fun getTodoById(todoId: Int): Flow<Todo?> =
+        flow {
+            emit(todos.find {
+                it.todoId == todoId
+            })
+        }
+
+
     override fun getAllTodos(): Flow<List<Todo>> {
         return flow { emit(todos) }
     }

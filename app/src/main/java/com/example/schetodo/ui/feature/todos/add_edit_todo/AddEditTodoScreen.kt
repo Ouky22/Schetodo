@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -19,6 +20,7 @@ import com.example.schetodo.R
 import com.example.schetodo.data.entity.TodoPriority
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.feature.todos.components.AddEditTopBar
+import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.getTodoPriorityColorOf
 import com.example.schetodo.ui.feature.todos.list.CategoryItem
 import com.example.schetodo.ui.theme.SchetodoTheme
@@ -30,17 +32,20 @@ fun AddEditTodoScreen(
     viewModel: AddEditTodoViewModel,
     navController: NavController
 ) {
+    val state = viewModel.addEditTodoState.value
+
     AddEditTodoScreen(
-        todoCategoryName = "Household",
-        todoCategoryIcon = Icons.Filled.House,
-        todoCategoryColor = Color(0xff85586F),
-        todoDescription = "Clean the Bathroom",
-        todoPriority = TodoPriority.MEDIUM,
-        isRecurringTodo = false,
-        inEditingMode = false,
-        onTodoNameChanged = {},
-        onTodoPriorityChanged = {},
-        onTodoIsRecurringChanged = {}
+        todoCategoryName = state.parentTodoCategoryName,
+        todoCategoryIcon = getIconByName(state.parentTodoCategoryName) ?: Icons.Filled.Category,
+        todoCategoryColor = Color(state.parentTodoCategoryColor),
+        todoDescription = state.todoDescription,
+        todoPriority = state.todoPriority,
+        isRecurringTodo = state.todoIsRecurring,
+        inEditingMode = state.inEditingMode,
+        onTodoDescriptionChanged = { viewModel.onEvent(AddEditTodoEvent.ChangeTodoDescription(it)) },
+        onTodoPriorityChanged = { viewModel.onEvent(AddEditTodoEvent.ChangeTodoPriority(it)) },
+        onTodoIsRecurringChanged = { viewModel.onEvent(AddEditTodoEvent.ChangeTodoIsRecurring(it)) },
+        modifier = modifier
     )
 }
 
@@ -55,14 +60,14 @@ fun AddEditTodoScreen(
     todoDescription: String,
     todoPriority: TodoPriority,
     isRecurringTodo: Boolean,
-    onTodoNameChanged: (String) -> Unit,
+    onTodoDescriptionChanged: (String) -> Unit,
     onTodoPriorityChanged: (TodoPriority) -> Unit,
     onTodoIsRecurringChanged: (Boolean) -> Unit
 ) {
     Scaffold(
         topBar = {
             AddEditTopBar(
-                title = "TODO",
+                title = if (inEditingMode) stringResource(R.string.edit_todo) else stringResource(id = R.string.add_todo),
                 showDeleteIconButton = inEditingMode,
                 onDeleteClick = {},
                 onCloseDialog = {}
@@ -90,7 +95,7 @@ fun AddEditTodoScreen(
                 Spacer(modifier = Modifier.size(64.dp))
 
                 TodoPrioritySlider(
-                    onTodoPriorityChanged = {},
+                    onTodoPriorityChanged = onTodoPriorityChanged,
                     todoPriority = todoPriority
                 )
                 Spacer(modifier = Modifier.size(32.dp))
@@ -109,7 +114,7 @@ fun AddEditTodoScreen(
 
                 OutlinedTextField(
                     value = todoDescription,
-                    onValueChange = onTodoNameChanged,
+                    onValueChange = onTodoDescriptionChanged,
                     label = { stringResource(R.string.todo_name) },
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -181,7 +186,7 @@ fun AddEditTodoScreenPreview() {
             todoPriority = TodoPriority.HIGH,
             isRecurringTodo = false,
             inEditingMode = true,
-            onTodoNameChanged = {},
+            onTodoDescriptionChanged = {},
             onTodoPriorityChanged = {},
             onTodoIsRecurringChanged = {}
         )

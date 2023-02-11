@@ -11,6 +11,7 @@ import com.example.schetodo.data.entity.TodoFlag
 import com.example.schetodo.data.entity.TodoPriority
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
@@ -35,6 +36,21 @@ class TodoDaoTest {
     @Throws(IOException::class)
     fun closeDb() {
         db.close()
+    }
+
+    @Test
+    fun when_getting_todo_by_id_and_id_not_exists_then_return_null() = runTest {
+        assertThat(todoDao.getTodoById(1).first()).isNull()
+    }
+
+    @Test
+    fun when_getting_todo_by_id_and_id_exists_then_return_the_todo() = runTest {
+        val category = TodoCategory(1, "c1", 0, null, "")
+        val todo = Todo(1, "test", TodoPriority.MEDIUM, TodoFlag.UNDONE, category.categoryId)
+        todoCategoryDao.insertTodoCategory(category)
+        todoDao.insertTodo(todo)
+
+        assertThat(todoDao.getTodoById(todo.todoId).first()).isEqualTo(todo)
     }
 
     @Test

@@ -16,6 +16,9 @@ class TodoRepositoryImpl @Inject constructor(
         todoDao.insertTodo(todo)
     }
 
+    override suspend fun getTodoById(todoId: Int): Flow<Todo?> =
+        todoDao.getTodoById(todoId)
+
     override fun getTodosOfTodoCategory(todoCategoryId: Int?): Flow<List<Todo>> {
         // all todos must have a TodoCategory, that's why an empty list is returned if no todoCategoryId is passed
         return if (todoCategoryId == null)

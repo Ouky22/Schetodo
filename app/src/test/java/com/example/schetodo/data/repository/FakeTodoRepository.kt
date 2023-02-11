@@ -11,6 +11,12 @@ class FakeTodoRepository : TodoRepository {
         todos.add(todo)
     }
 
+    override suspend fun getTodoById(todoId: Int): Flow<Todo?> =
+        flow {
+            val todo = todos.find { it.todoId == todoId }
+            emit(todo)
+        }
+
     override fun getTodosOfTodoCategory(todoCategoryId: Int?): Flow<List<Todo>> {
         return flow {
             val todosOfCategory = todos.filter { it.categoryId == todoCategoryId }

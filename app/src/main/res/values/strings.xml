@@ -30,4 +30,5 @@
     <string name="add_todo">Add Todo</string>
     <string name="todo_category">Todo Category</string>
     <string name="todo">Todo</string>
+    <string name="edit_todo">Edit Todo</string>
 </resources>

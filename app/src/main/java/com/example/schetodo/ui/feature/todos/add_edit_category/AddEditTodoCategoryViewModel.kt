@@ -56,7 +56,7 @@ class AddEditTodoCategoryViewModel @Inject constructor(
         } else {
             val parentCategoryId =
                 savedStateHandle.get<Int>(AddTodoCategory.parentTodoCategoryIdArg)
-                    ?: throw Exception("No parent category id provided")
+                    ?: throw Exception("No parent category id provided while adding new TodoCategory")
             setParentTodoCategoryForAdding(parentCategoryId)
         }
     }

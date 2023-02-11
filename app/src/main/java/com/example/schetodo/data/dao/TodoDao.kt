@@ -11,6 +11,9 @@ interface TodoDao {
     @Insert
     suspend fun insertTodo(todo: Todo): Long
 
+    @Query("SELECT * FROM Todo WHERE todoId = :todoId")
+    fun getTodoById(todoId: Int): Flow<Todo?>
+
     @Query("SELECT * FROM Todo")
     fun getAllTodos(): Flow<List<Todo>>
 
