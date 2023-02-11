@@ -54,7 +54,11 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
         }
         composable(route = CheckOffTodos.route) {
             val viewModel = hiltViewModel<CheckOffTodosViewModel>()
-            CheckOffTodosScreen(viewModel = viewModel, modifier = Modifier.fillMaxSize())
+            CheckOffTodosScreen(
+                viewModel = viewModel,
+                navController = navController,
+                modifier = Modifier.fillMaxSize()
+            )
         }
         composable(
             route = AddTodoCategory.routeWithArgs,

@@ -9,7 +9,6 @@ import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.outlined.Checklist
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.example.schetodo.R
 import com.example.schetodo.data.entity.Todo
 import com.example.schetodo.data.entity.TodoCategory
@@ -39,13 +39,15 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 @Composable
 fun CheckOffTodosScreen(
     viewModel: CheckOffTodosViewModel,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     val todosInProgress by viewModel.todosInProgress.collectAsStateWithLifecycle()
 
     CheckOffTodosScreen(
         todoCategoryTodoPairs = todosInProgress,
-        modifier = modifier
+        modifier = modifier,
+        onBackButtonClick = { navController.popBackStack() }
     )
 }
 
@@ -54,14 +56,15 @@ fun CheckOffTodosScreen(
 @Composable
 fun CheckOffTodosScreen(
     modifier: Modifier = Modifier,
-    todoCategoryTodoPairs: List<TodoCategoryTodoPair>
+    todoCategoryTodoPairs: List<TodoCategoryTodoPair>,
+    onBackButtonClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
             SchetodoTopAppBar(
                 title = stringResource(R.string.check_off_done_todos),
                 showBackButton = true,
-                onBackButtonClick = { /*TODO*/ }
+                onBackButtonClick = onBackButtonClick
             )
         }
     ) { contentPadding ->
@@ -174,7 +177,8 @@ fun CheckOffTodosScreenPreview() {
     SchetodoTheme {
         CheckOffTodosScreen(
             modifier = Modifier.fillMaxSize(),
-            todoCategoryTodoPairs = todoCategoryTodoPairs
+            todoCategoryTodoPairs = todoCategoryTodoPairs,
+            onBackButtonClick = {}
         )
     }
 }
