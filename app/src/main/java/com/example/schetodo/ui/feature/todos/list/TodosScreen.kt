@@ -88,7 +88,7 @@ fun TodosScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { viewModel.onEvent(TodosEvent.ClickOnAddCategoryorTodoButton) }
+                onClick = { viewModel.onEvent(TodosEvent.ClickOnAddCategoryOrTodoButton) }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,

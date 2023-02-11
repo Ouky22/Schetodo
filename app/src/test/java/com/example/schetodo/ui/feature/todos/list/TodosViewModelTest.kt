@@ -27,7 +27,7 @@ internal class TodosViewModelTest {
     fun when_current_category_is_null_then_todo_can_not_be_added() = runTest {
         val viewModel = TodosViewModel(fakeTodoRepository, fakeTodoCategoryRepository)
 
-        viewModel.onEvent(TodosEvent.ClickOnAddCategoryorTodoButton)
+        viewModel.onEvent(TodosEvent.ClickOnAddCategoryOrTodoButton)
 
         assertThat(viewModel.navigateToAddTodoCategoryScreen.first()).isTrue()
         assertThat(viewModel.todosState.value.showAddCategoryOrTodoDialog).isFalse()

@@ -33,4 +33,5 @@
     <string name="description">Description</string>
     <string name="please_enter_description">Please enter a description</string>
     <string name="category">Category</string>
+    <string name="check_off_done_todos">Check off done Todos</string>
 </resources>

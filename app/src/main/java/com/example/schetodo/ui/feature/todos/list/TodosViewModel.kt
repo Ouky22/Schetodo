@@ -38,7 +38,7 @@ class TodosViewModel @Inject constructor(
         when (event) {
             is TodosEvent.NavigateToNewTodoCategory -> setCurrentTodoCategory(event.newTodoCategoryId)
             is TodosEvent.NavigateToPreviousTodoCategory -> loadPreviousCategory()
-            is TodosEvent.ClickOnAddCategoryorTodoButton -> onClickAddCategoryOrTodoButton()
+            is TodosEvent.ClickOnAddCategoryOrTodoButton -> onClickAddCategoryOrTodoButton()
             is TodosEvent.CloseAddCategoryOrTodoDialog -> onCloseAddCategoryOrTodoDialog()
             is TodosEvent.NavigateToAddTodoCategoryScreen -> onNavigateToAddTodoCategoryScreen()
             is TodosEvent.NavigateToAddTodoScreen -> onNavigateToAddTodoScreen()
