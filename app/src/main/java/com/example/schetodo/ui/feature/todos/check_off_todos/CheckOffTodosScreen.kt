@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.House
+import androidx.compose.material.icons.filled.RemoveDone
 import androidx.compose.material.icons.outlined.Checklist
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -76,47 +77,70 @@ fun CheckOffTodosScreen(
             )
         }
     ) { contentPadding ->
-        Column(
-            modifier = modifier.padding(contentPadding),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            LazyColumn(modifier = modifier.weight(1f)) {
-                items(todoCategoryTodoPairs) { todoCategoryTodoPair ->
-                    CheckOffTodoItem(
-                        modifier = Modifier
-                            .height(175.dp)
-                            .padding(vertical = 8.dp, horizontal = 16.dp),
-                        todoDescription = todoCategoryTodoPair.todo.description,
-                        parentTodoCategoryName = todoCategoryTodoPair.todoCategory.name,
-                        parentTodoCategoryIcon = getIconByName(todoCategoryTodoPair.todoCategory.iconName)
-                            ?: Icons.Filled.Category,
-                        parentTodoCategoryColor = Color(todoCategoryTodoPair.todoCategory.color),
-                        checkedOff = todoCategoryTodoPair.checkedOff,
-                        onCheck = { checkedOff ->
-                            val todoId = todoCategoryTodoPair.todo.todoId
-                            if (checkedOff) onMarkTodoForCheckOff(todoId)
-                            else onUndoMarkTodoForCheckOff(todoId)
-                        }
-                    )
-                }
-            }
-            Button(
-                onClick = onCheckOffTodos,
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .padding(vertical = 16.dp)
+        if (todoCategoryTodoPairs.isEmpty()) {
+            NoTodosInProgress(modifier = modifier.fillMaxSize())
+        } else {
+            Column(
+                modifier = modifier.padding(contentPadding),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
-                    imageVector = Icons.Outlined.Checklist,
-                    contentDescription = null,
-                    Modifier.padding(end = 10.dp)
-                )
-                Text(text = stringResource(id = R.string.check_off_todos))
+                LazyColumn(modifier = modifier.weight(1f)) {
+                    items(todoCategoryTodoPairs) { todoCategoryTodoPair ->
+                        CheckOffTodoItem(
+                            modifier = Modifier
+                                .height(175.dp)
+                                .padding(vertical = 8.dp, horizontal = 16.dp),
+                            todoDescription = todoCategoryTodoPair.todo.description,
+                            parentTodoCategoryName = todoCategoryTodoPair.todoCategory.name,
+                            parentTodoCategoryIcon = getIconByName(todoCategoryTodoPair.todoCategory.iconName)
+                                ?: Icons.Filled.Category,
+                            parentTodoCategoryColor = Color(todoCategoryTodoPair.todoCategory.color),
+                            checkedOff = todoCategoryTodoPair.checkedOff,
+                            onCheck = { checkedOff ->
+                                val todoId = todoCategoryTodoPair.todo.todoId
+                                if (checkedOff) onMarkTodoForCheckOff(todoId)
+                                else onUndoMarkTodoForCheckOff(todoId)
+                            }
+                        )
+                    }
+                }
+                Button(
+                    onClick = onCheckOffTodos,
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .padding(vertical = 16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Checklist,
+                        contentDescription = null,
+                        Modifier.padding(end = 10.dp)
+                    )
+                    Text(text = stringResource(id = R.string.check_off_todos))
+                }
             }
         }
     }
 }
+
+@Composable
+fun NoTodosInProgress(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = Icons.Filled.RemoveDone,
+            contentDescription = null
+        )
+        Spacer(modifier = Modifier.size(16.dp))
+        Text(text = "No todos in progress")
+    }
+}
+
 
 @Composable
 fun CheckOffTodoItem(
@@ -194,6 +218,24 @@ fun CheckOffTodosScreenPreview() {
         CheckOffTodosScreen(
             modifier = Modifier.fillMaxSize(),
             todoCategoryTodoPairs = todoCategoryTodoPairs,
+            onCheckOffTodos = {},
+            onUndoMarkTodoForCheckOff = {},
+            onMarkTodoForCheckOff = {},
+            onBackButtonClick = {}
+        )
+    }
+}
+
+
+@ExperimentalMaterial3Api
+@Preview(showBackground = true)
+@Composable
+fun CheckOffTodosScreenWhenNoTodosInProgressPreview() {
+
+    SchetodoTheme {
+        CheckOffTodosScreen(
+            modifier = Modifier.fillMaxSize(),
+            todoCategoryTodoPairs = emptyList(),
             onCheckOffTodos = {},
             onUndoMarkTodoForCheckOff = {},
             onMarkTodoForCheckOff = {},
