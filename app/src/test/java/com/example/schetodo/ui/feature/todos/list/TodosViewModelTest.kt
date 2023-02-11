@@ -6,11 +6,10 @@ import com.example.schetodo.data.entity.TodoFlag
 import com.example.schetodo.data.entity.TodoPriority
 import com.example.schetodo.data.repository.FakeTodoCategoryRepository
 import com.example.schetodo.data.repository.FakeTodoRepository
-import com.example.schetodo.ui.feature.todos.list.TodosEvent
-import com.example.schetodo.ui.feature.todos.list.TodosViewModel
 import com.example.schetodo.util.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.*
 import org.junit.Rule
 import org.junit.Test
@@ -24,6 +23,15 @@ internal class TodosViewModelTest {
     private val fakeTodoRepository = FakeTodoRepository()
     private val fakeTodoCategoryRepository = FakeTodoCategoryRepository()
 
+    @Test
+    fun when_current_category_is_null_then_todo_can_not_be_added() = runTest {
+        val viewModel = TodosViewModel(fakeTodoRepository, fakeTodoCategoryRepository)
+
+        viewModel.onEvent(TodosEvent.ClickOnAddCategoryorTodoButton)
+
+        assertThat(viewModel.navigateToAddTodoCategoryScreen.first()).isTrue()
+        assertThat(viewModel.todosState.value.showAddCategoryOrTodoDialog).isFalse()
+    }
 
     @Test
     fun when_current_category_changes_then_load_categories_and_todos_of_new_category() = runTest {

@@ -38,7 +38,7 @@ class TodosViewModel @Inject constructor(
         when (event) {
             is TodosEvent.NavigateToNewTodoCategory -> setCurrentTodoCategory(event.newTodoCategoryId)
             is TodosEvent.NavigateToPreviousTodoCategory -> loadPreviousCategory()
-            is TodosEvent.ShowAddCategoryOrTodoDialog -> onShowAddCategoryOrTodoDialog()
+            is TodosEvent.ClickOnAddCategoryorTodoButton -> onClickAddCategoryOrTodoButton()
             is TodosEvent.CloseAddCategoryOrTodoDialog -> onCloseAddCategoryOrTodoDialog()
             is TodosEvent.NavigateToAddTodoCategoryScreen -> onNavigateToAddTodoCategoryScreen()
             is TodosEvent.NavigateToAddTodoScreen -> onNavigateToAddTodoScreen()
@@ -49,8 +49,14 @@ class TodosViewModel @Inject constructor(
         _todosState.value = _todosState.value.copy(showAddCategoryOrTodoDialog = false)
     }
 
-    private fun onShowAddCategoryOrTodoDialog() {
-        _todosState.value = _todosState.value.copy(showAddCategoryOrTodoDialog = true)
+    private fun onClickAddCategoryOrTodoButton() {
+        val openAddCategoryOrTodoDialog = _todosState.value.currentCategory != null
+        if (openAddCategoryOrTodoDialog)
+            _todosState.value = _todosState.value.copy(showAddCategoryOrTodoDialog = true)
+        else
+            viewModelScope.launch {
+                _navigateToAddTodoCategoryScreen.emit(true)
+            }
     }
 
     private fun onNavigateToAddTodoScreen() {

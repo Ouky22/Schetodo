@@ -88,7 +88,7 @@ fun TodosScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { viewModel.onEvent(TodosEvent.ShowAddCategoryOrTodoDialog) }
+                onClick = { viewModel.onEvent(TodosEvent.ClickOnAddCategoryorTodoButton) }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
@@ -185,7 +185,7 @@ fun AddCategoryOrTodoDialog(
             AddCategoryOrTodoDialogButton(
                 onClick = onAddTodoCategory,
                 icon = Icons.Filled.Category,
-                text = stringResource(R.string.todo_category),
+                text = stringResource(R.string.category),
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.size(80.dp))
