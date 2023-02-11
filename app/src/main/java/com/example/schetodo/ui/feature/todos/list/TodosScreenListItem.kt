@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.outlined.RestartAlt
 import androidx.compose.material.icons.outlined.TaskAlt
@@ -22,10 +21,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.schetodo.data.entity.Todo
-import com.example.schetodo.data.entity.TodoCategory
 import com.example.schetodo.data.entity.TodoFlag
 import com.example.schetodo.data.entity.TodoPriority
-import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.getTodoPriorityColorOf
 import com.example.schetodo.ui.theme.SchetodoTheme
 
@@ -43,17 +40,18 @@ fun TodosScreenListItem(
         colors = CardDefaults.cardColors(containerColor = cardBackgroundColor),
     ) {
         Row(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.padding(8.dp).fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier.weight(1f).padding(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize(0.7f)
                         .aspectRatio(1f)
                         .clip(CircleShape)
                         .background(iconBackgroundColor)
-                        .align(Alignment.CenterHorizontally)
                 ) {
                     Icon(
                         modifier = Modifier
@@ -69,8 +67,10 @@ fun TodosScreenListItem(
             Column(
                 modifier = Modifier
                     .weight(3f)
-                    .padding(horizontal = 8.dp),
-                horizontalAlignment = Alignment.Start
+                    .padding(horizontal = 8.dp)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center
             ) {
                 text()
             }
