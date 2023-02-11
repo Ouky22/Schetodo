@@ -1,6 +1,7 @@
 package com.example.schetodo.data
 
 import androidx.room.TypeConverter
+import com.example.schetodo.data.entity.TodoPriority
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -23,5 +24,15 @@ class RoomTypeConverters {
     @TypeConverter
     fun timeToTimeStamp(time: LocalTime): Int {
         return time.toSecondOfDay()
+    }
+
+    @TypeConverter
+    fun todoPriorityToNumber(todoPriority: TodoPriority): Int {
+        return todoPriority.priorityNumber
+    }
+
+    @TypeConverter
+    fun numberToTodoPriority(number: Int): TodoPriority {
+        return TodoPriority.getByPriorityNumber(number)
     }
 }
