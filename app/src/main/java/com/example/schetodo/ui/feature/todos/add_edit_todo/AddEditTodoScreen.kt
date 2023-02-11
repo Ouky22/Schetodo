@@ -1,5 +1,6 @@
 package com.example.schetodo.ui.feature.todos.add_edit_todo
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -146,9 +147,17 @@ fun TodoPrioritySlider(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        val priorityText = when (todoPriority) {
+            TodoPriority.LOW -> stringResource(R.string.low_priority)
+            TodoPriority.MEDIUM -> stringResource(R.string.medium_priority)
+            TodoPriority.HIGH -> stringResource(R.string.high_priority)
+            TodoPriority.VERY_HIGH -> stringResource(R.string.very_high_priority)
+        }
+        Text(text = priorityText)
+
         Slider(
             value = todoPriority.priorityNumber.toFloat(),
-            steps = 1,
+            steps = TodoPriority.values().size,
             valueRange = 1f..TodoPriority.values().size.toFloat(),
             onValueChange = { todoPriorityNumber ->
                 onTodoPriorityChanged(TodoPriority.getByPriorityNumber(todoPriorityNumber.toInt()))
@@ -158,14 +167,6 @@ fun TodoPrioritySlider(
                 activeTrackColor = getTodoPriorityColorOf(todoPriority)
             )
         )
-
-        val priorityText = when (todoPriority) {
-            TodoPriority.LOW -> stringResource(R.string.low_priority)
-            TodoPriority.MEDIUM -> stringResource(R.string.medium_priority)
-            TodoPriority.HIGH -> stringResource(R.string.high_priority)
-            TodoPriority.VERY_HIGH -> stringResource(R.string.very_high_priority)
-        }
-        Text(text = priorityText)
     }
 }
 
