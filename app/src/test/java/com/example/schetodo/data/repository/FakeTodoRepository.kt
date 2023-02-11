@@ -11,6 +11,17 @@ class FakeTodoRepository : TodoRepository {
         todos.add(todo)
     }
 
+    override suspend fun insertOrUpdateTodo(todo: Todo) {
+        val indexOfTodoInList = todos.indexOfFirst { it.todoId == todo.todoId }
+
+        if (indexOfTodoInList >= 0) {
+            val oldTodo = todos.removeAt(indexOfTodoInList)
+            val updatedTodo = todo.copy(todoId = oldTodo.todoId)
+            todos.add(updatedTodo)
+        } else
+            todos.add(todo)
+    }
+
     override suspend fun getTodoById(todoId: Int): Flow<Todo?> =
         flow {
             val todo = todos.find { it.todoId == todoId }

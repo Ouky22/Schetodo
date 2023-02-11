@@ -12,6 +12,8 @@ import com.example.schetodo.ui.navigation.EditTodo
 import com.example.schetodo.util.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -21,10 +23,77 @@ import org.junit.Test
 internal class AddEditTodoViewModelTest {
 
     @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
+    val mainDispatcherRule = MainDispatcherRule(UnconfinedTestDispatcher())
 
     private val fakeTodoRepository = FakeTodoRepository()
     private val fakeTodoCategoryRepository = FakeTodoCategoryRepository()
+
+    @Test
+    fun test_editing_and_saving_todo() = runTest {
+        val category = TodoCategory(1, "test category", 0, null, "icon")
+        val todo = Todo(1, "test", TodoPriority.HIGH, TodoFlag.UNDONE, category.categoryId)
+        fakeTodoCategoryRepository.insertTodoCategory(category)
+        fakeTodoRepository.insertTodo(todo)
+        val savedStateHandle =
+            SavedStateHandle(mapOf(EditTodo.todoId to category.categoryId))
+        val viewModel =
+            AddEditTodoViewModel(fakeTodoRepository, fakeTodoCategoryRepository, savedStateHandle)
+
+        val newDescription = "new"
+        val newPriority = TodoPriority.LOW
+        val newTodoFlag = TodoFlag.RECURRING
+
+        viewModel.onEvent(AddEditTodoEvent.ChangeTodoDescription(newDescription))
+        viewModel.onEvent(AddEditTodoEvent.ChangeTodoPriority(newPriority))
+        viewModel.onEvent(AddEditTodoEvent.ChangeTodoFlag(newTodoFlag))
+        viewModel.onEvent(AddEditTodoEvent.SaveTodo)
+
+        val editedTodo = fakeTodoRepository.getTodoById(todo.todoId).first()
+        assertThat(editedTodo?.flag).isEqualTo(newTodoFlag)
+        assertThat(editedTodo?.priority).isEqualTo(newPriority)
+        assertThat(editedTodo?.description).isEqualTo(newDescription)
+        assertThat(editedTodo?.categoryId).isEqualTo(category.categoryId)
+    }
+
+    @Test
+    fun test_adding_and_saving_todo() = runTest {
+        val category = TodoCategory(1, "test category", 0, null, "icon")
+        fakeTodoCategoryRepository.insertTodoCategory(category)
+        val savedStateHandle =
+            SavedStateHandle(mapOf(AddTodo.parentTodoCategoryIdArg to category.categoryId))
+        val viewModel =
+            AddEditTodoViewModel(fakeTodoRepository, fakeTodoCategoryRepository, savedStateHandle)
+
+        val description = "new"
+        val priority = TodoPriority.LOW
+        val todoFlag = TodoFlag.RECURRING
+
+        viewModel.onEvent(AddEditTodoEvent.ChangeTodoDescription(description))
+        viewModel.onEvent(AddEditTodoEvent.ChangeTodoPriority(priority))
+        viewModel.onEvent(AddEditTodoEvent.ChangeTodoFlag(todoFlag))
+        viewModel.onEvent(AddEditTodoEvent.SaveTodo)
+
+        val addedTodo = fakeTodoRepository.getTodosOfTodoCategory(category.categoryId).first()[0]
+        assertThat(addedTodo.flag).isEqualTo(todoFlag)
+        assertThat(addedTodo.priority).isEqualTo(priority)
+        assertThat(addedTodo.description).isEqualTo(description)
+        assertThat(addedTodo.categoryId).isEqualTo(category.categoryId)
+    }
+
+    @Test
+    fun when_saving_todo_without_description_then_show_error_message() = runTest {
+        val category = TodoCategory(1, "test category", 0, null, "icon")
+        fakeTodoCategoryRepository.insertTodoCategory(category)
+        val savedStateHandle =
+            SavedStateHandle(mapOf(AddTodo.parentTodoCategoryIdArg to category.categoryId))
+        val viewModel =
+            AddEditTodoViewModel(fakeTodoRepository, fakeTodoCategoryRepository, savedStateHandle)
+
+        viewModel.onEvent(AddEditTodoEvent.SaveTodo)
+
+        assertThat(viewModel.addEditTodoState.value.showInvalidDescriptionError).isTrue()
+        assertThat(fakeTodoRepository.getTodosOfTodoCategory(category.categoryId).first()).isEmpty()
+    }
 
     @Test
     fun when_opening_view_model_for_adding_todo_then_load_data_of_parent_category() = runTest {
@@ -36,8 +105,6 @@ internal class AddEditTodoViewModelTest {
             SavedStateHandle(mapOf(AddTodo.parentTodoCategoryIdArg to category.categoryId))
         val viewModel =
             AddEditTodoViewModel(fakeTodoRepository, fakeTodoCategoryRepository, savedStateHandle)
-
-        advanceUntilIdle()
 
         val state = viewModel.addEditTodoState
         assertThat(state.value.parentTodoCategoryName).isEqualTo(category.name)
@@ -55,12 +122,10 @@ internal class AddEditTodoViewModelTest {
         val viewModel =
             AddEditTodoViewModel(fakeTodoRepository, fakeTodoCategoryRepository, savedStateHandle)
 
-        advanceUntilIdle()
-
         val state = viewModel.addEditTodoState
         assertThat(state.value.todoDescription).isEqualTo(todo.description)
         assertThat(state.value.todoPriority).isEqualTo(todo.priority)
-        assertThat(state.value.todoIsRecurring).isFalse()
+        assertThat(state.value.todoFlag).isEqualTo(todo.flag)
         assertThat(state.value.inEditingMode).isTrue()
     }
 
@@ -73,8 +138,6 @@ internal class AddEditTodoViewModelTest {
         val savedStateHandle = SavedStateHandle(mapOf(EditTodo.todoId to todo.todoId))
         val viewModel =
             AddEditTodoViewModel(fakeTodoRepository, fakeTodoCategoryRepository, savedStateHandle)
-
-        advanceUntilIdle()
 
         val state = viewModel.addEditTodoState
         assertThat(state.value.parentTodoCategoryName).isEqualTo(category.name)

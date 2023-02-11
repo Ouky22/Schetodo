@@ -31,4 +31,5 @@
     <string name="todo">Todo</string>
     <string name="edit_todo">Edit Todo</string>
     <string name="description">Description</string>
+    <string name="please_enter_description">Please enter a description</string>
 </resources>
