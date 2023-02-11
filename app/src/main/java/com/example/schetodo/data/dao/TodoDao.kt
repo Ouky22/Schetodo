@@ -1,9 +1,6 @@
 package com.example.schetodo.data.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Upsert
+import androidx.room.*
 import com.example.schetodo.data.entity.Todo
 import kotlinx.coroutines.flow.Flow
 
@@ -14,6 +11,9 @@ interface TodoDao {
 
     @Upsert
     suspend fun insertOrUpdateTodo(todo: Todo): Long
+
+    @Query("DELETE FROM Todo WHERE todoId = :todoId")
+    suspend fun deleteTodoById(todoId: Int)
 
     @Query("SELECT * FROM Todo WHERE todoId = :todoId")
     fun getTodoById(todoId: Int): Flow<Todo?>

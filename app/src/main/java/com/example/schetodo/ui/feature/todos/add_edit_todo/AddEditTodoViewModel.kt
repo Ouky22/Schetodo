@@ -53,6 +53,17 @@ class AddEditTodoViewModel @Inject constructor(
             is AddEditTodoEvent.ChangeTodoFlag -> onChangeTodoFlag(event.todoFlag)
             is AddEditTodoEvent.SaveTodo -> onSaveTodo()
             is AddEditTodoEvent.CloseScreen -> _closeAddEditTodoScreen.value = true
+            is AddEditTodoEvent.DeleteTodo -> onDeleteTodo()
+        }
+    }
+
+    private fun onDeleteTodo() {
+        if (!_addEditTodoState.value.inEditingMode)
+            throw UnsupportedOperationException("Cannot remove Todo in adding mode")
+
+        viewModelScope.launch {
+            todoRepository.deleteTodoById(todoId)
+            _closeAddEditTodoScreen.value = true
         }
     }
 

@@ -39,6 +39,23 @@ class TodoDaoTest {
     }
 
     @Test
+    fun when_deleting_todo_by_id_and_id_not_exists_do_nothing() = runTest {
+        todoDao.deleteTodoById(1)
+    }
+
+    @Test
+    fun when_deleting_todo_by_id_and_id_exists_delete_it() = runTest {
+        val category = TodoCategory(1, "c1", 0, null, "")
+        val todo = Todo(1, "test", TodoPriority.MEDIUM, TodoFlag.UNDONE, category.categoryId)
+        todoCategoryDao.insertTodoCategory(category)
+        todoDao.insertTodo(todo)
+
+        todoDao.deleteTodoById(todo.todoId)
+
+        assertThat(todoDao.getTodoById(todo.todoId).first()).isNull()
+    }
+
+    @Test
     fun when_getting_todo_by_id_and_id_not_exists_then_return_null() = runTest {
         assertThat(todoDao.getTodoById(1).first()).isNull()
     }

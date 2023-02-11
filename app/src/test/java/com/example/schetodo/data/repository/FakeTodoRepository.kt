@@ -22,6 +22,10 @@ class FakeTodoRepository : TodoRepository {
             todos.add(todo)
     }
 
+    override suspend fun deleteTodoById(todoId: Int) {
+        todos.removeIf { it.todoId == todoId }
+    }
+
     override suspend fun getTodoById(todoId: Int): Flow<Todo?> =
         flow {
             val todo = todos.find { it.todoId == todoId }

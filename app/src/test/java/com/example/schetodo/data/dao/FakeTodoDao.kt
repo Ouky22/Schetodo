@@ -28,6 +28,10 @@ class FakeTodoDao : TodoDao {
         return id.toLong()
     }
 
+    override suspend fun deleteTodoById(todoId: Int) {
+        todos.removeIf { it.todoId == todoId }
+    }
+
     override fun getTodoById(todoId: Int): Flow<Todo?> =
         flow {
             emit(todos.find {

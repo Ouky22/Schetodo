@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
 
@@ -27,6 +28,35 @@ internal class AddEditTodoViewModelTest {
 
     private val fakeTodoRepository = FakeTodoRepository()
     private val fakeTodoCategoryRepository = FakeTodoCategoryRepository()
+
+    @Test
+    fun when_in_editing_mode_and_delete_todo_event_happens_then_delete_todo() = runTest {
+        val category = TodoCategory(1, "test category", 0, null, "icon")
+        val todo = Todo(1, "test", TodoPriority.HIGH, TodoFlag.UNDONE, category.categoryId)
+        fakeTodoCategoryRepository.insertTodoCategory(category)
+        fakeTodoRepository.insertTodo(todo)
+        val savedStateHandle =
+            SavedStateHandle(mapOf(EditTodo.todoId to category.categoryId))
+        val viewModel =
+            AddEditTodoViewModel(fakeTodoRepository, fakeTodoCategoryRepository, savedStateHandle)
+
+        viewModel.onEvent(AddEditTodoEvent.DeleteTodo)
+
+        assertThat(fakeTodoRepository.getTodoById(todo.todoId).first()).isNull()
+        assertThat(viewModel.closeAddEditTodoScreen.value).isTrue()
+    }
+
+    @Test
+    fun when_in_adding_mode_and_delete_todo_event_happens_throw_exception() = runTest {
+        val category = TodoCategory(1, "test category", 0, null, "icon")
+        fakeTodoCategoryRepository.insertTodoCategory(category)
+        val savedStateHandle =
+            SavedStateHandle(mapOf(AddTodo.parentTodoCategoryIdArg to category.categoryId))
+        val viewModel =
+            AddEditTodoViewModel(fakeTodoRepository, fakeTodoCategoryRepository, savedStateHandle)
+
+        assertThrows(Exception::class.java) { viewModel.onEvent(AddEditTodoEvent.DeleteTodo) }
+    }
 
     @Test
     fun test_editing_and_saving_todo() = runTest {
@@ -53,6 +83,7 @@ internal class AddEditTodoViewModelTest {
         assertThat(editedTodo?.priority).isEqualTo(newPriority)
         assertThat(editedTodo?.description).isEqualTo(newDescription)
         assertThat(editedTodo?.categoryId).isEqualTo(category.categoryId)
+        assertThat(viewModel.closeAddEditTodoScreen.value).isTrue()
     }
 
     @Test
@@ -78,6 +109,7 @@ internal class AddEditTodoViewModelTest {
         assertThat(addedTodo.priority).isEqualTo(priority)
         assertThat(addedTodo.description).isEqualTo(description)
         assertThat(addedTodo.categoryId).isEqualTo(category.categoryId)
+        assertThat(viewModel.closeAddEditTodoScreen.value).isTrue()
     }
 
     @Test

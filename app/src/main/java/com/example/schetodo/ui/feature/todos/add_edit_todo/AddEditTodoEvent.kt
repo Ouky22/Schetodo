@@ -8,5 +8,6 @@ sealed class AddEditTodoEvent {
     data class ChangeTodoPriority(val todoPriority: TodoPriority) : AddEditTodoEvent()
     data class ChangeTodoFlag(val todoFlag: TodoFlag) : AddEditTodoEvent()
     object SaveTodo : AddEditTodoEvent()
+    object DeleteTodo: AddEditTodoEvent()
     object CloseScreen: AddEditTodoEvent()
 }

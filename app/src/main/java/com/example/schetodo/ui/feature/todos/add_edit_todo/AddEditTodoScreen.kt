@@ -61,6 +61,7 @@ fun AddEditTodoScreen(
         onTodoFlagChanged = { viewModel.onEvent(AddEditTodoEvent.ChangeTodoFlag(it)) },
         onClose = { viewModel.onEvent(AddEditTodoEvent.CloseScreen) },
         onSave = { viewModel.onEvent(AddEditTodoEvent.SaveTodo) },
+        onDelete = {viewModel.onEvent(AddEditTodoEvent.DeleteTodo)},
         modifier = modifier
     )
 }
@@ -81,14 +82,15 @@ fun AddEditTodoScreen(
     onTodoPriorityChanged: (TodoPriority) -> Unit,
     onTodoFlagChanged: (TodoFlag) -> Unit,
     onClose: () -> Unit,
-    onSave: () -> Unit
+    onSave: () -> Unit,
+    onDelete: () -> Unit
 ) {
     Scaffold(
         topBar = {
             AddEditTopBar(
                 title = if (inEditingMode) stringResource(R.string.edit_todo) else stringResource(id = R.string.add_todo),
                 showDeleteIconButton = inEditingMode,
-                onDeleteClick = {},
+                onDeleteClick = onDelete,
                 onCloseDialog = onClose
             )
         }
@@ -216,7 +218,8 @@ fun AddEditTodoScreenPreview() {
             onTodoPriorityChanged = {},
             onTodoFlagChanged = {},
             onClose = {},
-            onSave = {}
+            onSave = {},
+            onDelete = {}
         )
     }
 }

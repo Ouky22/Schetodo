@@ -20,6 +20,10 @@ class TodoRepositoryImpl @Inject constructor(
         todoDao.insertOrUpdateTodo(todo)
     }
 
+    override suspend fun deleteTodoById(todoId: Int) {
+        todoDao.deleteTodoById(todoId)
+    }
+
     override suspend fun getTodoById(todoId: Int): Flow<Todo?> =
         todoDao.getTodoById(todoId)
 
