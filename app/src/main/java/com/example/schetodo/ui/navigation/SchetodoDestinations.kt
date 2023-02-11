@@ -36,6 +36,10 @@ object Statistics : MainSchetodoDestination {
     override val titleResourceId = R.string.statistics
 }
 
+object CheckOffTodos : SchetodoDestination {
+    override val route = "check_off_todos"
+}
+
 object AddTodo : SchetodoDestination {
     override val route = "add_todo"
     const val parentTodoCategoryIdArg = "parent_todo_category_id"

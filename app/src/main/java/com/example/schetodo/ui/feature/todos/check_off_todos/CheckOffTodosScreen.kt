@@ -134,7 +134,8 @@ fun CheckOffTodoItem(
             Divider(
                 modifier = Modifier
                     .fillMaxHeight(0.85f)
-                    .width(1.dp)
+                    .width(1.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Column(
                 modifier = Modifier

@@ -17,6 +17,8 @@ import com.example.schetodo.ui.feature.todos.add_edit_category.AddEditTodoCatego
 import com.example.schetodo.ui.feature.todos.add_edit_category.AddEditTodoCategoryViewModel
 import com.example.schetodo.ui.feature.todos.add_edit_todo.AddEditTodoScreen
 import com.example.schetodo.ui.feature.todos.add_edit_todo.AddEditTodoViewModel
+import com.example.schetodo.ui.feature.todos.check_off_todos.CheckOffTodosScreen
+import com.example.schetodo.ui.feature.todos.check_off_todos.CheckOffTodosViewModel
 
 @ExperimentalFoundationApi
 @ExperimentalLifecycleComposeApi
@@ -33,7 +35,9 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
             val todosViewModel = hiltViewModel<TodosViewModel>(parentEntry)
             TodosScreen(
                 viewModel = todosViewModel,
-                onCheckOffCompletedTodos = {},
+                onCheckOffCompletedTodos = {
+                    navController.navigateToCheckOffTodosScreen()
+                },
                 onAddTodoCategory = { parentCategoryId ->
                     navController.navigateToAddTodoCategoryScreen(parentCategoryId)
                 },
@@ -47,6 +51,10 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
                     navController.navigateToEditTodoScreen(todoId)
                 }
             )
+        }
+        composable(route = CheckOffTodos.route) {
+            val viewModel = hiltViewModel<CheckOffTodosViewModel>()
+            CheckOffTodosScreen(viewModel = viewModel, modifier = Modifier.fillMaxSize())
         }
         composable(
             route = AddTodoCategory.routeWithArgs,
@@ -93,6 +101,10 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
             )
         }
     }
+}
+
+fun NavHostController.navigateToCheckOffTodosScreen() {
+    navigate(CheckOffTodos.route)
 }
 
 fun NavHostController.navigateToAddTodoScreen(parentTodoCategory: Int) {
