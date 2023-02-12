@@ -34,4 +34,8 @@
     <string name="please_enter_description">Please enter a description</string>
     <string name="category">Category</string>
     <string name="check_off_done_todos">Check Off Done Todos</string>
+    <string name="undone">Undone</string>
+    <string name="todo_in_progress">In progress</string>
+    <string name="done">Done</string>
+    <string name="status">Status: %1$s</string>
 </resources>

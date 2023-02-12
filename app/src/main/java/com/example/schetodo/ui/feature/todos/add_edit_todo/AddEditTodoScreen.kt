@@ -53,7 +53,7 @@ fun AddEditTodoScreen(
         todoCategoryColor = Color(state.parentTodoCategoryColor),
         todoDescription = state.todoDescription,
         todoPriority = state.todoPriority,
-        isRecurringTodo = state.todoFlag == TodoFlag.RECURRING,
+        todoFlag = state.todoFlag,
         showDescriptionError = state.showInvalidDescriptionError,
         inEditingMode = state.inEditingMode,
         onTodoDescriptionChanged = { viewModel.onEvent(AddEditTodoEvent.ChangeTodoDescription(it)) },
@@ -61,7 +61,7 @@ fun AddEditTodoScreen(
         onTodoFlagChanged = { viewModel.onEvent(AddEditTodoEvent.ChangeTodoFlag(it)) },
         onClose = { viewModel.onEvent(AddEditTodoEvent.CloseScreen) },
         onSave = { viewModel.onEvent(AddEditTodoEvent.SaveTodo) },
-        onDelete = {viewModel.onEvent(AddEditTodoEvent.DeleteTodo)},
+        onDelete = { viewModel.onEvent(AddEditTodoEvent.DeleteTodo) },
         modifier = modifier
     )
 }
@@ -76,7 +76,7 @@ fun AddEditTodoScreen(
     todoCategoryIcon: ImageVector,
     todoDescription: String,
     todoPriority: TodoPriority,
-    isRecurringTodo: Boolean,
+    todoFlag: TodoFlag,
     showDescriptionError: Boolean,
     onTodoDescriptionChanged: (String) -> Unit,
     onTodoPriorityChanged: (TodoPriority) -> Unit,
@@ -126,12 +126,22 @@ fun AddEditTodoScreen(
                     Text(text = stringResource(R.string.recurring))
                     Spacer(modifier = Modifier.size(4.dp))
                     Checkbox(
-                        checked = isRecurringTodo,
+                        checked = todoFlag == TodoFlag.RECURRING,
                         onCheckedChange = { recurring ->
                             if (recurring) onTodoFlagChanged(TodoFlag.RECURRING)
                             else onTodoFlagChanged(TodoFlag.UNDONE)
                         }
                     )
+                }
+                Spacer(modifier = Modifier.size(8.dp))
+
+                if (inEditingMode && todoFlag != TodoFlag.RECURRING) {
+                    val status = when (todoFlag) {
+                        TodoFlag.UNDONE -> stringResource(R.string.undone)
+                        TodoFlag.IN_PROGRESS -> stringResource(R.string.todo_in_progress)
+                        else -> stringResource(R.string.done)
+                    }
+                    Text(text = stringResource(R.string.status, status))
                 }
                 Spacer(modifier = Modifier.size(32.dp))
 
@@ -211,7 +221,7 @@ fun AddEditTodoScreenPreview() {
             todoCategoryColor = Color(0xff85586F),
             todoDescription = todoDescription,
             todoPriority = TodoPriority.HIGH,
-            isRecurringTodo = false,
+            todoFlag = TodoFlag.IN_PROGRESS,
             inEditingMode = true,
             showDescriptionError = false,
             onTodoDescriptionChanged = {},
