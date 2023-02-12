@@ -120,6 +120,7 @@ fun TodosScreen(
                     .fillMaxWidth(0.55f)
                     .padding(16.dp),
                 onClick = onCheckOffCompletedTodos,
+                enabled = state.checkOffTodosButtonActivated
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Checklist,

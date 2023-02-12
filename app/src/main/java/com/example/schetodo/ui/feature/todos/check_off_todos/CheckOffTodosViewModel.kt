@@ -12,11 +12,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class CheckOffTodosSnackBarType {
-    UNDO_CHECK_OFF_TODOS,
-    UNDO_MARK_TODO_AS_UNDONE
-}
-
 @HiltViewModel
 class CheckOffTodosViewModel @Inject constructor(
     private val todoRepository: TodoRepository,
@@ -26,6 +21,9 @@ class CheckOffTodosViewModel @Inject constructor(
     private val _todosInProgress = MutableStateFlow(emptyList<TodoCategoryTodoPair>())
     val todosInProgress: StateFlow<List<TodoCategoryTodoPair>>
         get() = _todosInProgress.asStateFlow()
+
+    val todosMarkedForCheckOff: Boolean
+        get() = _todosInProgress.value.any { it.markedForCheckOff }
 
     private val _snackBarFlow = MutableSharedFlow<CheckOffTodosSnackBarType>()
     val snackBarFlow: SharedFlow<CheckOffTodosSnackBarType>
@@ -108,7 +106,7 @@ class CheckOffTodosViewModel @Inject constructor(
 
     private fun checkOffTodos() {
         viewModelScope.launch {
-            val todosToCheckOff = _todosInProgress.value.filter { it.checkedOff }.map { it.todo }
+            val todosToCheckOff = _todosInProgress.value.filter { it.markedForCheckOff }.map { it.todo }
 
             todosToCheckOff.forEach { todoCategoryTodoPair ->
                 todoRepository.updateTodo(
@@ -125,7 +123,7 @@ class CheckOffTodosViewModel @Inject constructor(
     private fun undoMarkTodoForCheckOff(todoId: Int) {
         _todosInProgress.value = _todosInProgress.value.map {
             if (todoId == it.todo.todoId)
-                it.copy(checkedOff = false)
+                it.copy(markedForCheckOff = false)
             else
                 it
         }
@@ -134,15 +132,20 @@ class CheckOffTodosViewModel @Inject constructor(
     private fun markTodoForCheckOff(todoId: Int) {
         _todosInProgress.value = _todosInProgress.value.map {
             if (todoId == it.todo.todoId)
-                it.copy(checkedOff = true)
+                it.copy(markedForCheckOff = true)
             else
                 it
         }
     }
 }
 
+enum class CheckOffTodosSnackBarType {
+    UNDO_CHECK_OFF_TODOS,
+    UNDO_MARK_TODO_AS_UNDONE
+}
+
 data class TodoCategoryTodoPair(
     val todo: Todo,
     val todoCategory: TodoCategory,
-    var checkedOff: Boolean = false
+    var markedForCheckOff: Boolean = false
 )

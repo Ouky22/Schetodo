@@ -19,8 +19,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -95,7 +93,8 @@ fun CheckOffTodosScreen(
         onCheckOffTodo = { viewModel.onEvent(CheckOffTodosEvent.CheckOffTodo(it)) },
         onCheckOffTodos = { viewModel.onEvent(CheckOffTodosEvent.CheckOffMarkedTodos) },
         onMarkTodoAsUndone = { viewModel.onEvent(CheckOffTodosEvent.MarkTodoAsUndone(it)) },
-        onBackButtonClick = { navController.popBackStack() }
+        onBackButtonClick = { navController.popBackStack() },
+        checkOffTodosButtonActivated = viewModel.todosMarkedForCheckOff
     )
 }
 
@@ -110,7 +109,8 @@ fun CheckOffTodosScreen(
     onCheckOffTodo: (todoId: Int) -> Unit,
     onCheckOffTodos: () -> Unit,
     onMarkTodoAsUndone: (todoId: Int) -> Unit,
-    onBackButtonClick: () -> Unit
+    onBackButtonClick: () -> Unit,
+    checkOffTodosButtonActivated: Boolean
 ) {
     Scaffold(
         scaffoldState = scaffoldState,
@@ -150,7 +150,7 @@ fun CheckOffTodosScreen(
                                 parentTodoCategoryIcon = getIconByName(todoCategoryTodoPair.todoCategory.iconName)
                                     ?: Icons.Filled.Category,
                                 parentTodoCategoryColor = Color(todoCategoryTodoPair.todoCategory.color),
-                                checkedOff = todoCategoryTodoPair.checkedOff,
+                                checkedOff = todoCategoryTodoPair.markedForCheckOff,
                                 onCheck = { checkedOff ->
                                     val todoId = todoCategoryTodoPair.todo.todoId
                                     if (checkedOff) onMarkTodoForCheckOff(todoId)
@@ -164,7 +164,8 @@ fun CheckOffTodosScreen(
                     onClick = onCheckOffTodos,
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
-                        .padding(vertical = 16.dp)
+                        .padding(vertical = 16.dp),
+                    enabled = checkOffTodosButtonActivated
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Checklist,
@@ -340,7 +341,8 @@ fun CheckOffTodosScreenPreview() {
             onMarkTodoForCheckOff = {},
             onCheckOffTodo = {},
             onMarkTodoAsUndone = {},
-            onBackButtonClick = {}
+            onBackButtonClick = {},
+            checkOffTodosButtonActivated = true
         )
     }
 }
@@ -360,7 +362,8 @@ fun CheckOffTodosScreenWhenNoTodosInProgressPreview() {
             onMarkTodoForCheckOff = {},
             onCheckOffTodo = {},
             onMarkTodoAsUndone = {},
-            onBackButtonClick = {}
+            onBackButtonClick = {},
+            checkOffTodosButtonActivated = true
         )
     }
 }

@@ -32,6 +32,7 @@ class TodosViewModel @Inject constructor(
 
     init {
         setCurrentTodoCategory(null)
+        checkIfThereAreTodosInProgress()
     }
 
     fun onEvent(event: TodosEvent) {
@@ -80,6 +81,17 @@ class TodosViewModel @Inject constructor(
 
         val parentCategory = todosState.value.currentCategory?.parentTodoCategoryId
         setCurrentTodoCategory(parentCategory)
+    }
+
+    private fun checkIfThereAreTodosInProgress() {
+        viewModelScope.launch {
+            todoRepository.getTodosInProgress().collect {
+                if (it.isEmpty())
+                    _todosState.value = _todosState.value.copy(checkOffTodosButtonActivated = false)
+                else
+                    _todosState.value = _todosState.value.copy(checkOffTodosButtonActivated = true)
+            }
+        }
     }
 
     private fun setCurrentTodoCategory(currentTodoCategoryId: Int?) {
