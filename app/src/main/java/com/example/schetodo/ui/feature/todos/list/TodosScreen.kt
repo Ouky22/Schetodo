@@ -25,7 +25,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
 import com.example.schetodo.data.entity.Todo
@@ -37,7 +36,6 @@ import kotlinx.coroutines.launch
 
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
-@ExperimentalLifecycleComposeApi
 @Composable
 fun TodosScreen(
     modifier: Modifier = Modifier,
@@ -148,6 +146,7 @@ fun TodoCategoryTodoList(
             CategoryItem(
                 modifier = Modifier
                     .height(125.dp)
+                    .fillMaxWidth()
                     .padding(vertical = 8.dp, horizontal = 16.dp)
                     .combinedClickable(
                         onClick = { onClickOnTodoCategory(todoCategory) },
@@ -162,6 +161,7 @@ fun TodoCategoryTodoList(
             TodoItem(
                 modifier = Modifier
                     .height(125.dp)
+                    .fillMaxWidth()
                     .padding(vertical = 8.dp, horizontal = 16.dp)
                     .clickable { onClickOnTodo(todo) },
                 todo = todo

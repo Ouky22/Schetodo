@@ -34,7 +34,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.schetodo.R
@@ -49,7 +48,7 @@ import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.showSnackbarWithActionHandler
 
-@ExperimentalLifecycleComposeApi
+
 @ExperimentalMaterial3Api
 @Composable
 fun CheckOffTodosScreen(
@@ -280,7 +279,7 @@ fun CheckOffTodoItem(
                     .padding(8.dp)
             ) {
                 CategoryItem(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
                     todoCategoryName = parentTodoCategoryName,
                     todoCategoryColor = parentTodoCategoryColor,
                     todoCategoryIcon = parentTodoCategoryIcon

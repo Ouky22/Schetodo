@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,11 +41,12 @@ fun TodosScreenListItem(
         colors = CardDefaults.cardColors(containerColor = cardBackgroundColor),
     ) {
         Row(
-            modifier = Modifier.padding(8.dp).fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.padding(8.dp).wrapContentWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
         ) {
             Column(
-                modifier = Modifier.weight(1f).padding(4.dp),
+                modifier = Modifier.wrapContentWidth().padding(4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Box(
@@ -64,16 +66,15 @@ fun TodosScreenListItem(
                 }
             }
 
-            Column(
-                modifier = Modifier
-                    .weight(3f)
-                    .padding(horizontal = 8.dp)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Center
-            ) {
+//            Column(
+//                modifier = Modifier
+//                    .wrapContentWidth()
+//                    .padding(horizontal = 8.dp),
+//                horizontalAlignment = Alignment.Start,
+//                verticalArrangement = Arrangement.Center
+//            ) {
                 text()
-            }
+//            }
         }
     }
 }
@@ -83,7 +84,8 @@ fun CategoryItem(
     modifier: Modifier = Modifier,
     todoCategoryName: String,
     todoCategoryColor: Color,
-    todoCategoryIcon: ImageVector
+    todoCategoryIcon: ImageVector,
+    textStyle: TextStyle = MaterialTheme.typography.headlineMedium
 ) {
     TodosScreenListItem(
         modifier = modifier,
@@ -93,10 +95,11 @@ fun CategoryItem(
         text = {
             Text(
                 text = todoCategoryName,
-                style = MaterialTheme.typography.headlineMedium,
-                textAlign = TextAlign.Center,
+                style = textStyle,
+                textAlign = TextAlign.Start,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(8.dp)
             )
         }
     )
@@ -121,7 +124,8 @@ fun TodoItem(
                 text = todo.description,
                 textAlign = TextAlign.Start,
                 maxLines = 3,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(start = 4.dp)
             )
         }
     )
@@ -149,7 +153,7 @@ fun TodoItem() {
 fun CategoryItemPreview() {
     SchetodoTheme {
         CategoryItem(
-            modifier = Modifier.height(100.dp),
+            modifier = Modifier.height(100.dp).fillMaxWidth(),
             todoCategoryName = "Household",
             todoCategoryColor = Color(0xff799FCB),
             todoCategoryIcon = Icons.Filled.House

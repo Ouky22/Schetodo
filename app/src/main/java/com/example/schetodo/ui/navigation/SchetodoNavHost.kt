@@ -4,7 +4,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,7 +13,6 @@ import com.example.schetodo.ui.feature.statistics.StatisticsScreen
 
 @ExperimentalFoundationApi
 @Composable
-@ExperimentalLifecycleComposeApi
 @ExperimentalMaterial3Api
 fun SchetodoNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(

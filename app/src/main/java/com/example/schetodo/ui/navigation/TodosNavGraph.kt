@@ -6,7 +6,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -21,7 +20,6 @@ import com.example.schetodo.ui.feature.todos.check_off_todos.CheckOffTodosScreen
 import com.example.schetodo.ui.feature.todos.check_off_todos.CheckOffTodosViewModel
 
 @ExperimentalFoundationApi
-@ExperimentalLifecycleComposeApi
 @ExperimentalMaterial3Api
 fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
     navigation(
