@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.schetodo.data.entity.Todo
 import com.example.schetodo.data.entity.TodoCategory
 import com.example.schetodo.data.entity.TodoFlag
-import com.example.schetodo.data.entity.TodoPriority
 import com.example.schetodo.data.repository.TodoCategoryRepository
 import com.example.schetodo.data.repository.TodoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,13 +37,35 @@ class CheckOffTodosViewModel @Inject constructor(
 
     fun onEvent(event: CheckOffTodosEvent) {
         when (event) {
-            is CheckOffTodosEvent.MarkTodoForCheckOff -> onMarkTodoForCheckOff(event.todoId)
-            is CheckOffTodosEvent.UndoMarkTodoForCheckOff -> onUndoMarkTodoForCheckOff(event.todoId)
-            is CheckOffTodosEvent.CheckOffMarkedTodos -> onCheckOffTodos()
+            is CheckOffTodosEvent.MarkTodoForCheckOff -> markTodoForCheckOff(event.todoId)
+            is CheckOffTodosEvent.UndoMarkTodoForCheckOff -> undoMarkTodoForCheckOff(event.todoId)
+            is CheckOffTodosEvent.CheckOffMarkedTodos -> checkOffTodos()
+            is CheckOffTodosEvent.CheckOffTodo -> checkOffTodo(event.todoId)
+            is CheckOffTodosEvent.MarkTodoAsUndone -> markTodoAsUndone(event.todoId)
         }
     }
 
-    private fun onCheckOffTodos() {
+    private fun markTodoAsUndone(todoId: Int) {
+        viewModelScope.launch {
+            val undoneTodo =
+                _todosInProgress.value.find { it.todo.todoId == todoId }?.todo ?: return@launch
+            todoRepository.updateTodo(
+                undoneTodo.copy(flag = TodoFlag.UNDONE)
+            )
+        }
+    }
+
+    private fun checkOffTodo(todoId: Int) {
+        viewModelScope.launch {
+            val todoToCheckOff =
+                _todosInProgress.value.find { it.todo.todoId == todoId }?.todo ?: return@launch
+            todoRepository.updateTodo(
+                todoToCheckOff.copy(flag = TodoFlag.DONE)
+            )
+        }
+    }
+
+    private fun checkOffTodos() {
         viewModelScope.launch {
             _todosInProgress.value.filter { it.checkedOff }.forEach { todoCategoryTodoPair ->
                 todoRepository.updateTodo(
@@ -54,7 +75,7 @@ class CheckOffTodosViewModel @Inject constructor(
         }
     }
 
-    private fun onUndoMarkTodoForCheckOff(todoId: Int) {
+    private fun undoMarkTodoForCheckOff(todoId: Int) {
         _todosInProgress.value = _todosInProgress.value.map {
             if (todoId == it.todo.todoId)
                 it.copy(checkedOff = false)
@@ -63,7 +84,7 @@ class CheckOffTodosViewModel @Inject constructor(
         }
     }
 
-    private fun onMarkTodoForCheckOff(todoId: Int) {
+    private fun markTodoForCheckOff(todoId: Int) {
         _todosInProgress.value = _todosInProgress.value.map {
             if (todoId == it.todo.todoId)
                 it.copy(checkedOff = true)

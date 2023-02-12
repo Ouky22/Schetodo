@@ -64,11 +64,9 @@ fun CheckOffTodosScreen(
         onUndoMarkTodoForCheckOff = {
             viewModel.onEvent(CheckOffTodosEvent.UndoMarkTodoForCheckOff(it))
         },
-        onCheckOffSpecificTodo = {
-            // TODO
-        },
+        onCheckOffTodo = { viewModel.onEvent(CheckOffTodosEvent.CheckOffTodo(it)) },
         onCheckOffTodos = { viewModel.onEvent(CheckOffTodosEvent.CheckOffMarkedTodos) },
-        onMarkTodoAsUndone = {},
+        onMarkTodoAsUndone = { viewModel.onEvent(CheckOffTodosEvent.MarkTodoAsUndone(it)) },
         onBackButtonClick = { navController.popBackStack() }
     )
 }
@@ -81,7 +79,7 @@ fun CheckOffTodosScreen(
     todoCategoryTodoPairs: List<TodoCategoryTodoPair>,
     onMarkTodoForCheckOff: (todoId: Int) -> Unit,
     onUndoMarkTodoForCheckOff: (todoId: Int) -> Unit,
-    onCheckOffSpecificTodo: (todoId: Int) -> Unit,
+    onCheckOffTodo: (todoId: Int) -> Unit,
     onCheckOffTodos: () -> Unit,
     onMarkTodoAsUndone: (todoId: Int) -> Unit,
     onBackButtonClick: () -> Unit
@@ -104,10 +102,13 @@ fun CheckOffTodosScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 LazyColumn(modifier = modifier.weight(1f)) {
-                    items(todoCategoryTodoPairs) { todoCategoryTodoPair ->
+                    items(
+                        items = todoCategoryTodoPairs,
+                        key = { it.todo.todoId }
+                    ) { todoCategoryTodoPair ->
                         SwipeableCheckOffTodoItemContainer(
                             todoCategoryTodoPair = todoCategoryTodoPair,
-                            onCheckOffSpecificTodo = onCheckOffSpecificTodo,
+                            onCheckOffTodo = onCheckOffTodo,
                             onMarkTodoAsUndone = onMarkTodoAsUndone
                         ) {
                             CheckOffTodoItem(
@@ -151,7 +152,7 @@ fun CheckOffTodosScreen(
 @Composable
 fun SwipeableCheckOffTodoItemContainer(
     modifier: Modifier = Modifier,
-    onCheckOffSpecificTodo: (todoId: Int) -> Unit,
+    onCheckOffTodo: (todoId: Int) -> Unit,
     onMarkTodoAsUndone: (todoId: Int) -> Unit,
     todoCategoryTodoPair: TodoCategoryTodoPair,
     content: @Composable (RowScope.() -> Unit)
@@ -159,7 +160,7 @@ fun SwipeableCheckOffTodoItemContainer(
     val dismissState = rememberDismissState(
         confirmStateChange = {
             if (it == DismissValue.DismissedToEnd)
-                onCheckOffSpecificTodo(todoCategoryTodoPair.todo.todoId)
+                onCheckOffTodo(todoCategoryTodoPair.todo.todoId)
             else if (it == DismissValue.DismissedToStart)
                 onMarkTodoAsUndone(todoCategoryTodoPair.todo.todoId)
             it != DismissValue.DismissedToEnd
@@ -307,7 +308,7 @@ fun CheckOffTodosScreenPreview() {
             onCheckOffTodos = {},
             onUndoMarkTodoForCheckOff = {},
             onMarkTodoForCheckOff = {},
-            onCheckOffSpecificTodo = {},
+            onCheckOffTodo = {},
             onMarkTodoAsUndone = {},
             onBackButtonClick = {}
         )
@@ -327,7 +328,7 @@ fun CheckOffTodosScreenWhenNoTodosInProgressPreview() {
             onCheckOffTodos = {},
             onUndoMarkTodoForCheckOff = {},
             onMarkTodoForCheckOff = {},
-            onCheckOffSpecificTodo = {},
+            onCheckOffTodo = {},
             onMarkTodoAsUndone = {},
             onBackButtonClick = {}
         )
