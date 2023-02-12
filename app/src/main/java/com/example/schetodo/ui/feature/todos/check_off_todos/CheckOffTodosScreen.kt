@@ -19,8 +19,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +31,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,7 +49,7 @@ import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.list.CategoryItem
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
-
+import com.example.schetodo.ui.util.showSnackbarWithActionHandler
 
 @ExperimentalLifecycleComposeApi
 @ExperimentalMaterial3Api
@@ -56,8 +60,32 @@ fun CheckOffTodosScreen(
     modifier: Modifier = Modifier
 ) {
     val todosInProgress by viewModel.todosInProgress.collectAsStateWithLifecycle()
+    val scaffoldState = rememberScaffoldState()
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = true) {
+        viewModel.snackBarFlow.collect { snackBarType ->
+            when (snackBarType) {
+                CheckOffTodosSnackBarType.UNDO_CHECK_OFF_TODOS -> {
+                    scaffoldState.snackbarHostState.showSnackbarWithActionHandler(
+                        message = context.getString(R.string.checked_off),
+                        actionLabel = context.getString(R.string.undo),
+                        onActionPerformed = { viewModel.onEvent(CheckOffTodosEvent.UndoCheckOffTodos) }
+                    )
+                }
+                CheckOffTodosSnackBarType.UNDO_MARK_TODO_AS_UNDONE -> {
+                    scaffoldState.snackbarHostState.showSnackbarWithActionHandler(
+                        message = "Marked as undone",
+                        actionLabel = context.getString(R.string.undo),
+                        onActionPerformed = { viewModel.onEvent(CheckOffTodosEvent.UndoMarkTodoAsUndone) }
+                    )
+                }
+            }
+        }
+    }
 
     CheckOffTodosScreen(
+        scaffoldState = scaffoldState,
         todoCategoryTodoPairs = todosInProgress,
         modifier = modifier,
         onMarkTodoForCheckOff = { viewModel.onEvent(CheckOffTodosEvent.MarkTodoForCheckOff(it)) },
@@ -71,11 +99,11 @@ fun CheckOffTodosScreen(
     )
 }
 
-
 @ExperimentalMaterial3Api
 @Composable
 fun CheckOffTodosScreen(
     modifier: Modifier = Modifier,
+    scaffoldState: ScaffoldState = rememberScaffoldState(),
     todoCategoryTodoPairs: List<TodoCategoryTodoPair>,
     onMarkTodoForCheckOff: (todoId: Int) -> Unit,
     onUndoMarkTodoForCheckOff: (todoId: Int) -> Unit,
@@ -85,6 +113,8 @@ fun CheckOffTodosScreen(
     onBackButtonClick: () -> Unit
 ) {
     Scaffold(
+        scaffoldState = scaffoldState,
+        backgroundColor = MaterialTheme.colorScheme.background,
         topBar = {
             SchetodoTopAppBar(
                 title = stringResource(R.string.check_off_done_todos),

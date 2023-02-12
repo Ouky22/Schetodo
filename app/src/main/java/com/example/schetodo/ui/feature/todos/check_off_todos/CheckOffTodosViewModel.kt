@@ -12,6 +12,11 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+enum class CheckOffTodosSnackBarType {
+    UNDO_CHECK_OFF_TODOS,
+    UNDO_MARK_TODO_AS_UNDONE
+}
+
 @HiltViewModel
 class CheckOffTodosViewModel @Inject constructor(
     private val todoRepository: TodoRepository,
@@ -21,6 +26,13 @@ class CheckOffTodosViewModel @Inject constructor(
     private val _todosInProgress = MutableStateFlow(emptyList<TodoCategoryTodoPair>())
     val todosInProgress: StateFlow<List<TodoCategoryTodoPair>>
         get() = _todosInProgress.asStateFlow()
+
+    private val _snackBarFlow = MutableSharedFlow<CheckOffTodosSnackBarType>()
+    val snackBarFlow: SharedFlow<CheckOffTodosSnackBarType>
+        get() = _snackBarFlow.asSharedFlow()
+
+    private val todosRecentlyCheckedOff = mutableListOf<Todo>()
+    private val todosRecentlyMarkedAsUndone = mutableListOf<Todo>()
 
     init {
         viewModelScope.launch {
@@ -42,36 +54,71 @@ class CheckOffTodosViewModel @Inject constructor(
             is CheckOffTodosEvent.CheckOffMarkedTodos -> checkOffTodos()
             is CheckOffTodosEvent.CheckOffTodo -> checkOffTodo(event.todoId)
             is CheckOffTodosEvent.MarkTodoAsUndone -> markTodoAsUndone(event.todoId)
+            is CheckOffTodosEvent.UndoCheckOffTodos -> undoCheckOffTodos()
+            is CheckOffTodosEvent.UndoMarkTodoAsUndone -> undoMarkTodoAsUndone()
+        }
+    }
+
+    private fun undoCheckOffTodos() {
+        viewModelScope.launch {
+            todosRecentlyCheckedOff.forEach {
+                todoRepository.updateTodo(it.copy(flag = TodoFlag.IN_PROGRESS))
+            }
+            todosRecentlyCheckedOff.clear()
+        }
+    }
+
+    private fun undoMarkTodoAsUndone() {
+        viewModelScope.launch {
+            todosRecentlyMarkedAsUndone.forEach {
+                todoRepository.updateTodo(it.copy(flag = TodoFlag.IN_PROGRESS))
+            }
+            todosRecentlyMarkedAsUndone.clear()
         }
     }
 
     private fun markTodoAsUndone(todoId: Int) {
         viewModelScope.launch {
-            val undoneTodo =
-                _todosInProgress.value.find { it.todo.todoId == todoId }?.todo ?: return@launch
-            todoRepository.updateTodo(
-                undoneTodo.copy(flag = TodoFlag.UNDONE)
-            )
+            val undoneTodo = _todosInProgress.value.find {
+                it.todo.todoId == todoId
+            }?.todo?.copy(flag = TodoFlag.UNDONE) ?: return@launch
+
+            todoRepository.updateTodo(undoneTodo)
+
+            _snackBarFlow.emit(CheckOffTodosSnackBarType.UNDO_MARK_TODO_AS_UNDONE)
+            todosRecentlyMarkedAsUndone.clear()
+            todosRecentlyMarkedAsUndone.add(undoneTodo)
         }
     }
 
     private fun checkOffTodo(todoId: Int) {
         viewModelScope.launch {
             val todoToCheckOff =
-                _todosInProgress.value.find { it.todo.todoId == todoId }?.todo ?: return@launch
-            todoRepository.updateTodo(
-                todoToCheckOff.copy(flag = TodoFlag.DONE)
-            )
+                _todosInProgress.value.find {
+                    it.todo.todoId == todoId
+                }?.todo?.copy(flag = TodoFlag.DONE) ?: return@launch
+
+            todoRepository.updateTodo(todoToCheckOff)
+
+            _snackBarFlow.emit(CheckOffTodosSnackBarType.UNDO_CHECK_OFF_TODOS)
+            todosRecentlyCheckedOff.clear()
+            todosRecentlyCheckedOff.add(todoToCheckOff)
         }
     }
 
     private fun checkOffTodos() {
         viewModelScope.launch {
-            _todosInProgress.value.filter { it.checkedOff }.forEach { todoCategoryTodoPair ->
+            val todosToCheckOff = _todosInProgress.value.filter { it.checkedOff }.map { it.todo }
+
+            todosToCheckOff.forEach { todoCategoryTodoPair ->
                 todoRepository.updateTodo(
-                    todoCategoryTodoPair.todo.copy(flag = TodoFlag.DONE)
+                    todoCategoryTodoPair.copy(flag = TodoFlag.DONE)
                 )
             }
+
+            _snackBarFlow.emit(CheckOffTodosSnackBarType.UNDO_CHECK_OFF_TODOS)
+            todosRecentlyCheckedOff.clear()
+            todosRecentlyCheckedOff.addAll(todosToCheckOff)
         }
     }
 

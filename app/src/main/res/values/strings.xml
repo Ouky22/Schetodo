@@ -38,4 +38,6 @@
     <string name="todo_in_progress">In progress</string>
     <string name="done">Done</string>
     <string name="status">Status: %1$s</string>
+    <string name="undo">Undo</string>
+    <string name="checked_off">Checked off</string>
 </resources>

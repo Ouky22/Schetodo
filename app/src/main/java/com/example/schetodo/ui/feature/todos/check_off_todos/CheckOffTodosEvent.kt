@@ -6,4 +6,6 @@ sealed class CheckOffTodosEvent {
     object CheckOffMarkedTodos : CheckOffTodosEvent()
     data class CheckOffTodo(val todoId: Int) : CheckOffTodosEvent()
     data class MarkTodoAsUndone(val todoId: Int) : CheckOffTodosEvent()
+    object UndoCheckOffTodos: CheckOffTodosEvent()
+    object UndoMarkTodoAsUndone: CheckOffTodosEvent()
 }

@@ -24,6 +24,51 @@ internal class CheckOffTodosViewModelTest {
     private val fakeTodoRepository = FakeTodoRepository()
     private val fakeTodoCategoryRepository = FakeTodoCategoryRepository()
 
+
+    @Test
+    fun test_undoing_check_off_todos() = runTest {
+        val category = TodoCategory(1, "c1", 0, null, "icon")
+        val todo1 = Todo(1, "t1", TodoPriority.LOW, TodoFlag.IN_PROGRESS, category.categoryId)
+        val todo2 = Todo(2, "t2", TodoPriority.LOW, TodoFlag.IN_PROGRESS, category.categoryId)
+        val todo3 = Todo(3, "t3", TodoPriority.LOW, TodoFlag.IN_PROGRESS, category.categoryId)
+        fakeTodoCategoryRepository.insertTodoCategory(category)
+        fakeTodoRepository.insertTodo(todo1)
+        fakeTodoRepository.insertTodo(todo2)
+        fakeTodoRepository.insertTodo(todo3)
+        val viewModel = CheckOffTodosViewModel(fakeTodoRepository, fakeTodoCategoryRepository)
+
+        viewModel.onEvent(CheckOffTodosEvent.MarkTodoForCheckOff(todo1.todoId))
+        viewModel.onEvent(CheckOffTodosEvent.CheckOffMarkedTodos)
+        viewModel.onEvent(CheckOffTodosEvent.CheckOffTodo(todo2.todoId))
+        viewModel.onEvent(CheckOffTodosEvent.UndoCheckOffTodos) // should only affect last check off of todo2
+
+        val todos = fakeTodoRepository.getTodosOfTodoCategory(category.categoryId).first()
+        assertThat(todos.size).isEqualTo(3)
+        assertThat(todos).contains(todo1.copy(flag = TodoFlag.DONE))
+        assertThat(todos).contains(todo2)
+        assertThat(todos).contains(todo3)
+    }
+
+    @Test
+    fun test_undoing_mark_todo_as_undone() = runTest {
+        val category = TodoCategory(1, "c1", 0, null, "icon")
+        val todo1 = Todo(1, "t1", TodoPriority.LOW, TodoFlag.IN_PROGRESS, category.categoryId)
+        val todo2 = Todo(2, "t2", TodoPriority.LOW, TodoFlag.IN_PROGRESS, category.categoryId)
+        fakeTodoCategoryRepository.insertTodoCategory(category)
+        fakeTodoRepository.insertTodo(todo1)
+        fakeTodoRepository.insertTodo(todo2)
+        val viewModel = CheckOffTodosViewModel(fakeTodoRepository, fakeTodoCategoryRepository)
+
+        viewModel.onEvent(CheckOffTodosEvent.MarkTodoAsUndone(todo1.todoId))
+        viewModel.onEvent(CheckOffTodosEvent.MarkTodoAsUndone(todo2.todoId))
+        viewModel.onEvent(CheckOffTodosEvent.UndoMarkTodoAsUndone) // should only affect last undo of todo2
+
+        val todos = fakeTodoRepository.getTodosOfTodoCategory(category.categoryId).first()
+        assertThat(todos.size).isEqualTo(2)
+        assertThat(todos).contains(todo1.copy(flag = TodoFlag.UNDONE))
+        assertThat(todos).contains(todo2)
+    }
+
     @Test
     fun when_todo_is_checked_off_then_is_is_marked_as_done() = runTest {
         val category = TodoCategory(1, "c1", 0, null, "icon")
