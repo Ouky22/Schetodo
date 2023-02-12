@@ -1,18 +1,30 @@
 package com.example.schetodo.ui.feature.todos.check_off_todos
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.filled.RemoveDone
 import androidx.compose.material.icons.outlined.Checklist
 import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -52,7 +64,11 @@ fun CheckOffTodosScreen(
         onUndoMarkTodoForCheckOff = {
             viewModel.onEvent(CheckOffTodosEvent.UndoMarkTodoForCheckOff(it))
         },
+        onCheckOffSpecificTodo = {
+            // TODO
+        },
         onCheckOffTodos = { viewModel.onEvent(CheckOffTodosEvent.CheckOffMarkedTodos) },
+        onMarkTodoAsUndone = {},
         onBackButtonClick = { navController.popBackStack() }
     )
 }
@@ -65,7 +81,9 @@ fun CheckOffTodosScreen(
     todoCategoryTodoPairs: List<TodoCategoryTodoPair>,
     onMarkTodoForCheckOff: (todoId: Int) -> Unit,
     onUndoMarkTodoForCheckOff: (todoId: Int) -> Unit,
+    onCheckOffSpecificTodo: (todoId: Int) -> Unit,
     onCheckOffTodos: () -> Unit,
+    onMarkTodoAsUndone: (todoId: Int) -> Unit,
     onBackButtonClick: () -> Unit
 ) {
     Scaffold(
@@ -87,22 +105,28 @@ fun CheckOffTodosScreen(
             ) {
                 LazyColumn(modifier = modifier.weight(1f)) {
                     items(todoCategoryTodoPairs) { todoCategoryTodoPair ->
-                        CheckOffTodoItem(
-                            modifier = Modifier
-                                .height(175.dp)
-                                .padding(vertical = 8.dp, horizontal = 16.dp),
-                            todoDescription = todoCategoryTodoPair.todo.description,
-                            parentTodoCategoryName = todoCategoryTodoPair.todoCategory.name,
-                            parentTodoCategoryIcon = getIconByName(todoCategoryTodoPair.todoCategory.iconName)
-                                ?: Icons.Filled.Category,
-                            parentTodoCategoryColor = Color(todoCategoryTodoPair.todoCategory.color),
-                            checkedOff = todoCategoryTodoPair.checkedOff,
-                            onCheck = { checkedOff ->
-                                val todoId = todoCategoryTodoPair.todo.todoId
-                                if (checkedOff) onMarkTodoForCheckOff(todoId)
-                                else onUndoMarkTodoForCheckOff(todoId)
-                            }
-                        )
+                        SwipeableCheckOffTodoItemContainer(
+                            todoCategoryTodoPair = todoCategoryTodoPair,
+                            onCheckOffSpecificTodo = onCheckOffSpecificTodo,
+                            onMarkTodoAsUndone = onMarkTodoAsUndone
+                        ) {
+                            CheckOffTodoItem(
+                                modifier = Modifier
+                                    .height(175.dp)
+                                    .padding(vertical = 8.dp, horizontal = 16.dp),
+                                todoDescription = todoCategoryTodoPair.todo.description,
+                                parentTodoCategoryName = todoCategoryTodoPair.todoCategory.name,
+                                parentTodoCategoryIcon = getIconByName(todoCategoryTodoPair.todoCategory.iconName)
+                                    ?: Icons.Filled.Category,
+                                parentTodoCategoryColor = Color(todoCategoryTodoPair.todoCategory.color),
+                                checkedOff = todoCategoryTodoPair.checkedOff,
+                                onCheck = { checkedOff ->
+                                    val todoId = todoCategoryTodoPair.todo.todoId
+                                    if (checkedOff) onMarkTodoForCheckOff(todoId)
+                                    else onUndoMarkTodoForCheckOff(todoId)
+                                }
+                            )
+                        }
                     }
                 }
                 Button(
@@ -121,6 +145,68 @@ fun CheckOffTodosScreen(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun SwipeableCheckOffTodoItemContainer(
+    modifier: Modifier = Modifier,
+    onCheckOffSpecificTodo: (todoId: Int) -> Unit,
+    onMarkTodoAsUndone: (todoId: Int) -> Unit,
+    todoCategoryTodoPair: TodoCategoryTodoPair,
+    content: @Composable (RowScope.() -> Unit)
+) {
+    val dismissState = rememberDismissState(
+        confirmStateChange = {
+            if (it == DismissValue.DismissedToEnd)
+                onCheckOffSpecificTodo(todoCategoryTodoPair.todo.todoId)
+            else if (it == DismissValue.DismissedToStart)
+                onMarkTodoAsUndone(todoCategoryTodoPair.todo.todoId)
+            it != DismissValue.DismissedToEnd
+        }
+    )
+
+    SwipeToDismiss(
+        modifier = modifier,
+        state = dismissState,
+        directions = setOf(DismissDirection.StartToEnd, DismissDirection.EndToStart),
+        background = {
+            val direction =
+                dismissState.dismissDirection ?: return@SwipeToDismiss
+            val color by animateColorAsState(
+                when (dismissState.targetValue) {
+                    DismissValue.Default -> MaterialTheme.colorScheme.onBackground
+                    DismissValue.DismissedToEnd -> Color(0xFF90A17D)
+                    DismissValue.DismissedToStart -> Color(0xFFE97777)
+                }
+            )
+            val alignment = when (direction) {
+                DismissDirection.StartToEnd -> Alignment.CenterStart
+                DismissDirection.EndToStart -> Alignment.CenterEnd
+            }
+            val icon = when (direction) {
+                DismissDirection.StartToEnd -> Icons.Filled.Done
+                DismissDirection.EndToStart -> Icons.Filled.RemoveDone
+            }
+            val scale by animateFloatAsState(
+                if (dismissState.targetValue == DismissValue.Default) 0.75f else 1f
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color)
+                    .padding(horizontal = 20.dp),
+                contentAlignment = alignment
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.scale(scale)
+                )
+            }
+        },
+        dismissContent = content
+    )
 }
 
 @Composable
@@ -221,6 +307,8 @@ fun CheckOffTodosScreenPreview() {
             onCheckOffTodos = {},
             onUndoMarkTodoForCheckOff = {},
             onMarkTodoForCheckOff = {},
+            onCheckOffSpecificTodo = {},
+            onMarkTodoAsUndone = {},
             onBackButtonClick = {}
         )
     }
@@ -239,6 +327,8 @@ fun CheckOffTodosScreenWhenNoTodosInProgressPreview() {
             onCheckOffTodos = {},
             onUndoMarkTodoForCheckOff = {},
             onMarkTodoForCheckOff = {},
+            onCheckOffSpecificTodo = {},
+            onMarkTodoAsUndone = {},
             onBackButtonClick = {}
         )
     }
