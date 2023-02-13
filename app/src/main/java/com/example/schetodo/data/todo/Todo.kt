@@ -1,9 +1,10 @@
-package com.example.schetodo.data.entity
+package com.example.schetodo.data.todo
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.example.schetodo.data.entity.TodoCategory
 
 @Entity(
     foreignKeys = [

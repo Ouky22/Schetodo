@@ -1,12 +1,12 @@
 package com.example.schetodo.ui.feature.todos.add_edit_todo
 
 import androidx.lifecycle.SavedStateHandle
-import com.example.schetodo.data.entity.Todo
+import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.entity.TodoCategory
-import com.example.schetodo.data.entity.TodoFlag
-import com.example.schetodo.data.entity.TodoPriority
+import com.example.schetodo.data.todo.TodoFlag
+import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.repository.FakeTodoCategoryRepository
-import com.example.schetodo.data.repository.FakeTodoRepository
+import com.example.schetodo.data.todo.FakeTodoRepository
 import com.example.schetodo.ui.navigation.AddTodo
 import com.example.schetodo.ui.navigation.EditTodo
 import com.example.schetodo.util.MainDispatcherRule
@@ -14,7 +14,6 @@ import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
 import org.junit.Rule

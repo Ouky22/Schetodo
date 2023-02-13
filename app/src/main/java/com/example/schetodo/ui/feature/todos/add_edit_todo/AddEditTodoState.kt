@@ -1,7 +1,7 @@
 package com.example.schetodo.ui.feature.todos.add_edit_todo
 
-import com.example.schetodo.data.entity.TodoFlag
-import com.example.schetodo.data.entity.TodoPriority
+import com.example.schetodo.data.todo.TodoFlag
+import com.example.schetodo.data.todo.TodoPriority
 
 data class AddEditTodoState(
     val parentTodoCategoryName: String = "",

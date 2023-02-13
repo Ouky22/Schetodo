@@ -1,8 +1,8 @@
-package com.example.schetodo.data.dao
+package com.example.schetodo.data.todo
 
 import androidx.room.*
-import com.example.schetodo.data.entity.Todo
-import com.example.schetodo.data.entity.TodoFlag
+import com.example.schetodo.data.todo.Todo
+import com.example.schetodo.data.todo.TodoFlag
 import kotlinx.coroutines.flow.Flow
 
 @Dao

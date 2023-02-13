@@ -37,10 +37,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.schetodo.R
-import com.example.schetodo.data.entity.Todo
+import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.entity.TodoCategory
-import com.example.schetodo.data.entity.TodoFlag
-import com.example.schetodo.data.entity.TodoPriority
+import com.example.schetodo.data.todo.TodoFlag
+import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.list.CategoryItem

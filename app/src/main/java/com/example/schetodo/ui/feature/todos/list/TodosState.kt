@@ -1,6 +1,6 @@
 package com.example.schetodo.ui.feature.todos.list
 
-import com.example.schetodo.data.entity.Todo
+import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.entity.TodoCategory
 
 data class TodosState(

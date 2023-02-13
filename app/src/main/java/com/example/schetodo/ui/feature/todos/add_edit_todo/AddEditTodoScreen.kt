@@ -19,8 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.schetodo.R
-import com.example.schetodo.data.entity.TodoFlag
-import com.example.schetodo.data.entity.TodoPriority
+import com.example.schetodo.data.todo.TodoFlag
+import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.feature.todos.components.AddEditTopBar
 import com.example.schetodo.ui.feature.todos.getIconByName

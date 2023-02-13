@@ -1,7 +1,7 @@
 package com.example.schetodo.data
 
 import androidx.room.TypeConverter
-import com.example.schetodo.data.entity.TodoPriority
+import com.example.schetodo.data.todo.TodoPriority
 import java.time.LocalDate
 import java.time.LocalTime
 

@@ -2,11 +2,11 @@ package com.example.schetodo.ui.feature.todos.check_off_todos
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.schetodo.data.entity.Todo
+import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.entity.TodoCategory
-import com.example.schetodo.data.entity.TodoFlag
+import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.repository.TodoCategoryRepository
-import com.example.schetodo.data.repository.TodoRepository
+import com.example.schetodo.data.todo.TodoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

@@ -1,14 +1,9 @@
-package com.example.schetodo.data.repository
+package com.example.schetodo.data.todo
 
-import com.example.schetodo.data.dao.FakeTodoDao
-import com.example.schetodo.data.dao.TodoDao
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import app.cash.turbine.test
-import com.example.schetodo.data.entity.Todo
-import com.example.schetodo.data.entity.TodoFlag
-import com.example.schetodo.data.entity.TodoPriority
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 

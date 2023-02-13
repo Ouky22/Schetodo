@@ -2,8 +2,8 @@ package com.example.schetodo.di
 
 import com.example.schetodo.data.repository.TodoCategoryRepository
 import com.example.schetodo.data.repository.TodoCategoryRepositoryImpl
-import com.example.schetodo.data.repository.TodoRepository
-import com.example.schetodo.data.repository.TodoRepositoryImpl
+import com.example.schetodo.data.todo.TodoRepository
+import com.example.schetodo.data.todo.TodoRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

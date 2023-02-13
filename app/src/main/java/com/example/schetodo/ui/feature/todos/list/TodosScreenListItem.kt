@@ -21,9 +21,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.schetodo.data.entity.Todo
-import com.example.schetodo.data.entity.TodoFlag
-import com.example.schetodo.data.entity.TodoPriority
+import com.example.schetodo.data.todo.Todo
+import com.example.schetodo.data.todo.TodoFlag
+import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.ui.feature.todos.getTodoPriorityColorOf
 import com.example.schetodo.ui.theme.SchetodoTheme
 

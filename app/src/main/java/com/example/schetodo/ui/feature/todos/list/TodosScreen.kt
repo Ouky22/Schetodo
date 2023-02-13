@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
-import com.example.schetodo.data.entity.Todo
+import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.entity.TodoCategory
 import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.feature.todos.getIconByName

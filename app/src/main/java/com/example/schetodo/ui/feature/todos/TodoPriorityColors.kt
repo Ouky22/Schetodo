@@ -1,7 +1,7 @@
 package com.example.schetodo.ui.feature.todos
 
 import androidx.compose.ui.graphics.Color
-import com.example.schetodo.data.entity.TodoPriority
+import com.example.schetodo.data.todo.TodoPriority
 
 val lowTodoPriorityColor = Color(0xFF93BFCF)
 val mediumTodoPriorityColor = Color(0xFF6D8B74)

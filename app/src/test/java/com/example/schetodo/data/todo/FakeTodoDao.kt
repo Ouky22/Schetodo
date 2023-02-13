@@ -1,7 +1,5 @@
-package com.example.schetodo.data.dao
+package com.example.schetodo.data.todo
 
-import com.example.schetodo.data.entity.Todo
-import com.example.schetodo.data.entity.TodoFlag
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
