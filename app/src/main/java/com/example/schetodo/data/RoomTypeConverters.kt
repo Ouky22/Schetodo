@@ -7,13 +7,13 @@ import java.time.LocalTime
 
 class RoomTypeConverters {
     @TypeConverter
-    fun dateStampToDate(dateStampInDays: Long): LocalDate {
-        return LocalDate.ofEpochDay(dateStampInDays)
+    fun dateStampToDate(dateStampInDays: Long?): LocalDate? {
+        return dateStampInDays?.let { LocalDate.ofEpochDay(it) }
     }
 
     @TypeConverter
-    fun dateToDateStamp(date: LocalDate): Long {
-        return date.toEpochDay()
+    fun dateToDateStamp(date: LocalDate?): Long? {
+        return date?.toEpochDay()
     }
 
     @TypeConverter
