@@ -12,8 +12,6 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -24,10 +22,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.schetodo.data.entity.Todo
 import com.example.schetodo.data.entity.TodoCategory
-import com.example.schetodo.data.entity.TodoFlag
-import com.example.schetodo.data.entity.TodoPriority
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.list.CategoryItem
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
@@ -54,39 +49,44 @@ fun ScheduleListItem(
         Column(
             modifier = Modifier.padding(8.dp)
         ) {
-            FlowRow(
-                modifier = Modifier.wrapContentHeight()
-            ) {
-                todoCategories.forEach { todoCategory ->
-                    CategoryItem(
-                        modifier = Modifier
-                            .padding(2.dp)
-                            .height(50.dp),
-                        todoCategoryName = todoCategory.name,
-                        todoCategoryColor = Color(todoCategory.color),
-                        todoCategoryIcon = getIconByName(todoCategory.iconName)
-                            ?: Icons.Filled.Category,
-                        textStyle = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.size(8.dp))
-            Text(
-                modifier = Modifier.padding(start = 8.dp),
-                text = buildAnnotatedString {
-                    todoDescriptions.forEach {
-                        withStyle(style = ParagraphStyle(textIndent = TextIndent(restLine = 12.sp))) {
-                            append("\u2022")
-                            append("\t\t")
-                            append(it)
-                        }
+            if (todoCategories.isNotEmpty()) {
+                FlowRow(
+                    modifier = Modifier.wrapContentHeight()
+                ) {
+                    todoCategories.forEach { todoCategory ->
+                        CategoryItem(
+                            modifier = Modifier
+                                .padding(2.dp)
+                                .height(50.dp),
+                            todoCategoryName = todoCategory.name,
+                            todoCategoryColor = Color(todoCategory.color),
+                            todoCategoryIcon = getIconByName(todoCategory.iconName)
+                                ?: Icons.Filled.Category,
+                            textStyle = MaterialTheme.typography.bodyMedium
+                        )
                     }
                 }
-            )
-            Text(
-                text = todoBlocKNotes,
-                modifier = Modifier.padding(8.dp)
-            )
+            }
+            if (todoDescriptions.isNotEmpty()) {
+                Text(
+                    modifier = Modifier.padding(8.dp),
+                    text = buildAnnotatedString {
+                        todoDescriptions.forEach {
+                            withStyle(style = ParagraphStyle(textIndent = TextIndent(restLine = 12.sp))) {
+                                append("\u2022")
+                                append("\t\t")
+                                append(it)
+                            }
+                        }
+                    }
+                )
+            }
+            if (todoBlocKNotes.isNotEmpty()) {
+                Text(
+                    text = todoBlocKNotes,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
             Divider(
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
@@ -123,20 +123,54 @@ fun ScheduleListItemPreview() {
             2, "Piano", todoCategoryColors[3].toArgb().toLong(), null, Icons.Filled.School.name
         )
     )
-    val todos = listOf(
-        Todo(1, "Wash the dishes", TodoPriority.LOW, TodoFlag.UNDONE, 1),
-        Todo(2, "Clean the floor", TodoPriority.LOW, TodoFlag.UNDONE, 1),
-        Todo(3, "Bake a cake", TodoPriority.LOW, TodoFlag.UNDONE, 1)
-    )
-
     SchetodoTheme {
         ScheduleListItem(
             modifier = Modifier
                 .wrapContentHeight()
                 .fillMaxWidth(),
             todoCategories = todoCategories,
-            todoDescriptions = todos.map { it.description },
+            todoDescriptions = listOf("Wash the dishes", "Clean the floor", "Bake a cake"),
             todoBlocKNotes = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
+            startTimeString = "14.00",
+            endTimeString = "16.30",
+            durationString = "2 Std 30 min"
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ScheduleListItemPreviewWithoutCategoriesAndTodos() {
+    SchetodoTheme {
+        ScheduleListItem(
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth(),
+            todoCategories = emptyList(),
+            todoDescriptions = emptyList(),
+            todoBlocKNotes = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
+            startTimeString = "14.00",
+            endTimeString = "16.30",
+            durationString = "2 Std 30 min"
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ScheduleListItemPreviewWithoutNotes() {
+    val category = TodoCategory(
+        1, "Household", todoCategoryColors[0].toArgb().toLong(), null,
+        Icons.Filled.House.name
+    )
+    SchetodoTheme {
+        ScheduleListItem(
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth(),
+            todoCategories = listOf(category),
+            todoDescriptions = listOf("Wash the dishes"),
+            todoBlocKNotes = "",
             startTimeString = "14.00",
             endTimeString = "16.30",
             durationString = "2 Std 30 min"
