@@ -1,9 +1,10 @@
-package com.example.schetodo.data.entity
+package com.example.schetodo.data.todo_block
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.example.schetodo.data.entity.TodoTemplate
 import java.time.LocalDate
 import java.time.LocalTime
 

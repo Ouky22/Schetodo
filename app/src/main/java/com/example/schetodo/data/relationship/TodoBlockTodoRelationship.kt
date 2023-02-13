@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import com.example.schetodo.data.todo.Todo
-import com.example.schetodo.data.entity.TodoBlock
+import com.example.schetodo.data.todo_block.TodoBlock
 
 @Entity(
     primaryKeys = ["todoBlockId", "todoId"],

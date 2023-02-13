@@ -53,7 +53,9 @@
                 <map>
                   <entry key="Duration" value="90" />
                   <entry key="Pixel_3a_API_33" value="120" />
+                  <entry key="RF8M712DG6R" value="120" />
                   <entry key="Tests" value="360" />
+                  <entry key="samsung&#10; SM-G973F" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>

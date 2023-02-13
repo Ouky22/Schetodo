@@ -3,6 +3,7 @@ package com.example.schetodo.data.entity
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
+import com.example.schetodo.data.todo_block.TodoBlock
 import java.time.LocalTime
 
 @Entity(
