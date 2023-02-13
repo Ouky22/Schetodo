@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.schetodo.data.dao.TodoBlockDao
 import com.example.schetodo.data.dao.TodoCategoryDao
 import com.example.schetodo.data.dao.TodoDao
 import com.example.schetodo.data.entity.*
@@ -23,6 +24,7 @@ abstract class SchetodoDatabase : RoomDatabase() {
 
     abstract val todoCategoryDao: TodoCategoryDao
     abstract val todoDao: TodoDao
+    abstract val todoBlockDao: TodoBlockDao
 
     companion object {
         @Volatile
