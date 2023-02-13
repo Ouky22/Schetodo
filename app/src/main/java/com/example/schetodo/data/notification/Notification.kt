@@ -1,4 +1,4 @@
-package com.example.schetodo.data.entity
+package com.example.schetodo.data.notification
 
 import androidx.room.Entity
 import androidx.room.ForeignKey

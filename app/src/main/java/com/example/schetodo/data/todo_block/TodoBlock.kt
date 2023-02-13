@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.example.schetodo.data.entity.TodoTemplate
+import com.example.schetodo.data.todo_template.TodoTemplate
 import java.time.LocalDate
 import java.time.LocalTime
 
