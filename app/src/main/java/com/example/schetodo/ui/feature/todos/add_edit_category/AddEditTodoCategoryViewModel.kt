@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.schetodo.data.entity.TodoCategory
-import com.example.schetodo.data.repository.TodoCategoryRepository
+import com.example.schetodo.data.todo_category.TodoCategory
+import com.example.schetodo.data.todo_category.TodoCategoryRepository
 import com.example.schetodo.ui.navigation.AddTodoCategory
 import com.example.schetodo.ui.navigation.EditTodoCategory
 import dagger.hilt.android.lifecycle.HiltViewModel

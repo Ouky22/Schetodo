@@ -1,6 +1,5 @@
-package com.example.schetodo.data.repository
+package com.example.schetodo.data.todo_category
 
-import com.example.schetodo.data.entity.TodoCategory
 import kotlinx.coroutines.flow.Flow
 
 interface TodoCategoryRepository {

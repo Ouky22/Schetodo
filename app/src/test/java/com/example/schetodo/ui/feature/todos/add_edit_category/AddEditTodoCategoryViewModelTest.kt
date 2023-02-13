@@ -5,8 +5,8 @@ import androidx.compose.material.icons.filled.Architecture
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.House
 import androidx.lifecycle.SavedStateHandle
-import com.example.schetodo.data.entity.TodoCategory
-import com.example.schetodo.data.repository.FakeTodoCategoryRepository
+import com.example.schetodo.data.todo_category.TodoCategory
+import com.example.schetodo.data.todo_category.FakeTodoCategoryRepository
 import com.example.schetodo.ui.navigation.AddTodoCategory
 import com.example.schetodo.ui.navigation.EditTodoCategory
 import com.example.schetodo.util.MainDispatcherRule

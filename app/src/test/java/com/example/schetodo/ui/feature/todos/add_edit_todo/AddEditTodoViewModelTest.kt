@@ -2,10 +2,10 @@ package com.example.schetodo.ui.feature.todos.add_edit_todo
 
 import androidx.lifecycle.SavedStateHandle
 import com.example.schetodo.data.todo.Todo
-import com.example.schetodo.data.entity.TodoCategory
+import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
-import com.example.schetodo.data.repository.FakeTodoCategoryRepository
+import com.example.schetodo.data.todo_category.FakeTodoCategoryRepository
 import com.example.schetodo.data.todo.FakeTodoRepository
 import com.example.schetodo.ui.navigation.AddTodo
 import com.example.schetodo.ui.navigation.EditTodo

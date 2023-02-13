@@ -1,7 +1,5 @@
-package com.example.schetodo.data.repository
+package com.example.schetodo.data.todo_category
 
-import com.example.schetodo.data.dao.TodoCategoryDao
-import com.example.schetodo.data.entity.TodoCategory
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject

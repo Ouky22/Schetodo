@@ -1,11 +1,10 @@
-package com.example.schetodo.data.dao
+package com.example.schetodo.data.todo_category
 
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import app.cash.turbine.test
 import com.example.schetodo.data.SchetodoDatabase
-import com.example.schetodo.data.entity.TodoCategory
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first

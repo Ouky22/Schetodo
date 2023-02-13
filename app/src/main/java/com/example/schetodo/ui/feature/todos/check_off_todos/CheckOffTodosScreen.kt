@@ -38,7 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.schetodo.R
 import com.example.schetodo.data.todo.Todo
-import com.example.schetodo.data.entity.TodoCategory
+import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.ui.components.SchetodoTopAppBar

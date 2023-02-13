@@ -1,7 +1,7 @@
 package com.example.schetodo.ui.feature.todos.list
 
 import com.example.schetodo.data.todo.Todo
-import com.example.schetodo.data.entity.TodoCategory
+import com.example.schetodo.data.todo_category.TodoCategory
 
 data class TodosState(
     val currentCategory: TodoCategory? = null, // the todos screen starts with no category selected, so currentCategory is initially null

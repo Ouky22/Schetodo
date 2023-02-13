@@ -1,9 +1,6 @@
-package com.example.schetodo.data.repository
+package com.example.schetodo.data.todo_category
 
 import app.cash.turbine.test
-import com.example.schetodo.data.dao.FakeTodoCategoryDao
-import com.example.schetodo.data.dao.TodoCategoryDao
-import com.example.schetodo.data.entity.TodoCategory
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

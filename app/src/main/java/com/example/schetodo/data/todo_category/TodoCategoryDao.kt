@@ -1,7 +1,6 @@
-package com.example.schetodo.data.dao
+package com.example.schetodo.data.todo_category
 
 import androidx.room.*
-import com.example.schetodo.data.entity.TodoCategory
 import kotlinx.coroutines.flow.Flow
 
 @Dao

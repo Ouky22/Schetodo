@@ -1,7 +1,7 @@
 package com.example.schetodo.ui.feature.schedule
 
 import androidx.lifecycle.ViewModel
-import com.example.schetodo.data.entity.TodoCategory
+import com.example.schetodo.data.todo_category.TodoCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

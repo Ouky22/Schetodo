@@ -1,4 +1,4 @@
-package com.example.schetodo.data.entity
+package com.example.schetodo.data.todo_category
 
 import androidx.room.Entity
 import androidx.room.ForeignKey

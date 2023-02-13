@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
-import com.example.schetodo.data.repository.TodoCategoryRepository
+import com.example.schetodo.data.todo_category.TodoCategoryRepository
 import com.example.schetodo.data.todo.TodoRepository
 import com.example.schetodo.ui.navigation.AddTodo
 import com.example.schetodo.ui.navigation.EditTodo

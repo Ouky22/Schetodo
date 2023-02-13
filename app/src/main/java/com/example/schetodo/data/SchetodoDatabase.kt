@@ -5,13 +5,14 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.schetodo.data.todo_block.TodoBlockDao
-import com.example.schetodo.data.dao.TodoCategoryDao
+import com.example.schetodo.data.todo_category.TodoCategoryDao
 import com.example.schetodo.data.todo.TodoDao
 import com.example.schetodo.data.entity.*
 import com.example.schetodo.data.relationship.TodoBlockCategoryRelationship
 import com.example.schetodo.data.relationship.TodoBlockTodoRelationship
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo_block.TodoBlock
+import com.example.schetodo.data.todo_category.TodoCategory
 
 @Database(
     entities = [

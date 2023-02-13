@@ -2,7 +2,7 @@ package com.example.schetodo.ui.feature.todos.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.schetodo.data.repository.TodoCategoryRepository
+import com.example.schetodo.data.todo_category.TodoCategoryRepository
 import com.example.schetodo.data.todo.TodoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job

@@ -2,7 +2,7 @@ package com.example.schetodo.di
 
 import android.content.Context
 import com.example.schetodo.data.SchetodoDatabase
-import com.example.schetodo.data.dao.TodoCategoryDao
+import com.example.schetodo.data.todo_category.TodoCategoryDao
 import com.example.schetodo.data.todo.TodoDao
 import dagger.Module
 import dagger.Provides
