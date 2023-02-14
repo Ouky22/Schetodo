@@ -15,6 +15,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.schetodo.ui.components.BottomNavBar
 import com.example.schetodo.ui.navigation.*
+import com.example.schetodo.ui.navigation.schedule.Schedule
 import com.example.schetodo.ui.theme.SchetodoTheme
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -6,9 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import com.example.schetodo.ui.feature.schedule.ScheduleScreen
-import com.example.schetodo.ui.feature.statistics.StatisticsScreen
+import com.example.schetodo.ui.navigation.schedule.scheduleNavGraph
+import com.example.schetodo.ui.navigation.statistics.statisticsNavGraph
 import com.example.schetodo.ui.navigation.todos.todosNavGraph
 
 
@@ -18,19 +17,17 @@ import com.example.schetodo.ui.navigation.todos.todosNavGraph
 fun SchetodoNavHost(navController: NavHostController, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
-        startDestination = Schedule.route,
+        startDestination = Graph.SCHEDULE,
         modifier = modifier
     ) {
-        composable(route = Schedule.route) {
-            ScheduleScreen()
-        }
+        scheduleNavGraph(navController)
         todosNavGraph(navController)
-        composable(route = Statistics.route) {
-            StatisticsScreen()
-        }
+        statisticsNavGraph(navController)
     }
 }
 
 object Graph {
     const val TODOS = "todos_graph"
+    const val SCHEDULE = "schedule_graph"
+    const val STATISTICS = "statistics_graph"
 }
