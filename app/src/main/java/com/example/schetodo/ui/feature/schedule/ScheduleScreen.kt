@@ -9,10 +9,12 @@ import androidx.compose.material.icons.filled.School
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
@@ -23,9 +25,15 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 
 @Composable
 fun ScheduleScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: ScheduleViewModel
 ) {
+    val state by viewModel.scheduleState.collectAsStateWithLifecycle()
 
+    ScheduleScreen(
+        modifier = modifier,
+        uiScheduleBlocks = state.uiScheduleBlocks
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
