@@ -10,8 +10,8 @@ import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_category.TodoCategoryRepository
 import com.example.schetodo.data.todo.TodoRepository
-import com.example.schetodo.ui.navigation.AddTodo
-import com.example.schetodo.ui.navigation.EditTodo
+import com.example.schetodo.ui.navigation.todos.AddTodo
+import com.example.schetodo.ui.navigation.todos.EditTodo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

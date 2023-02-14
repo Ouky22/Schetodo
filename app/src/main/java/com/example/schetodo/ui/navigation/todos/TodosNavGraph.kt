@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.navigation
+package com.example.schetodo.ui.navigation.todos
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +18,7 @@ import com.example.schetodo.ui.feature.todos.add_edit_todo.AddEditTodoScreen
 import com.example.schetodo.ui.feature.todos.add_edit_todo.AddEditTodoViewModel
 import com.example.schetodo.ui.feature.todos.check_off_todos.CheckOffTodosScreen
 import com.example.schetodo.ui.feature.todos.check_off_todos.CheckOffTodosViewModel
+import com.example.schetodo.ui.navigation.*
 
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api

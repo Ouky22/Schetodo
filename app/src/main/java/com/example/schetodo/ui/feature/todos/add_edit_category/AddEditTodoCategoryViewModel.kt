@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.todo_category.TodoCategoryRepository
-import com.example.schetodo.ui.navigation.AddTodoCategory
-import com.example.schetodo.ui.navigation.EditTodoCategory
+import com.example.schetodo.ui.navigation.todos.AddTodoCategory
+import com.example.schetodo.ui.navigation.todos.EditTodoCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first

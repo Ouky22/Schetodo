@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.schetodo.ui.feature.schedule.ScheduleScreen
 import com.example.schetodo.ui.feature.statistics.StatisticsScreen
+import com.example.schetodo.ui.navigation.todos.todosNavGraph
 
 
 @ExperimentalFoundationApi
