@@ -1,6 +1,7 @@
 package com.example.schetodo.data.todo_block
 
 import androidx.room.*
+import com.example.schetodo.data.schedule_block.ScheduleBlock
 import kotlinx.coroutines.flow.Flow
 
 @Dao
