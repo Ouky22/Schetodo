@@ -6,8 +6,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.example.schetodo.ui.feature.schedule.ScheduleScreen
-import com.example.schetodo.ui.feature.schedule.ScheduleViewModel
+import com.example.schetodo.ui.feature.schedule.list.ScheduleScreen
+import com.example.schetodo.ui.feature.schedule.list.ScheduleViewModel
 import com.example.schetodo.ui.navigation.Graph
 
 fun NavGraphBuilder.scheduleNavGraph(navController: NavController) {

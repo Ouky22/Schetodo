@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.feature.schedule
+package com.example.schetodo.ui.feature.schedule.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

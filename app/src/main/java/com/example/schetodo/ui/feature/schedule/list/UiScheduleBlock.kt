@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.feature.schedule
+package com.example.schetodo.ui.feature.schedule.list
 
 import com.example.schetodo.data.todo_category.TodoCategory
 

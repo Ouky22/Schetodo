@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.feature.schedule
+package com.example.schetodo.ui.feature.schedule.list
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
