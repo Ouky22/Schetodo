@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.schetodo.data.entity.*
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
@@ -33,7 +32,7 @@ fun ScheduleScreen(
 @Composable
 fun ScheduleScreen(
     modifier: Modifier = Modifier,
-    uiTodoBlocks: List<UiTodoBlock>
+    uiScheduleBlocks: List<UiScheduleBlock>
 ) {
     Scaffold(
         topBar = {
@@ -47,7 +46,7 @@ fun ScheduleScreen(
             modifier = modifier.padding(contentPadding)
         ) {
             ScheduleList(
-                uiTodoBlocks = uiTodoBlocks
+                uiScheduleBlocks = uiScheduleBlocks
             )
         }
     }
@@ -56,7 +55,7 @@ fun ScheduleScreen(
 @Composable
 fun ScheduleList(
     modifier: Modifier = Modifier,
-    uiTodoBlocks: List<UiTodoBlock>
+    uiScheduleBlocks: List<UiScheduleBlock>
 ) {
     LazyColumn(
         modifier = modifier,
@@ -64,7 +63,7 @@ fun ScheduleList(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(
-            items = uiTodoBlocks, key = { it.id }
+            items = uiScheduleBlocks, key = { it.id }
         ) { uiTodoBlock ->
             ScheduleListItem(
                 todoCategories = uiTodoBlock.categories,
@@ -84,12 +83,12 @@ fun ScheduleScreenPreview() {
     SchetodoTheme {
         ScheduleScreen(
             modifier = Modifier.fillMaxSize(),
-            uiTodoBlocks = createTodoBlocksForPreview()
+            uiScheduleBlocks = createTodoBlocksForPreview()
         )
     }
 }
 
-private fun createTodoBlocksForPreview(): List<UiTodoBlock> {
+private fun createTodoBlocksForPreview(): List<UiScheduleBlock> {
     val todoCategories = listOf(
         TodoCategory(
             1, "Household", todoCategoryColors[0].toArgb().toLong(), null,
@@ -111,7 +110,7 @@ private fun createTodoBlocksForPreview(): List<UiTodoBlock> {
         Todo(3, "Bake a cake", TodoPriority.LOW, TodoFlag.UNDONE, 1)
     )
     return listOf(
-        UiTodoBlock(
+        UiScheduleBlock(
             0,
             todoCategories.subList(0, 1),
             todos.subList(0, 1).map { it.description },
@@ -120,7 +119,7 @@ private fun createTodoBlocksForPreview(): List<UiTodoBlock> {
             "16.30",
             "3h 30min"
         ),
-        UiTodoBlock(
+        UiScheduleBlock(
             1,
             todoCategories,
             todos.map { it.description },
@@ -129,7 +128,7 @@ private fun createTodoBlocksForPreview(): List<UiTodoBlock> {
             "12.00",
             "2h"
         ),
-        UiTodoBlock(
+        UiScheduleBlock(
             id = 2,
             notes = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna",
             startTime = "20.00",
