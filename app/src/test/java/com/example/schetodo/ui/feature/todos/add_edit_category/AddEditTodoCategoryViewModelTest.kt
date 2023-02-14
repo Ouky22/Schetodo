@@ -7,8 +7,8 @@ import androidx.compose.material.icons.filled.House
 import androidx.lifecycle.SavedStateHandle
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.todo_category.FakeTodoCategoryRepository
-import com.example.schetodo.ui.navigation.AddTodoCategory
-import com.example.schetodo.ui.navigation.EditTodoCategory
+import com.example.schetodo.ui.navigation.todos.AddTodoCategory
+import com.example.schetodo.ui.navigation.todos.EditTodoCategory
 import com.example.schetodo.util.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi

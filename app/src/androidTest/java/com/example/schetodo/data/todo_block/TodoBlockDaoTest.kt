@@ -4,16 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.example.schetodo.data.SchetodoDatabase
-import com.example.schetodo.data.relationship.TodoBlockCategoryRelationshipDao
-import com.example.schetodo.data.relationship.TodoBlockTodoRelationshipDao
-import com.example.schetodo.data.schedule_block.ScheduleBlock
-import com.example.schetodo.data.todo.Todo
-import com.example.schetodo.data.todo.TodoDao
-import com.example.schetodo.data.todo.TodoFlag
-import com.example.schetodo.data.todo.TodoPriority
-import com.example.schetodo.data.todo_category.TodoCategory
-import com.example.schetodo.data.todo_category.TodoCategoryDao
-import com.example.schetodo.ui.navigation.Schedule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first

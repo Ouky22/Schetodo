@@ -7,8 +7,8 @@ import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_category.FakeTodoCategoryRepository
 import com.example.schetodo.data.todo.FakeTodoRepository
-import com.example.schetodo.ui.navigation.AddTodo
-import com.example.schetodo.ui.navigation.EditTodo
+import com.example.schetodo.ui.navigation.todos.AddTodo
+import com.example.schetodo.ui.navigation.todos.EditTodo
 import com.example.schetodo.util.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -1,12 +1,11 @@
-package com.example.schetodo.data
+package com.example.schetodo.data.schedule_block
 
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import com.example.schetodo.data.SchetodoDatabase
 import com.example.schetodo.data.relationship.TodoBlockCategoryRelationshipDao
 import com.example.schetodo.data.relationship.TodoBlockTodoRelationshipDao
-import com.example.schetodo.data.schedule_block.ScheduleBlock
-import com.example.schetodo.data.schedule_block.ScheduleBlockDao
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoDao
 import com.example.schetodo.data.todo.TodoFlag
