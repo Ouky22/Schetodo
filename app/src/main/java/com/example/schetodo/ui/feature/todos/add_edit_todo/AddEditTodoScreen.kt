@@ -22,7 +22,7 @@ import com.example.schetodo.R
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
-import com.example.schetodo.ui.feature.todos.components.AddEditTopBar
+import com.example.schetodo.ui.components.AddEditTopBar
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.getTodoPriorityColorOf
 import com.example.schetodo.ui.feature.todos.list.CategoryItem

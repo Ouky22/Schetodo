@@ -41,12 +41,16 @@ fun TodosScreenListItem(
         colors = CardDefaults.cardColors(containerColor = cardBackgroundColor),
     ) {
         Row(
-            modifier = Modifier.padding(8.dp).wrapContentWidth(),
+            modifier = Modifier
+                .padding(8.dp)
+                .wrapContentWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
             Column(
-                modifier = Modifier.wrapContentWidth().padding(4.dp),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Box(
@@ -66,15 +70,7 @@ fun TodosScreenListItem(
                 }
             }
 
-//            Column(
-//                modifier = Modifier
-//                    .wrapContentWidth()
-//                    .padding(horizontal = 8.dp),
-//                horizontalAlignment = Alignment.Start,
-//                verticalArrangement = Arrangement.Center
-//            ) {
-                text()
-//            }
+            text()
         }
     }
 }
@@ -153,7 +149,9 @@ fun TodoItem() {
 fun CategoryItemPreview() {
     SchetodoTheme {
         CategoryItem(
-            modifier = Modifier.height(100.dp).fillMaxWidth(),
+            modifier = Modifier
+                .height(100.dp)
+                .fillMaxWidth(),
             todoCategoryName = "Household",
             todoCategoryColor = Color(0xff799FCB),
             todoCategoryIcon = Icons.Filled.House

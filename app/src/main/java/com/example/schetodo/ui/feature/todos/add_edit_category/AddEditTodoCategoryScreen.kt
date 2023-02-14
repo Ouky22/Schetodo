@@ -8,7 +8,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,8 +27,7 @@ import androidx.navigation.NavController
 import com.example.schetodo.R
 import com.example.schetodo.ui.components.ElementPickerDialog
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
-import com.example.schetodo.ui.components.SchetodoTopAppBar
-import com.example.schetodo.ui.feature.todos.components.AddEditTopBar
+import com.example.schetodo.ui.components.AddEditTopBar
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.householdIcons
 import com.example.schetodo.ui.feature.todos.sportIcons

@@ -40,4 +40,8 @@
     <string name="status">Status: %1$s</string>
     <string name="undo">Undo</string>
     <string name="checked_off">Checked off</string>
+    <string name="add_todo_block">Add Todo Block</string>
+    <string name="edit_todo_block">Edit Todo Block</string>
+    <string name="notes">Notes</string>
+    <string name="todo_categories">Todo Categories</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.feature.todos.components
+package com.example.schetodo.ui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
