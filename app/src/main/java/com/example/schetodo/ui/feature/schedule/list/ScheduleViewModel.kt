@@ -18,6 +18,8 @@ class ScheduleViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var currentDate = LocalDate.now()
+    val currentDateStamp: Long
+        get() = currentDate.toEpochDay()
 
     private val _scheduleState = MutableStateFlow(ScheduleState())
     val scheduleState: StateFlow<ScheduleState>

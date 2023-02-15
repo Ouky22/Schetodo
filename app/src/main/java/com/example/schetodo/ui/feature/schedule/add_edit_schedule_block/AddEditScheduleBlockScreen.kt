@@ -34,6 +34,34 @@ import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
 
+
+@Composable
+fun AddEditScheduleBlockScreen(
+    modifier: Modifier = Modifier,
+    viewModel: AddEditScheduleBlockViewModel
+) {
+    val state = viewModel.state
+
+    AddEditScheduleBlockScreen(
+        modifier = modifier,
+        todoCategories = state.todoCategories,
+        todos = state.todos,
+        notes = state.notes,
+        date = state.date,
+        startTime = state.startTime,
+        endTime = state.endTime,
+        inEditingMode = state.inEditingMode,
+        onNotesChanged = {},
+        onAddTodoButtonClick = {},
+        onAddTodoCategoryButtonClick = {},
+        onRemoveTodo = {},
+        onRemoveCategory = {},
+        onSave = {},
+        onDelete = {},
+        onClose = {}
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditScheduleBlockScreen(
@@ -41,6 +69,9 @@ fun AddEditScheduleBlockScreen(
     todoCategories: List<TodoCategory>,
     todos: List<Todo>,
     notes: String,
+    date: String,
+    startTime: String,
+    endTime: String,
     inEditingMode: Boolean,
     onNotesChanged: (String) -> Unit,
     onAddTodoButtonClick: () -> Unit,
@@ -75,10 +106,10 @@ fun AddEditScheduleBlockScreen(
                     .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Mo, 2021-02-01", style = MaterialTheme.typography.headlineMedium)
+                Text(text = date, style = MaterialTheme.typography.headlineMedium)
                 SelectTimeButtonRow(
-                    startTimeButtonText = "13.30",
-                    endTimeButtonText = "15.30",
+                    startTimeButtonText = startTime,
+                    endTimeButtonText = endTime,
                     onClickStartTimeButton = { /* TODO */ },
                     onClickEndTimeButton = { /* TODO */ }
                 )
@@ -271,6 +302,9 @@ fun AddScheduleBlockScreenPreview() {
             todoCategories = emptyList(),
             todos = emptyList(),
             notes = "",
+            date = "Mo, 2023-02-ß1",
+            startTime = "13.00",
+            endTime = "15.30",
             inEditingMode = false,
             onNotesChanged = {},
             onAddTodoButtonClick = {},
@@ -316,6 +350,9 @@ fun EditScheduleBlockScreenPreview() {
             todoCategories = categories,
             todos = todos,
             notes = "Lorem ipsum dolor sit at, usto duo",
+            date = "Mo, 2023-02-ß1",
+            startTime = "13.00",
+            endTime = "15.30",
             inEditingMode = true,
             onNotesChanged = {},
             onAddTodoButtonClick = {},

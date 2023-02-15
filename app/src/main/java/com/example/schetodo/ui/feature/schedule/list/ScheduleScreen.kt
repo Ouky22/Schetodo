@@ -3,18 +3,23 @@ package com.example.schetodo.ui.feature.schedule.list
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.schetodo.R
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
@@ -26,13 +31,17 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 @Composable
 fun ScheduleScreen(
     modifier: Modifier = Modifier,
-    viewModel: ScheduleViewModel
+    viewModel: ScheduleViewModel,
+    onAddScheduleBlockNavigation: (dateTimeStamp: Long) -> Unit
 ) {
     val state by viewModel.scheduleState.collectAsStateWithLifecycle()
 
     ScheduleScreen(
         modifier = modifier,
-        uiScheduleBlocks = state.uiScheduleBlocks
+        uiScheduleBlocks = state.uiScheduleBlocks,
+        onFabClick = {
+            onAddScheduleBlockNavigation(viewModel.currentDateStamp)
+        }
     )
 }
 
@@ -40,7 +49,8 @@ fun ScheduleScreen(
 @Composable
 fun ScheduleScreen(
     modifier: Modifier = Modifier,
-    uiScheduleBlocks: List<UiScheduleBlock>
+    uiScheduleBlocks: List<UiScheduleBlock>,
+    onFabClick: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -48,6 +58,14 @@ fun ScheduleScreen(
                 title = "Schedule",
                 showBackButton = false,
                 onBackButtonClick = { })
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = onFabClick) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = stringResource(R.string.add_new_schedule_block)
+                )
+            }
         }
     ) { contentPadding ->
         Column(
@@ -91,7 +109,8 @@ fun ScheduleScreenPreview() {
     SchetodoTheme {
         ScheduleScreen(
             modifier = Modifier.fillMaxSize(),
-            uiScheduleBlocks = createTodoBlocksForPreview()
+            uiScheduleBlocks = createTodoBlocksForPreview(),
+            onFabClick = {}
         )
     }
 }

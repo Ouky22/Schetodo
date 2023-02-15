@@ -17,8 +17,8 @@ class RoomTypeConverters {
     }
 
     @TypeConverter
-    fun timeStampToTime(timeStampInSeconds: Long): LocalTime {
-        return LocalTime.ofSecondOfDay(timeStampInSeconds)
+    fun timeStampToTime(timeStampInSeconds: Int): LocalTime {
+        return LocalTime.ofSecondOfDay(timeStampInSeconds.toLong())
     }
 
     @TypeConverter
