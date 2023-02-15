@@ -51,7 +51,7 @@ fun AddEditScheduleBlockScreen(
         startTime = state.startTime,
         endTime = state.endTime,
         inEditingMode = state.inEditingMode,
-        onNotesChanged = {},
+        onNotesChanged = { viewModel.onEvent(AddEditScheduleBlockEvent.ChangeTodoBlockNotes(it)) },
         onAddTodoButtonClick = {},
         onAddTodoCategoryButtonClick = {},
         onRemoveTodo = {},

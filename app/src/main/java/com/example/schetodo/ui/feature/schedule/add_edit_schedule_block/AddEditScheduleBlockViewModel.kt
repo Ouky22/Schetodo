@@ -55,6 +55,18 @@ class AddEditScheduleBlockViewModel @Inject constructor(
         }
     }
 
+    fun onEvent(event: AddEditScheduleBlockEvent) {
+        when (event) {
+            is AddEditScheduleBlockEvent.ChangeTodoBlockNotes -> updateTodoBlockNotes(event.notes)
+        }
+    }
+
+    private fun updateTodoBlockNotes(notes: String) {
+        state = state.copy(
+            notes = notes
+        )
+    }
+
     private fun loadScheduleBlock(todoBlockId: Int) {
         viewModelScope.launch {
             val scheduleBlock =
