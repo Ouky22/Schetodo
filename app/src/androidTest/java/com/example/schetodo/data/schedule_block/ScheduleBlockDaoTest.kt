@@ -68,11 +68,34 @@ class ScheduleBlockDaoTest {
     }
 
     @Test
+    fun when_getting_schedule_block_by_todo_block_id_and_id_invalid_then_return_null() =
+        runTest {
+            initDbWithTestData()
+
+            val scheduleBlock =
+                scheduleBlockDao.getScheduleBlockByTodoBlockId(10).first()
+
+            assertThat(scheduleBlock).isNull()
+        }
+
+    @Test
+    fun when_getting_schedule_block_by_todo_block_id_and_id_valid_then_return_schedule_block() =
+        runTest {
+            initDbWithTestData()
+
+            val scheduleBlock =
+                scheduleBlockDao.getScheduleBlockByTodoBlockId(todoBlock1.todoBlockId).first()
+
+            assertThat(scheduleBlock).isEqualTo(scheduleBlock1)
+        }
+
+    @Test
     fun test_getting_todo_block_with_its_todos_and_categories_on_date() = runTest {
         initDbWithTestData()
 
         val date = todoBlock1.date!!
-        val scheduleBlocksOnDate = scheduleBlockDao.getScheduleBlocksOnDate(date.toEpochDay()).first()
+        val scheduleBlocksOnDate =
+            scheduleBlockDao.getScheduleBlocksOnDate(date.toEpochDay()).first()
 
         assertThat(scheduleBlocksOnDate).containsExactly(scheduleBlock1)
     }

@@ -1,7 +1,5 @@
-package com.example.schetodo.ui.feature.schedule
+package com.example.schetodo.data.schedule_block
 
-import com.example.schetodo.data.schedule_block.ScheduleBlock
-import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.time.LocalDate
@@ -13,6 +11,12 @@ class FakeScheduleBlockRepository : ScheduleBlockRepository {
     override fun getScheduleBlocksOnDate(date: LocalDate): Flow<List<ScheduleBlock>> {
         return flow {
             emit(scheduleBlocks.filter { it.todoBlock.date == date })
+        }
+    }
+
+    override fun getScheduleBlockByTodoBlockId(todoBlockId: Int): Flow<ScheduleBlock?> {
+        return flow {
+            emit(scheduleBlocks.firstOrNull { it.todoBlock.todoBlockId == todoBlockId })
         }
     }
 

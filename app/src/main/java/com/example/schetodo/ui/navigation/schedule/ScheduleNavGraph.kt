@@ -25,8 +25,11 @@ fun NavGraphBuilder.scheduleNavGraph(navController: NavHostController) {
             val viewModel = hiltViewModel<ScheduleViewModel>(parentEntry)
             ScheduleScreen(
                 viewModel = viewModel,
-                onAddScheduleBlockNavigation = { dateTimeStamp ->
-                    navController.navigateToAddScheduleBlockScreen(dateTimeStamp)
+                onAddScheduleBlockNavigation = { dateStamp ->
+                    navController.navigateToAddScheduleBlockScreen(dateStamp)
+                },
+                onEditScheduleBlockNavigation = { todoBlockId ->
+                    navController.navigateToEditScheduleBlockScreen(todoBlockId)
                 }
             )
         }
@@ -35,13 +38,22 @@ fun NavGraphBuilder.scheduleNavGraph(navController: NavHostController) {
             arguments = AddScheduleBlock.args
         ) {
             val viewModel = hiltViewModel<AddEditScheduleBlockViewModel>()
-            AddEditScheduleBlockScreen(
-                viewModel = viewModel
-            )
+            AddEditScheduleBlockScreen(viewModel = viewModel)
+        }
+        composable(
+            route = EditScheduleBlock.routeWithArgs,
+            arguments = EditScheduleBlock.args
+        ) {
+            val viewModel = hiltViewModel<AddEditScheduleBlockViewModel>()
+            AddEditScheduleBlockScreen(viewModel = viewModel)
         }
     }
 }
 
-fun NavHostController.navigateToAddScheduleBlockScreen(dateTimeStamp: Long) {
-    navigate("${AddScheduleBlock.route}/$dateTimeStamp")
+fun NavHostController.navigateToAddScheduleBlockScreen(dateStamp: Long) {
+    navigate("${AddScheduleBlock.route}/$dateStamp")
+}
+
+fun NavHostController.navigateToEditScheduleBlockScreen(todoBlockId: Int) {
+    navigate("${EditScheduleBlock.route}/$todoBlockId")
 }

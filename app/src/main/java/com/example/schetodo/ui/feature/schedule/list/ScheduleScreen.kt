@@ -1,5 +1,6 @@
 package com.example.schetodo.ui.feature.schedule.list
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -32,16 +33,16 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 fun ScheduleScreen(
     modifier: Modifier = Modifier,
     viewModel: ScheduleViewModel,
-    onAddScheduleBlockNavigation: (dateTimeStamp: Long) -> Unit
+    onAddScheduleBlockNavigation: (dateStamp: Long) -> Unit,
+    onEditScheduleBlockNavigation: (todoBlockId: Int) -> Unit
 ) {
     val state by viewModel.scheduleState.collectAsStateWithLifecycle()
 
     ScheduleScreen(
         modifier = modifier,
         uiScheduleBlocks = state.uiScheduleBlocks,
-        onFabClick = {
-            onAddScheduleBlockNavigation(viewModel.currentDateStamp)
-        }
+        onFabClick = { onAddScheduleBlockNavigation(viewModel.currentDateStamp) },
+        onEditScheduleBlock = { todoBlockId -> onEditScheduleBlockNavigation(todoBlockId) }
     )
 }
 
@@ -51,6 +52,7 @@ fun ScheduleScreen(
     modifier: Modifier = Modifier,
     uiScheduleBlocks: List<UiScheduleBlock>,
     onFabClick: () -> Unit,
+    onEditScheduleBlock: (todoBlockId: Int) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -72,7 +74,8 @@ fun ScheduleScreen(
             modifier = modifier.padding(contentPadding)
         ) {
             ScheduleList(
-                uiScheduleBlocks = uiScheduleBlocks
+                uiScheduleBlocks = uiScheduleBlocks,
+                onListItemClick = onEditScheduleBlock
             )
         }
     }
@@ -81,7 +84,8 @@ fun ScheduleScreen(
 @Composable
 fun ScheduleList(
     modifier: Modifier = Modifier,
-    uiScheduleBlocks: List<UiScheduleBlock>
+    uiScheduleBlocks: List<UiScheduleBlock>,
+    onListItemClick: (todoBlockId: Int) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
@@ -97,7 +101,8 @@ fun ScheduleList(
                 todoBlocKNotes = uiTodoBlock.notes,
                 startTimeString = uiTodoBlock.startTime,
                 endTimeString = uiTodoBlock.endTime,
-                durationString = uiTodoBlock.duration
+                durationString = uiTodoBlock.duration,
+                modifier = Modifier.clickable { onListItemClick(uiTodoBlock.id) }
             )
         }
     }
@@ -110,7 +115,8 @@ fun ScheduleScreenPreview() {
         ScheduleScreen(
             modifier = Modifier.fillMaxSize(),
             uiScheduleBlocks = createTodoBlocksForPreview(),
-            onFabClick = {}
+            onFabClick = {},
+            onEditScheduleBlock = {}
         )
     }
 }

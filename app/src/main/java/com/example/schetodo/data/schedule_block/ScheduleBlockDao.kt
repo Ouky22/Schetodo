@@ -14,4 +14,8 @@ interface ScheduleBlockDao {
     @Transaction
     @Query("SELECT * FROM TodoBlock WHERE date = :dateStampInDays")
     fun getScheduleBlocksOnDate(dateStampInDays: Long): Flow<List<ScheduleBlock>>
+
+    @Transaction
+    @Query("SELECT * FROM TodoBlock WHERE todoBlockId = :todoBlockId")
+    fun getScheduleBlockByTodoBlockId(todoBlockId: Int): Flow<ScheduleBlock?>
 }

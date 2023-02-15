@@ -39,3 +39,16 @@ object AddScheduleBlock : SchetodoDestination {
         }
     )
 }
+
+object EditScheduleBlock: SchetodoDestination {
+    override val route = "edit_schedule_block"
+    const val todoBlockIdArg = "todo_block_id"
+
+    val routeWithArgs = "$route/{$todoBlockIdArg}"
+
+    val args = listOf(
+        navArgument(todoBlockIdArg) {
+            type = NavType.IntType
+        }
+    )
+}
