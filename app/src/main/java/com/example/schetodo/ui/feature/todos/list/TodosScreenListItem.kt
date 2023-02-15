@@ -2,10 +2,12 @@ package com.example.schetodo.ui.feature.todos.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.outlined.RestartAlt
 import androidx.compose.material.icons.outlined.TaskAlt
@@ -16,11 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.schetodo.R
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
@@ -34,7 +38,9 @@ fun TodosScreenListItem(
     iconBackgroundColor: Color,
     cardBackgroundColor: Color,
     icon: ImageVector,
-    text: @Composable () -> Unit
+    text: @Composable () -> Unit,
+    showRemoveIcon: Boolean,
+    onRemoveIconClick: () -> Unit
 ) {
     Card(
         modifier = modifier,
@@ -70,7 +76,21 @@ fun TodosScreenListItem(
                 }
             }
 
-            text()
+            Column(modifier = Modifier.weight(weight = 1f, fill = false)) {
+                text()
+            }
+
+            if (showRemoveIcon)
+                Column(
+                    modifier = Modifier.padding(start = 4.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = stringResource(R.string.remove),
+                        modifier = Modifier.clickable { onRemoveIconClick() }
+                    )
+                }
         }
     }
 }
@@ -81,7 +101,9 @@ fun CategoryItem(
     todoCategoryName: String,
     todoCategoryColor: Color,
     todoCategoryIcon: ImageVector,
-    textStyle: TextStyle = MaterialTheme.typography.headlineMedium
+    textStyle: TextStyle = MaterialTheme.typography.headlineMedium,
+    showRemoveIcon: Boolean = false,
+    onRemoveIconClick: () -> Unit = {}
 ) {
     TodosScreenListItem(
         modifier = modifier,
@@ -97,14 +119,18 @@ fun CategoryItem(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(8.dp)
             )
-        }
+        },
+        showRemoveIcon = showRemoveIcon,
+        onRemoveIconClick = onRemoveIconClick
     )
 }
 
 @Composable
 fun TodoItem(
     modifier: Modifier = Modifier,
-    todo: Todo
+    todo: Todo,
+    showRemoveIcon: Boolean = false,
+    onRemoveIconClick: () -> Unit = {}
 ) {
     TodosScreenListItem(
         modifier = modifier.border(
@@ -123,7 +149,9 @@ fun TodoItem(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(start = 4.dp)
             )
-        }
+        },
+        showRemoveIcon = showRemoveIcon,
+        onRemoveIconClick = onRemoveIconClick
     )
 }
 
@@ -159,3 +187,20 @@ fun CategoryItemPreview() {
     }
 }
 
+@Preview
+@Composable
+fun TodoItemWithRemoveIcon() {
+    SchetodoTheme {
+        TodoItem(
+            modifier = Modifier.height(100.dp),
+            todo = Todo(
+                0,
+                "Lorem ipsum dolor sit at,  voluptua. At vero eos et et justo duo dolores et ea rebum. Stet clita kasd",
+                TodoPriority.HIGH,
+                TodoFlag.UNDONE,
+                0
+            ),
+            showRemoveIcon = true
+        )
+    }
+}

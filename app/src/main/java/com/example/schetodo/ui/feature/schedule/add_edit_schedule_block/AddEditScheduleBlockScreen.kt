@@ -45,6 +45,8 @@ fun AddEditScheduleBlockScreen(
     onNotesChanged: (String) -> Unit,
     onAddTodoButtonClick: () -> Unit,
     onAddTodoCategoryButtonClick: () -> Unit,
+    onRemoveCategory: (TodoCategory) -> Unit,
+    onRemoveTodo: (Todo) -> Unit,
     onSave: () -> Unit,
     onDelete: () -> Unit,
     onClose: () -> Unit
@@ -88,14 +90,19 @@ fun AddEditScheduleBlockScreen(
                 CategoriesFlowRow(
                     todoCategories = todoCategories,
                     onAddCategoryButtonClick = onAddTodoCategoryButtonClick,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    onRemoveCategoryIconClick = onRemoveCategory
                 )
                 HorizontalDividerWithText(
                     text = stringResource(id = R.string.todos),
                     modifier = Modifier.padding(vertical = 16.dp)
                 )
 
-                TodosColumn(todos = todos, onAddTodoButtonClick = onAddTodoButtonClick)
+                TodosColumn(
+                    todos = todos,
+                    onAddTodoButtonClick = onAddTodoButtonClick,
+                    onRemoveTodoIconClick = onRemoveTodo
+                )
                 HorizontalDividerWithText(
                     text = stringResource(R.string.notes),
                     modifier = Modifier.padding(vertical = 16.dp)
@@ -150,14 +157,17 @@ fun SelectTimeButtonRow(
 fun TodosColumn(
     modifier: Modifier = Modifier,
     todos: List<Todo>,
-    onAddTodoButtonClick: () -> Unit
+    onAddTodoButtonClick: () -> Unit,
+    onRemoveTodoIconClick: (Todo) -> Unit
 ) {
     Column(modifier = modifier) {
         todos.forEach {
             TodoItem(
                 todo = it, modifier = Modifier
                     .height(75.dp)
-                    .padding(4.dp)
+                    .padding(4.dp),
+                showRemoveIcon = true,
+                onRemoveIconClick = { onRemoveTodoIconClick(it) }
             )
         }
         AddCircle(
@@ -176,7 +186,8 @@ fun TodosColumn(
 fun CategoriesFlowRow(
     modifier: Modifier = Modifier,
     todoCategories: List<TodoCategory>,
-    onAddCategoryButtonClick: () -> Unit
+    onAddCategoryButtonClick: () -> Unit,
+    onRemoveCategoryIconClick: (TodoCategory) -> Unit
 ) {
     if (todoCategories.isNotEmpty())
         FlowRow(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
@@ -189,7 +200,9 @@ fun CategoriesFlowRow(
                     todoCategoryColor = Color(todoCategory.color),
                     todoCategoryIcon = getIconByName(todoCategory.iconName)
                         ?: Icons.Filled.Category,
-                    textStyle = MaterialTheme.typography.bodyLarge
+                    textStyle = MaterialTheme.typography.bodyLarge,
+                    showRemoveIcon = true,
+                    onRemoveIconClick = { onRemoveCategoryIconClick(todoCategory) }
                 )
             }
             AddCircle(
@@ -264,7 +277,9 @@ fun AddScheduleBlockScreenPreview() {
             onAddTodoCategoryButtonClick = {},
             onClose = {},
             onSave = {},
-            onDelete = {}
+            onDelete = {},
+            onRemoveCategory = {},
+            onRemoveTodo = {}
         )
     }
 }
@@ -278,7 +293,7 @@ fun EditScheduleBlockScreenPreview() {
             null, Icons.Filled.School.name
         ),
         TodoCategory(
-            1, "Household", todoCategoryColors[2].toArgb().toLong(),
+            1, "Sport", todoCategoryColors[2].toArgb().toLong(),
             null, Icons.Filled.House.name
         ),
         TodoCategory(
@@ -307,7 +322,9 @@ fun EditScheduleBlockScreenPreview() {
             onAddTodoCategoryButtonClick = {},
             onClose = {},
             onSave = {},
-            onDelete = {}
+            onDelete = {},
+            onRemoveCategory = {},
+            onRemoveTodo = {}
         )
     }
 }
