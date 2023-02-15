@@ -23,8 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.schetodo.data.todo_category.TodoCategory
+import com.example.schetodo.ui.components.CategoryItem
 import com.example.schetodo.ui.feature.todos.getIconByName
-import com.example.schetodo.ui.feature.todos.list.CategoryItem
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
 

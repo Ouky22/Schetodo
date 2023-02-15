@@ -28,9 +28,9 @@ import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.AddEditTopBar
+import com.example.schetodo.ui.components.CategoryItem
+import com.example.schetodo.ui.components.TodoItem
 import com.example.schetodo.ui.feature.todos.getIconByName
-import com.example.schetodo.ui.feature.todos.list.CategoryItem
-import com.example.schetodo.ui.feature.todos.list.TodoItem
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
 

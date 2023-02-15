@@ -29,7 +29,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo_category.TodoCategory
+import com.example.schetodo.ui.components.CategoryItem
 import com.example.schetodo.ui.components.SchetodoTopAppBar
+import com.example.schetodo.ui.components.TodoItem
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.theme.SchetodoTheme
 import kotlinx.coroutines.launch

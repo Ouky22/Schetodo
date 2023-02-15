@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.feature.todos.list
+package com.example.schetodo.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,7 +33,7 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 
 
 @Composable
-fun TodosScreenListItem(
+fun TodoCategoryItem(
     modifier: Modifier = Modifier,
     iconBackgroundColor: Color,
     cardBackgroundColor: Color,
@@ -105,7 +105,7 @@ fun CategoryItem(
     showRemoveIcon: Boolean = false,
     onRemoveIconClick: () -> Unit = {}
 ) {
-    TodosScreenListItem(
+    TodoCategoryItem(
         modifier = modifier,
         cardBackgroundColor = todoCategoryColor.copy(alpha = 0.2f),
         iconBackgroundColor = todoCategoryColor,
@@ -132,7 +132,7 @@ fun TodoItem(
     showRemoveIcon: Boolean = false,
     onRemoveIconClick: () -> Unit = {}
 ) {
-    TodosScreenListItem(
+    TodoCategoryItem(
         modifier = modifier.border(
             width = 1.dp,
             color = MaterialTheme.colorScheme.onBackground,
