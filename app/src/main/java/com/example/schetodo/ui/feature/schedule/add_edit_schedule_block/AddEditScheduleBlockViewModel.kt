@@ -58,6 +58,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
     fun onEvent(event: AddEditScheduleBlockEvent) {
         when (event) {
             is AddEditScheduleBlockEvent.ChangeTodoBlockNotes -> updateTodoBlockNotes(event.notes)
+            is AddEditScheduleBlockEvent.ChangeDate -> updateCurrentDate(event.date)
             is AddEditScheduleBlockEvent.ChangeStartTime -> updateStartTime(event.startTime)
             is AddEditScheduleBlockEvent.ChangeEndTime -> updateEndTime(event.endTime)
         }

@@ -37,6 +37,19 @@ internal class AddEditScheduleBlockViewModelTest {
     }
 
     @Test
+    fun test_update_date_event() = runTest {
+        val savedStateHandle = SavedStateHandle(
+            mapOf(AddScheduleBlock.dateStampArg to 0L)
+        )
+        val viewModel = AddEditScheduleBlockViewModel(fakeScheduleBlockRepository, savedStateHandle)
+
+        val newDate = LocalDate.of(2023, 12, 31)
+        viewModel.onEvent(AddEditScheduleBlockEvent.ChangeDate(newDate))
+
+        assertThat(viewModel.state.date).isEqualTo("Sun 31 Dec, 2023")
+    }
+
+    @Test
     fun test_update_end_time_event() = runTest {
         val savedStateHandle = SavedStateHandle(
             mapOf(AddScheduleBlock.dateStampArg to 0L)

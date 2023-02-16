@@ -34,6 +34,7 @@ import com.example.schetodo.ui.components.TodoItem
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
+import com.example.schetodo.ui.util.showDatePicker
 import com.example.schetodo.ui.util.showTimePicker
 
 
@@ -54,6 +55,11 @@ fun AddEditScheduleBlockScreen(
         startTime = state.startTime,
         endTime = state.endTime,
         inEditingMode = state.inEditingMode,
+        onDateClick = {
+            showDatePicker(context) { selectedDate ->
+                viewModel.onEvent(AddEditScheduleBlockEvent.ChangeDate(selectedDate))
+            }
+        },
         onStartTimeButtonClick = {
             showTimePicker(context) { selectedTime ->
                 viewModel.onEvent(AddEditScheduleBlockEvent.ChangeStartTime(selectedTime))
@@ -86,6 +92,7 @@ fun AddEditScheduleBlockScreen(
     startTime: String,
     endTime: String,
     inEditingMode: Boolean,
+    onDateClick: () -> Unit,
     onStartTimeButtonClick: () -> Unit,
     onEndTimeButtonClick: () -> Unit,
     onNotesChanged: (String) -> Unit,
@@ -121,7 +128,10 @@ fun AddEditScheduleBlockScreen(
                     .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = date, style = MaterialTheme.typography.headlineMedium)
+                Text(
+                    modifier = Modifier.clickable { onDateClick() },
+                    text = date, style = MaterialTheme.typography.headlineMedium
+                )
                 SelectTimeButtonRow(
                     startTimeButtonText = startTime,
                     endTimeButtonText = endTime,
@@ -318,6 +328,7 @@ fun AddScheduleBlockScreenPreview() {
             todos = emptyList(),
             notes = "",
             date = "Mo, 2023-02-ß1",
+            onDateClick = {},
             startTime = "13.00",
             endTime = "15.30",
             inEditingMode = false,
@@ -368,6 +379,7 @@ fun EditScheduleBlockScreenPreview() {
             todos = todos,
             notes = "Lorem ipsum dolor sit at, usto duo",
             date = "Mo, 2023-02-ß1",
+            onDateClick = {},
             startTime = "13.00",
             endTime = "15.30",
             inEditingMode = true,
