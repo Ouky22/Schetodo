@@ -37,6 +37,32 @@ internal class AddEditScheduleBlockViewModelTest {
     }
 
     @Test
+    fun test_update_end_time_event() = runTest {
+        val savedStateHandle = SavedStateHandle(
+            mapOf(AddScheduleBlock.dateStampArg to 0L)
+        )
+        val viewModel = AddEditScheduleBlockViewModel(fakeScheduleBlockRepository, savedStateHandle)
+
+        val newEndTime = LocalTime.of(13, 45)
+        viewModel.onEvent(AddEditScheduleBlockEvent.ChangeEndTime(newEndTime))
+
+        assertThat(viewModel.state.endTime).isEqualTo("1:45 PM")
+    }
+
+    @Test
+    fun test_update_start_time_event() = runTest {
+        val savedStateHandle = SavedStateHandle(
+            mapOf(AddScheduleBlock.dateStampArg to 0L)
+        )
+        val viewModel = AddEditScheduleBlockViewModel(fakeScheduleBlockRepository, savedStateHandle)
+
+        val newStartTime = LocalTime.of(13, 45)
+        viewModel.onEvent(AddEditScheduleBlockEvent.ChangeStartTime(newStartTime))
+
+        assertThat(viewModel.state.startTime).isEqualTo("1:45 PM")
+    }
+
+    @Test
     fun when_creating_view_model_for_editing_and_valid_id_passed_then_load_schedule_block_data() =
         runTest {
             val scheduleBlock = createTestScheduleBlock()

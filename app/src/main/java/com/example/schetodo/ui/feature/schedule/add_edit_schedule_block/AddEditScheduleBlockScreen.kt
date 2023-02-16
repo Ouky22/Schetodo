@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,13 +27,14 @@ import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_category.TodoCategory
-import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.AddEditTopBar
 import com.example.schetodo.ui.components.CategoryItem
+import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.TodoItem
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
+import com.example.schetodo.ui.util.showTimePicker
 
 
 @Composable
@@ -41,6 +43,7 @@ fun AddEditScheduleBlockScreen(
     viewModel: AddEditScheduleBlockViewModel
 ) {
     val state = viewModel.state
+    val context = LocalContext.current
 
     AddEditScheduleBlockScreen(
         modifier = modifier,
@@ -51,6 +54,16 @@ fun AddEditScheduleBlockScreen(
         startTime = state.startTime,
         endTime = state.endTime,
         inEditingMode = state.inEditingMode,
+        onStartTimeButtonClick = {
+            showTimePicker(context) { selectedTime ->
+                viewModel.onEvent(AddEditScheduleBlockEvent.ChangeStartTime(selectedTime))
+            }
+        },
+        onEndTimeButtonClick = {
+            showTimePicker(context) { selectedTime ->
+                viewModel.onEvent(AddEditScheduleBlockEvent.ChangeEndTime(selectedTime))
+            }
+        },
         onNotesChanged = { viewModel.onEvent(AddEditScheduleBlockEvent.ChangeTodoBlockNotes(it)) },
         onAddTodoButtonClick = {},
         onAddTodoCategoryButtonClick = {},
@@ -73,6 +86,8 @@ fun AddEditScheduleBlockScreen(
     startTime: String,
     endTime: String,
     inEditingMode: Boolean,
+    onStartTimeButtonClick: () -> Unit,
+    onEndTimeButtonClick: () -> Unit,
     onNotesChanged: (String) -> Unit,
     onAddTodoButtonClick: () -> Unit,
     onAddTodoCategoryButtonClick: () -> Unit,
@@ -110,8 +125,8 @@ fun AddEditScheduleBlockScreen(
                 SelectTimeButtonRow(
                     startTimeButtonText = startTime,
                     endTimeButtonText = endTime,
-                    onClickStartTimeButton = { /* TODO */ },
-                    onClickEndTimeButton = { /* TODO */ }
+                    onClickStartTimeButton = onStartTimeButtonClick,
+                    onClickEndTimeButton = onEndTimeButtonClick
                 )
                 HorizontalDividerWithText(
                     text = stringResource(R.string.todo_categories),
@@ -306,6 +321,8 @@ fun AddScheduleBlockScreenPreview() {
             startTime = "13.00",
             endTime = "15.30",
             inEditingMode = false,
+            onStartTimeButtonClick = {},
+            onEndTimeButtonClick = {},
             onNotesChanged = {},
             onAddTodoButtonClick = {},
             onAddTodoCategoryButtonClick = {},
@@ -354,6 +371,8 @@ fun EditScheduleBlockScreenPreview() {
             startTime = "13.00",
             endTime = "15.30",
             inEditingMode = true,
+            onStartTimeButtonClick = {},
+            onEndTimeButtonClick = {},
             onNotesChanged = {},
             onAddTodoButtonClick = {},
             onAddTodoCategoryButtonClick = {},
