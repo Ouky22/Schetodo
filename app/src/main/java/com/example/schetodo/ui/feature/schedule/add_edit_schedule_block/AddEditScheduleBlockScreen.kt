@@ -7,10 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Category
-import androidx.compose.material.icons.filled.House
-import androidx.compose.material.icons.filled.School
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -222,8 +219,11 @@ fun TodosColumn(
                 todo = it, modifier = Modifier
                     .height(75.dp)
                     .padding(4.dp),
-                showRemoveIcon = true,
-                onRemoveIconClick = { onRemoveTodoIconClick(it) }
+                endSideContent = {
+                    RemoveIcon(
+                        onRemoveIconClick = { onRemoveTodoIconClick(it) }
+                    )
+                }
             )
         }
         AddCircle(
@@ -257,8 +257,11 @@ fun CategoriesFlowRow(
                     todoCategoryIcon = getIconByName(todoCategory.iconName)
                         ?: Icons.Filled.Category,
                     textStyle = MaterialTheme.typography.bodyLarge,
-                    showRemoveIcon = true,
-                    onRemoveIconClick = { onRemoveCategoryIconClick(todoCategory) }
+                    endSideContent = {
+                        RemoveIcon(
+                            onRemoveIconClick = { onRemoveCategoryIconClick(todoCategory) }
+                        )
+                    }
                 )
             }
             AddCircle(
@@ -277,6 +280,15 @@ fun CategoriesFlowRow(
                 modifier = Modifier.height(60.dp)
             )
         }
+}
+
+@Composable
+fun RemoveIcon(onRemoveIconClick: () -> Unit) {
+    Icon(
+        imageVector = Icons.Filled.Close,
+        contentDescription = stringResource(R.string.remove),
+        modifier = Modifier.clickable { onRemoveIconClick() }
+    )
 }
 
 @Composable
