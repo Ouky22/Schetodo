@@ -35,7 +35,8 @@ fun TodoCategoryItem(
     cardBackgroundColor: Color,
     icon: ImageVector,
     text: @Composable () -> Unit,
-    endSideContent: @Composable () -> Unit = {}
+    endSideContent: @Composable () -> Unit = {},
+    alignEndSideContentToEnd: Boolean = false
 ) {
     Card(
         modifier = modifier,
@@ -71,7 +72,7 @@ fun TodoCategoryItem(
                 }
             }
 
-            Column(modifier = Modifier.weight(weight = 1f, fill = false)) {
+            Column(modifier = Modifier.weight(weight = 1f, fill = alignEndSideContentToEnd)) {
                 text()
             }
 
@@ -92,7 +93,8 @@ fun CategoryItem(
     todoCategoryColor: Color,
     todoCategoryIcon: ImageVector,
     textStyle: TextStyle = MaterialTheme.typography.headlineMedium,
-    endSideContent: @Composable () -> Unit = {}
+    endSideContent: @Composable () -> Unit = {},
+    alignEndSideContentToEnd: Boolean = false
 ) {
     TodoCategoryItem(
         modifier = modifier,
@@ -109,7 +111,8 @@ fun CategoryItem(
                 modifier = Modifier.padding(8.dp)
             )
         },
-        endSideContent = endSideContent
+        endSideContent = endSideContent,
+        alignEndSideContentToEnd = alignEndSideContentToEnd
     )
 }
 
@@ -117,7 +120,8 @@ fun CategoryItem(
 fun TodoItem(
     modifier: Modifier = Modifier,
     todo: Todo,
-    endSideContent: @Composable () -> Unit = {}
+    endSideContent: @Composable () -> Unit = {},
+    alignEndSideContentToEnd: Boolean = false
 ) {
     TodoCategoryItem(
         modifier = modifier.border(
@@ -137,7 +141,8 @@ fun TodoItem(
                 modifier = Modifier.padding(start = 4.dp)
             )
         },
-        endSideContent = endSideContent
+        endSideContent = endSideContent,
+        alignEndSideContentToEnd = alignEndSideContentToEnd
     )
 }
 
