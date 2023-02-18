@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.schetodo.R
 import com.example.schetodo.data.todo.Todo
-import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockEvent.*
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_category.TodoCategory
@@ -31,6 +31,7 @@ import com.example.schetodo.ui.components.AddEditTopBar
 import com.example.schetodo.ui.components.CategoryItem
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.TodoItem
+import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockEvent.*
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.category.TODO_CATEGORY_PICKER_RESULT
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.todo.TODO_PICKER_RESULT
 import com.example.schetodo.ui.feature.todos.getIconByName
@@ -40,6 +41,7 @@ import com.example.schetodo.ui.navigation.schedule.TodoPicker
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.showDatePicker
 import com.example.schetodo.ui.util.showTimePicker
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -49,31 +51,39 @@ fun AddEditScheduleBlockScreen(
     navController: NavController
 ) {
     val state = viewModel.state
+    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
     LaunchedEffect(true) {
-        navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Int>>(
-            TODO_PICKER_RESULT, emptyList()
-        )?.collect {
-            viewModel.onEvent(SelectTodos(it))
-            navController.currentBackStackEntry?.savedStateHandle
-                ?.remove<List<Int>>(TODO_PICKER_RESULT)
+        launch {
+            navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Int>>(
+                TODO_PICKER_RESULT, emptyList()
+            )?.collect {
+                viewModel.onEvent(SelectTodos(it))
+                navController.currentBackStackEntry?.savedStateHandle
+                    ?.remove<List<Int>>(TODO_PICKER_RESULT)
+            }
         }
-    }
-
-    LaunchedEffect(true) {
-        navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Int>>(
-            TODO_CATEGORY_PICKER_RESULT, emptyList()
-        )?.collect {
-            viewModel.onEvent(SelectTodoCategories(it))
-            navController.currentBackStackEntry?.savedStateHandle
-                ?.remove<List<Int>>(TODO_CATEGORY_PICKER_RESULT)
+        launch {
+            navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Int>>(
+                TODO_CATEGORY_PICKER_RESULT, emptyList()
+            )?.collect {
+                viewModel.onEvent(SelectTodoCategories(it))
+                navController.currentBackStackEntry?.savedStateHandle
+                    ?.remove<List<Int>>(TODO_CATEGORY_PICKER_RESULT)
+            }
+        }
+        launch {
+            viewModel.errorMessages.collect {
+                snackbarHostState.showSnackbar(message = it.asString(context))
+            }
         }
     }
 
     AddEditScheduleBlockScreen(
         modifier = modifier,
         todoCategories = state.todoCategories,
+        snackbarHostState = snackbarHostState,
         todos = state.todos,
         notes = state.notes,
         date = state.date,
@@ -100,7 +110,7 @@ fun AddEditScheduleBlockScreen(
         onAddTodoCategoryButtonClick = { navController.navigate(TodoCategoryPicker.route) },
         onRemoveTodo = { viewModel.onEvent(RemoveSelectedTodo(it)) },
         onRemoveCategory = { viewModel.onEvent(RemoveSelectedTodoCategory(it)) },
-        onSave = {},
+        onSave = { viewModel.onEvent(SaveScheduleBlock) },
         onDelete = {},
         onClose = {}
     )
@@ -110,6 +120,7 @@ fun AddEditScheduleBlockScreen(
 @Composable
 fun AddEditScheduleBlockScreen(
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
     todoCategories: List<TodoCategory>,
     todos: List<Todo>,
     notes: String,
@@ -130,6 +141,7 @@ fun AddEditScheduleBlockScreen(
     onClose: () -> Unit
 ) {
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             AddEditTopBar(
                 title = if (inEditingMode) stringResource(R.string.edit_todo_block)
@@ -367,6 +379,7 @@ fun AddScheduleBlockScreenPreview() {
     SchetodoTheme {
         AddEditScheduleBlockScreen(
             modifier = Modifier.fillMaxSize(),
+            snackbarHostState = remember { SnackbarHostState() },
             todoCategories = emptyList(),
             todos = emptyList(),
             notes = "",
@@ -418,6 +431,7 @@ fun EditScheduleBlockScreenPreview() {
     SchetodoTheme {
         AddEditScheduleBlockScreen(
             modifier = Modifier.fillMaxSize(),
+            snackbarHostState = remember { SnackbarHostState() },
             todoCategories = categories,
             todos = todos,
             notes = "Lorem ipsum dolor sit at, usto duo",

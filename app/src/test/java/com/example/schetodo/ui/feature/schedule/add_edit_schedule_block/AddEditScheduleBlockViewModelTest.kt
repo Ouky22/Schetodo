@@ -41,6 +41,50 @@ internal class AddEditScheduleBlockViewModelTest {
     }
 
     @Test
+    fun when_saving_and_start_time_equals_end_time_then_do_not_save() = runTest {
+        val date = LocalDate.of(2023, 2, 15)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(AddScheduleBlock.dateStampArg to date.toEpochDay())
+        )
+        val viewModel = AddEditScheduleBlockViewModel(
+            fakeScheduleBlockRepository,
+            fakeTodoRepository,
+            fakeTodoCategoryRepository,
+            savedStateHandle
+        )
+
+        val startTime = LocalTime.of(10, 0)
+        val endTime = LocalTime.of(10, 0)
+        viewModel.onEvent(AddEditScheduleBlockEvent.ChangeStartTime(startTime))
+        viewModel.onEvent(AddEditScheduleBlockEvent.ChangeStartTime(endTime))
+        viewModel.onEvent(AddEditScheduleBlockEvent.SaveScheduleBlock)
+
+        assertThat(viewModel.state.successfullySaved).isFalse()
+    }
+
+    @Test
+    fun when_saving_and_start_time_bigger_than_end_time_then_do_not_save() = runTest {
+        val date = LocalDate.of(2023, 2, 15)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(AddScheduleBlock.dateStampArg to date.toEpochDay())
+        )
+        val viewModel = AddEditScheduleBlockViewModel(
+            fakeScheduleBlockRepository,
+            fakeTodoRepository,
+            fakeTodoCategoryRepository,
+            savedStateHandle
+        )
+
+        val startTime = LocalTime.of(10, 0)
+        val endTime = LocalTime.of(9, 59)
+        viewModel.onEvent(AddEditScheduleBlockEvent.ChangeStartTime(startTime))
+        viewModel.onEvent(AddEditScheduleBlockEvent.ChangeStartTime(endTime))
+        viewModel.onEvent(AddEditScheduleBlockEvent.SaveScheduleBlock)
+
+        assertThat(viewModel.state.successfullySaved).isFalse()
+    }
+
+    @Test
     fun when_selecting_todos_then_the_corresponding_todo_categories_are_also_added() = runTest {
         val date = LocalDate.of(2023, 2, 15)
         val savedStateHandle = SavedStateHandle(

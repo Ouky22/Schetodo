@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.schetodo.R
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoRepository
@@ -15,6 +16,10 @@ import com.example.schetodo.ui.navigation.schedule.AddScheduleBlock
 import com.example.schetodo.ui.navigation.schedule.EditScheduleBlock
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockEvent.*
+import com.example.schetodo.ui.util.UiText
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -33,6 +38,10 @@ class AddEditScheduleBlockViewModel @Inject constructor(
 ) : ViewModel() {
     var state by mutableStateOf(AddEditScheduleBlockScreenState())
         private set
+
+    private val _errorMessages = MutableSharedFlow<UiText>()
+    val errorMessages: SharedFlow<UiText>
+        get() = _errorMessages.asSharedFlow()
 
     private lateinit var scheduleBlockDate: LocalDate
     private lateinit var startTime: LocalTime
@@ -58,7 +67,26 @@ class AddEditScheduleBlockViewModel @Inject constructor(
             is RemoveSelectedTodo -> removeSelectedTodo(event.todo)
             is SelectTodoCategories -> addSelectedTodoCategories(event.todoCategoryIds)
             is RemoveSelectedTodoCategory -> removeSelectedTodoCategory(event.category)
+            is SaveScheduleBlock -> saveScheduleBlock()
         }
+    }
+
+    fun saveScheduleBlock() {
+        val endTimeIsBiggerThanStartTime = endTime.isAfter(startTime)
+        if (!endTimeIsBiggerThanStartTime) {
+            viewModelScope.launch {
+                _errorMessages.emit(UiText.StringResource(R.string.start_time_bigger_end_time_error))
+            }
+            return
+        }
+
+        // schedule block can not overlap with other already existing schedule blocks
+
+        // at least one of the following must be set: notes, todo, todoCategory
+
+        // if todo selected and saved then mark status as IN_PROGRESS
+
+        state = state.copy(successfullySaved = true)
     }
 
     private fun addSelectedTodos(todoIds: List<Int>) {
