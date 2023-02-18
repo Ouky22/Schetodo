@@ -40,26 +40,12 @@ class AddEditScheduleBlockViewModel @Inject constructor(
 
     init {
         val todoBlockId = savedStateHandle.get<Int>(EditScheduleBlock.todoBlockIdArg)
+
         val viewModelCreatedForEditing = todoBlockId != null && todoBlockId >= 1
-
-        if (viewModelCreatedForEditing) {
-            loadScheduleBlock(todoBlockId!!)
-        } else {
-            val dateStamp = savedStateHandle.get<Long>(AddScheduleBlock.dateStampArg)
-                ?: throw Exception("Date stamp argument cannot be null when adding ScheduleBlock")
-
-            updateCurrentDate(dateStamp)
-
-            val startTimeStamp = savedStateHandle.get<Int>(AddScheduleBlock.startTimeStampArg)
-            val startTimePassed = startTimeStamp != null && startTimeStamp >= 0
-            if (startTimePassed) updateStartTime(startTimeStamp!!)
-            else updateStartTime(0)
-
-            val endTimeStamp = savedStateHandle.get<Int>(AddScheduleBlock.endTimeStampArg)
-            val endTimePassed = endTimeStamp != null && endTimeStamp >= 0
-            if (endTimePassed) updateEndTime(endTimeStamp!!)
-            else updateEndTime(0)
-        }
+        if (viewModelCreatedForEditing)
+            loadScheduleBlockToEdit(todoBlockId!!)
+        else
+            loadDataForAddingScheduleBlock(savedStateHandle)
     }
 
     fun onEvent(event: AddEditScheduleBlockEvent) {
@@ -115,26 +101,6 @@ class AddEditScheduleBlockViewModel @Inject constructor(
         )
     }
 
-    private fun loadScheduleBlock(todoBlockId: Int) {
-        viewModelScope.launch {
-            val scheduleBlock =
-                scheduleBlockRepository.getScheduleBlockByTodoBlockId(todoBlockId).first()
-                    ?: throw Exception("There is no ScheduleBlock with TodoBlock id $todoBlockId")
-
-            updateCurrentDate(
-                scheduleBlock.todoBlock.date ?: throw Exception("TodoBlock needs a date")
-            )
-            updateStartTime(scheduleBlock.todoBlock.startTime.toSecondOfDay())
-            updateEndTime(scheduleBlock.todoBlock.endTime.toSecondOfDay())
-            state = state.copy(
-                todoCategories = scheduleBlock.todoCategories,
-                todos = scheduleBlock.todos,
-                notes = scheduleBlock.todoBlock.notes ?: "",
-                inEditingMode = true
-            )
-        }
-    }
-
     private fun updateStartTime(startTime: LocalTime) {
         this.startTime = startTime
         state = state.copy(
@@ -166,4 +132,41 @@ class AddEditScheduleBlockViewModel @Inject constructor(
 
     private fun updateCurrentDate(dateStamp: Long) =
         updateCurrentDate(LocalDate.ofEpochDay(dateStamp))
+
+    private fun loadScheduleBlockToEdit(todoBlockId: Int) {
+        viewModelScope.launch {
+            val scheduleBlock =
+                scheduleBlockRepository.getScheduleBlockByTodoBlockId(todoBlockId).first()
+                    ?: throw Exception("There is no ScheduleBlock with TodoBlock id $todoBlockId")
+
+            updateCurrentDate(
+                scheduleBlock.todoBlock.date ?: throw Exception("TodoBlock needs a date")
+            )
+            updateStartTime(scheduleBlock.todoBlock.startTime.toSecondOfDay())
+            updateEndTime(scheduleBlock.todoBlock.endTime.toSecondOfDay())
+            state = state.copy(
+                todoCategories = scheduleBlock.todoCategories,
+                todos = scheduleBlock.todos,
+                notes = scheduleBlock.todoBlock.notes ?: "",
+                inEditingMode = true
+            )
+        }
+    }
+
+    private fun loadDataForAddingScheduleBlock(savedStateHandle: SavedStateHandle) {
+        val dateStamp = savedStateHandle.get<Long>(AddScheduleBlock.dateStampArg)
+            ?: throw Exception("Date stamp argument cannot be null when adding ScheduleBlock")
+
+        updateCurrentDate(dateStamp)
+
+        val startTimeStamp = savedStateHandle.get<Int>(AddScheduleBlock.startTimeStampArg)
+        val startTimeReceived = startTimeStamp != null && startTimeStamp >= 0
+        if (startTimeReceived) updateStartTime(startTimeStamp!!)
+        else updateStartTime(0)
+
+        val endTimeStamp = savedStateHandle.get<Int>(AddScheduleBlock.endTimeStampArg)
+        val endTimeReceived = endTimeStamp != null && endTimeStamp >= 0
+        if (endTimeReceived) updateEndTime(endTimeStamp!!)
+        else updateEndTime(0)
+    }
 }
