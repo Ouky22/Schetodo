@@ -12,11 +12,13 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 
 @Composable
 fun PositiveNegativeButtonRow(
+    modifier: Modifier = Modifier,
     positiveButtonText: String,
     negativeButtonText: String,
     onPositiveClick: () -> Unit,
     onNegativeClick: () -> Unit,
-    modifier: Modifier = Modifier
+    positiveButtonEnabled: Boolean = true,
+    negativeButtonEnabled: Boolean = true,
 ) {
     Row(
         modifier = modifier,
@@ -26,7 +28,8 @@ fun PositiveNegativeButtonRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            onClick = { onNegativeClick() }
+            onClick = { onNegativeClick() },
+            enabled = negativeButtonEnabled
         ) {
             Text(text = negativeButtonText)
         }
@@ -35,7 +38,8 @@ fun PositiveNegativeButtonRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            onClick = { onPositiveClick() }
+            onClick = { onPositiveClick() },
+            enabled = positiveButtonEnabled
         ) {
             Text(text = positiveButtonText)
         }

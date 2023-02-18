@@ -45,6 +45,7 @@ fun TodoPickerScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     TodoPickerScreen(
+        modifier = modifier,
         topAppBarTitle = state.currentCategory?.name ?: stringResource(R.string.select_todo),
         showTopBarBackButton = state.showTopBarBackButton,
         onTopBarBackButtonClick = { viewModel.navigateToPreviousCategory() },
@@ -97,8 +98,12 @@ fun TodoPickerScreen(
                 modifier = Modifier.weight(1f)
             )
 
+            val selectedTodosCount = selectedTodos.size
             PositiveNegativeButtonRow(
-                positiveButtonText = stringResource(id = R.string.add),
+                positiveButtonText =
+                if (selectedTodosCount == 0) stringResource(id = R.string.add)
+                else stringResource(id = R.string.add_with_number, selectedTodosCount),
+                positiveButtonEnabled = selectedTodosCount > 0,
                 negativeButtonText = stringResource(id = R.string.cancel),
                 onPositiveClick = onAdd,
                 onNegativeClick = onCancel,
