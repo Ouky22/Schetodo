@@ -68,6 +68,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
             is AddEditScheduleBlockEvent.ChangeEndTime -> updateEndTime(event.endTime)
             is AddEditScheduleBlockEvent.SelectTodos -> addSelectedTodos(event.todoIds)
             is AddEditScheduleBlockEvent.RemoveSelectedTodo -> removeSelectedTodo(event.todo)
+            is AddEditScheduleBlockEvent.SelectTodoCategories -> addSelectedTodoCategories(event.todoCategoryIds)
         }
     }
 

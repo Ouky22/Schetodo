@@ -30,9 +30,11 @@ import com.example.schetodo.ui.components.AddEditTopBar
 import com.example.schetodo.ui.components.CategoryItem
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.TodoItem
-import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.PICKER_RESULT_KEY
+import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.category.TODO_CATEGORY_PICKER_RESULT
+import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.todo.TODO_PICKER_RESULT
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
+import com.example.schetodo.ui.navigation.schedule.TodoCategoryPicker
 import com.example.schetodo.ui.navigation.schedule.TodoPicker
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.showDatePicker
@@ -50,11 +52,21 @@ fun AddEditScheduleBlockScreen(
 
     LaunchedEffect(true) {
         navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Int>>(
-            PICKER_RESULT_KEY, emptyList()
+            TODO_PICKER_RESULT, emptyList()
         )?.collect {
             viewModel.onEvent(AddEditScheduleBlockEvent.SelectTodos(it))
             navController.currentBackStackEntry?.savedStateHandle
-                ?.remove<List<Int>>(PICKER_RESULT_KEY)
+                ?.remove<List<Int>>(TODO_PICKER_RESULT)
+        }
+    }
+
+    LaunchedEffect(true) {
+        navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Int>>(
+            TODO_CATEGORY_PICKER_RESULT, emptyList()
+        )?.collect {
+            viewModel.onEvent(AddEditScheduleBlockEvent.SelectTodoCategories(it))
+            navController.currentBackStackEntry?.savedStateHandle
+                ?.remove<List<Int>>(TODO_CATEGORY_PICKER_RESULT)
         }
     }
 
@@ -84,7 +96,7 @@ fun AddEditScheduleBlockScreen(
         },
         onNotesChanged = { viewModel.onEvent(AddEditScheduleBlockEvent.ChangeTodoBlockNotes(it)) },
         onAddTodoButtonClick = { navController.navigate(TodoPicker.route) },
-        onAddTodoCategoryButtonClick = {},
+        onAddTodoCategoryButtonClick = { navController.navigate(TodoCategoryPicker.route) },
         onRemoveTodo = { viewModel.onEvent(AddEditScheduleBlockEvent.RemoveSelectedTodo(it)) },
         onRemoveCategory = {},
         onSave = {},

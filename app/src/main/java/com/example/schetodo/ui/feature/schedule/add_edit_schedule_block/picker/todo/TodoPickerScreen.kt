@@ -1,8 +1,7 @@
-package com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker
+package com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.todo
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,8 +12,6 @@ import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -31,14 +28,15 @@ import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.ui.components.CategoryItem
-import com.example.schetodo.ui.components.PositiveNegativeButtonRow
-import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.components.TodoItem
+import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.PickerScreen
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
 
-const val PICKER_RESULT_KEY = "picker_result"
+
+const val TODO_PICKER_RESULT = "todo_picker_result"
+
 
 @Composable
 fun TodoPickerScreen(
@@ -51,82 +49,28 @@ fun TodoPickerScreen(
     if (state.currentCategoryIsChildCategory)
         BackHandler { viewModel.navigateToPreviousCategory() }
 
-    TodoPickerScreen(
+    PickerScreen(
         modifier = modifier,
         topAppBarTitle = state.currentCategory?.name ?: stringResource(R.string.select_todo),
         showTopBarBackButton = state.showTopBarBackButton,
         onTopBarBackButtonClick = { viewModel.navigateToPreviousCategory() },
-        todos = state.todos,
-        todoCategories = state.childCategories,
-        selectedTodos = state.selectedItems,
-        onMarkTodoForSelection = { viewModel.markItemForSelection(it) },
-        onUndoMarkTodoForSelection = { viewModel.undoMarkItemForSelection(it) },
-        onClickOnTodoCategory = { viewModel.navigateToTodoCategory(it.categoryId) },
+        selectedItemCount = state.selectedItems.count(),
         onAdd = {
             navController.previousBackStackEntry?.savedStateHandle?.apply {
-                set(PICKER_RESULT_KEY, state.selectedItems.map { it.todoId })
+                set(TODO_PICKER_RESULT, state.selectedItems.map { it.todoId })
             }
             navController.popBackStack()
         },
-        onCancel = {
-            navController.popBackStack()
-        }
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TodoPickerScreen(
-    modifier: Modifier = Modifier,
-    topAppBarTitle: String,
-    showTopBarBackButton: Boolean,
-    onTopBarBackButtonClick: () -> Unit,
-    todos: List<Todo>,
-    todoCategories: List<TodoCategory>,
-    selectedTodos: List<Todo>,
-    onMarkTodoForSelection: (Todo) -> Unit,
-    onUndoMarkTodoForSelection: (Todo) -> Unit,
-    onClickOnTodoCategory: (TodoCategory) -> Unit,
-    onAdd: () -> Unit,
-    onCancel: () -> Unit
-) {
-    Scaffold(
-        topBar = {
-            SchetodoTopAppBar(
-                title = topAppBarTitle,
-                showBackButton = showTopBarBackButton,
-                onBackButtonClick = onTopBarBackButtonClick
-            )
-        }
-    ) { contentPadding ->
-        Column(
-            modifier = modifier.padding(contentPadding)
-        ) {
-            TodoPickerList(
-                todoCategories = todoCategories,
-                todos = todos,
-                selectedTodos = selectedTodos,
-                onMarkTodoForSelection = onMarkTodoForSelection,
-                onUndoMarkTodoForSelection = onUndoMarkTodoForSelection,
-                onClickOnTodoCategory = onClickOnTodoCategory,
-                modifier = Modifier.weight(1f)
-            )
-
-            val selectedTodosCount = selectedTodos.size
-            PositiveNegativeButtonRow(
-                positiveButtonText =
-                if (selectedTodosCount == 0) stringResource(id = R.string.add)
-                else stringResource(id = R.string.add_with_number, selectedTodosCount),
-                positiveButtonEnabled = selectedTodosCount > 0,
-                negativeButtonText = stringResource(id = R.string.cancel),
-                onPositiveClick = onAdd,
-                onNegativeClick = onCancel,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp, bottom = 24.dp)
-                    .padding(horizontal = 16.dp)
-            )
-        }
+        onCancel = { navController.popBackStack() }
+    ) {
+        TodoPickerList(
+            todoCategories = state.childCategories,
+            todos = state.todos,
+            selectedTodos = state.selectedItems,
+            onMarkTodoForSelection = { viewModel.markItemForSelection(it) },
+            onUndoMarkTodoForSelection = { viewModel.undoMarkItemForSelection(it) },
+            onClickOnTodoCategory = { viewModel.navigateToTodoCategory(it.categoryId) }
+        )
     }
 }
 
@@ -197,18 +141,22 @@ fun TodoPickerScreenPreview() {
     )
 
     SchetodoTheme {
-        TodoPickerScreen(
+        PickerScreen(
             topAppBarTitle = "Category Name",
             showTopBarBackButton = true,
             onTopBarBackButtonClick = {},
-            todos = listOf(todo1, todo2),
-            selectedTodos = listOf(todo2),
-            todoCategories = categories,
-            onMarkTodoForSelection = {},
-            onUndoMarkTodoForSelection = {},
-            onClickOnTodoCategory = {},
+            selectedItemCount = 1,
             onAdd = {},
             onCancel = {}
-        )
+        ) {
+            TodoPickerList(
+                todos = listOf(todo1, todo2),
+                selectedTodos = listOf(todo2),
+                todoCategories = categories,
+                onMarkTodoForSelection = {},
+                onUndoMarkTodoForSelection = {},
+                onClickOnTodoCategory = {}
+            )
+        }
     }
 }

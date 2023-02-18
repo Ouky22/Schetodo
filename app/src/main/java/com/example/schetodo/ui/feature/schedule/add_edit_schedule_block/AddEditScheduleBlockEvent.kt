@@ -11,4 +11,5 @@ sealed class AddEditScheduleBlockEvent {
     data class ChangeEndTime(val endTime: LocalTime) : AddEditScheduleBlockEvent()
     data class SelectTodos(val todoIds: List<Int>) : AddEditScheduleBlockEvent()
     data class RemoveSelectedTodo(val todo: Todo) : AddEditScheduleBlockEvent()
+    data class SelectTodoCategories(val todoCategoryIds: List<Int>) : AddEditScheduleBlockEvent()
 }

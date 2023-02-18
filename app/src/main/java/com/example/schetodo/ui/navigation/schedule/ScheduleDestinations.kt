@@ -56,3 +56,7 @@ object EditScheduleBlock: SchetodoDestination {
 object TodoPicker: SchetodoDestination {
     override val route = "todo_picker"
 }
+
+object TodoCategoryPicker: SchetodoDestination {
+    override val route = "todo_category_picker"
+}
