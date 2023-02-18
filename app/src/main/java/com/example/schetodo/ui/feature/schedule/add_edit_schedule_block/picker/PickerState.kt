@@ -9,4 +9,7 @@ data class PickerState<T>(
     val todos: List<Todo> = emptyList(),
     val selectedItems: List<T> = emptyList(),
     val showTopBarBackButton: Boolean = false
-)
+) {
+    val currentCategoryIsChildCategory: Boolean
+        get() = currentCategory != null
+}

@@ -1,5 +1,6 @@
 package com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -43,6 +44,9 @@ fun TodoPickerScreen(
     viewModel: TodoPickerViewModel
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    if (state.currentCategoryIsChildCategory)
+        BackHandler { viewModel.navigateToPreviousCategory() }
 
     TodoPickerScreen(
         modifier = modifier,
