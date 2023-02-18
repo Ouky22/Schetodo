@@ -9,10 +9,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoRepository
+import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.todo_category.TodoCategoryRepository
 import com.example.schetodo.ui.navigation.schedule.AddScheduleBlock
 import com.example.schetodo.ui.navigation.schedule.EditScheduleBlock
 import dagger.hilt.android.lifecycle.HiltViewModel
+import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockEvent.*
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -62,18 +64,15 @@ class AddEditScheduleBlockViewModel @Inject constructor(
 
     fun onEvent(event: AddEditScheduleBlockEvent) {
         when (event) {
-            is AddEditScheduleBlockEvent.ChangeTodoBlockNotes -> updateTodoBlockNotes(event.notes)
-            is AddEditScheduleBlockEvent.ChangeDate -> updateCurrentDate(event.date)
-            is AddEditScheduleBlockEvent.ChangeStartTime -> updateStartTime(event.startTime)
-            is AddEditScheduleBlockEvent.ChangeEndTime -> updateEndTime(event.endTime)
-            is AddEditScheduleBlockEvent.SelectTodos -> addSelectedTodos(event.todoIds)
-            is AddEditScheduleBlockEvent.RemoveSelectedTodo -> removeSelectedTodo(event.todo)
-            is AddEditScheduleBlockEvent.SelectTodoCategories -> addSelectedTodoCategories(event.todoCategoryIds)
+            is ChangeTodoBlockNotes -> updateTodoBlockNotes(event.notes)
+            is ChangeDate -> updateCurrentDate(event.date)
+            is ChangeStartTime -> updateStartTime(event.startTime)
+            is ChangeEndTime -> updateEndTime(event.endTime)
+            is SelectTodos -> addSelectedTodos(event.todoIds)
+            is RemoveSelectedTodo -> removeSelectedTodo(event.todo)
+            is SelectTodoCategories -> addSelectedTodoCategories(event.todoCategoryIds)
+            is RemoveSelectedTodoCategory -> removeSelectedTodoCategory(event.category)
         }
-    }
-
-    private fun removeSelectedTodo(todo: Todo) {
-        state = state.copy(todos = state.todos - todo)
     }
 
     private fun addSelectedTodos(todoIds: List<Int>) {
@@ -92,6 +91,10 @@ class AddEditScheduleBlockViewModel @Inject constructor(
         addSelectedTodoCategories(todos.map { it.categoryId })
     }
 
+    private fun removeSelectedTodo(todo: Todo) {
+        state = state.copy(todos = state.todos - todo)
+    }
+
     private fun addSelectedTodoCategories(todoCategoryIds: List<Int>) {
         viewModelScope.launch {
             val selectedCategories = todoCategoryIds.mapNotNull { categoryId ->
@@ -100,6 +103,10 @@ class AddEditScheduleBlockViewModel @Inject constructor(
             val allSelectedCategories = (state.todoCategories + selectedCategories).toSet().toList()
             state = state.copy(todoCategories = allSelectedCategories)
         }
+    }
+
+    private fun removeSelectedTodoCategory(todoCategory: TodoCategory) {
+        state = state.copy(todoCategories = state.todoCategories - todoCategory)
     }
 
     private fun updateTodoBlockNotes(notes: String) {

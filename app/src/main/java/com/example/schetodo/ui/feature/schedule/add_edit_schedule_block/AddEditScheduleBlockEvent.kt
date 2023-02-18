@@ -1,6 +1,7 @@
 package com.example.schetodo.ui.feature.schedule.add_edit_schedule_block
 
 import com.example.schetodo.data.todo.Todo
+import com.example.schetodo.data.todo_category.TodoCategory
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -12,4 +13,5 @@ sealed class AddEditScheduleBlockEvent {
     data class SelectTodos(val todoIds: List<Int>) : AddEditScheduleBlockEvent()
     data class RemoveSelectedTodo(val todo: Todo) : AddEditScheduleBlockEvent()
     data class SelectTodoCategories(val todoCategoryIds: List<Int>) : AddEditScheduleBlockEvent()
+    data class RemoveSelectedTodoCategory(val category: TodoCategory) : AddEditScheduleBlockEvent()
 }

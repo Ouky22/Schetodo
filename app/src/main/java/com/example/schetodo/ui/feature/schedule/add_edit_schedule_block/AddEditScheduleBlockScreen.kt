@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.schetodo.R
 import com.example.schetodo.data.todo.Todo
+import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockEvent.*
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_category.TodoCategory
@@ -54,7 +55,7 @@ fun AddEditScheduleBlockScreen(
         navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Int>>(
             TODO_PICKER_RESULT, emptyList()
         )?.collect {
-            viewModel.onEvent(AddEditScheduleBlockEvent.SelectTodos(it))
+            viewModel.onEvent(SelectTodos(it))
             navController.currentBackStackEntry?.savedStateHandle
                 ?.remove<List<Int>>(TODO_PICKER_RESULT)
         }
@@ -64,7 +65,7 @@ fun AddEditScheduleBlockScreen(
         navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Int>>(
             TODO_CATEGORY_PICKER_RESULT, emptyList()
         )?.collect {
-            viewModel.onEvent(AddEditScheduleBlockEvent.SelectTodoCategories(it))
+            viewModel.onEvent(SelectTodoCategories(it))
             navController.currentBackStackEntry?.savedStateHandle
                 ?.remove<List<Int>>(TODO_CATEGORY_PICKER_RESULT)
         }
@@ -81,24 +82,24 @@ fun AddEditScheduleBlockScreen(
         inEditingMode = state.inEditingMode,
         onDateClick = {
             showDatePicker(context) { selectedDate ->
-                viewModel.onEvent(AddEditScheduleBlockEvent.ChangeDate(selectedDate))
+                viewModel.onEvent(ChangeDate(selectedDate))
             }
         },
         onStartTimeButtonClick = {
             showTimePicker(context) { selectedTime ->
-                viewModel.onEvent(AddEditScheduleBlockEvent.ChangeStartTime(selectedTime))
+                viewModel.onEvent(ChangeStartTime(selectedTime))
             }
         },
         onEndTimeButtonClick = {
             showTimePicker(context) { selectedTime ->
-                viewModel.onEvent(AddEditScheduleBlockEvent.ChangeEndTime(selectedTime))
+                viewModel.onEvent(ChangeEndTime(selectedTime))
             }
         },
-        onNotesChanged = { viewModel.onEvent(AddEditScheduleBlockEvent.ChangeTodoBlockNotes(it)) },
+        onNotesChanged = { viewModel.onEvent(ChangeTodoBlockNotes(it)) },
         onAddTodoButtonClick = { navController.navigate(TodoPicker.route) },
         onAddTodoCategoryButtonClick = { navController.navigate(TodoCategoryPicker.route) },
-        onRemoveTodo = { viewModel.onEvent(AddEditScheduleBlockEvent.RemoveSelectedTodo(it)) },
-        onRemoveCategory = {},
+        onRemoveTodo = { viewModel.onEvent(RemoveSelectedTodo(it)) },
+        onRemoveCategory = { viewModel.onEvent(RemoveSelectedTodoCategory(it)) },
         onSave = {},
         onDelete = {},
         onClose = {}
