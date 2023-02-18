@@ -1,6 +1,5 @@
 package com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.todo_picker
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,12 +15,14 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoFlag
@@ -38,18 +39,22 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 
 @Composable
 fun TodoPickerScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: TodoPickerViewModel
 ) {
-    TodoPickerScreen(
-        topAppBarTitle = "",
-        showTopBarBackButton = false,
-        onTopBarBackButtonClick = {},
-        todos = emptyList(),
-        todoCategories = emptyList(),
-        onTodoSelectionChanged = { todo, selected ->
+    val state by viewModel.todoPickerState.collectAsStateWithLifecycle()
 
+    TodoPickerScreen(
+        topAppBarTitle = state.currentCategory?.name ?: stringResource(R.string.select_todo),
+        showTopBarBackButton = state.showTopBarBackButton,
+        onTopBarBackButtonClick = { viewModel.onEvent(TodoPickerEvent.NavigateToPreviousTodoCategory) },
+        todos = state.todos,
+        todoCategories = state.childCategories,
+        onMarkTodoForSelection = { viewModel.onEvent(TodoPickerEvent.MarkTodoForSelection(it)) },
+        onUndoMarkTodoForSelection = { viewModel.onEvent(TodoPickerEvent.UndoMarkTodoForSelection(it)) },
+        onClickOnTodoCategory = {
+            viewModel.onEvent(TodoPickerEvent.NavigateToNewTodoCategory(it.categoryId))
         },
-        onClickOnTodoCategory = {},
         onAdd = {},
         onCancel = {}
     )
@@ -64,7 +69,8 @@ fun TodoPickerScreen(
     onTopBarBackButtonClick: () -> Unit,
     todos: List<TodoWithSelector>,
     todoCategories: List<TodoCategory>,
-    onTodoSelectionChanged: (todo: Todo, selected: Boolean) -> Unit,
+    onMarkTodoForSelection: (Todo) -> Unit,
+    onUndoMarkTodoForSelection: (Todo) -> Unit,
     onClickOnTodoCategory: (TodoCategory) -> Unit,
     onAdd: () -> Unit,
     onCancel: () -> Unit
@@ -84,7 +90,8 @@ fun TodoPickerScreen(
             TodoPickerList(
                 todoCategories = todoCategories,
                 todos = todos,
-                onTodoSelectionChanged = onTodoSelectionChanged,
+                onMarkTodoForSelection = onMarkTodoForSelection,
+                onUndoMarkTodoForSelection = onUndoMarkTodoForSelection,
                 onClickOnTodoCategory = onClickOnTodoCategory,
                 modifier = Modifier.weight(1f)
             )
@@ -108,7 +115,8 @@ fun TodoPickerList(
     modifier: Modifier = Modifier,
     todos: List<TodoWithSelector>,
     todoCategories: List<TodoCategory>,
-    onTodoSelectionChanged: (todo: Todo, selected: Boolean) -> Unit,
+    onMarkTodoForSelection: (Todo) -> Unit,
+    onUndoMarkTodoForSelection: (Todo) -> Unit,
     onClickOnTodoCategory: (TodoCategory) -> Unit,
 ) {
     LazyColumn(modifier = modifier) {
@@ -132,7 +140,8 @@ fun TodoPickerList(
                     Checkbox(
                         checked = todoWithSelector.selected,
                         onCheckedChange = { selected ->
-                            onTodoSelectionChanged(todo, selected)
+                            if (selected) onMarkTodoForSelection(todo)
+                            else onUndoMarkTodoForSelection(todo)
                         }
                     )
                 },
@@ -184,7 +193,8 @@ fun TodoPickerScreenPreview() {
             onTopBarBackButtonClick = {},
             todos = todosWithSelectors,
             todoCategories = categories,
-            onTodoSelectionChanged = { todo, selected -> },
+            onMarkTodoForSelection = {},
+            onUndoMarkTodoForSelection = {},
             onClickOnTodoCategory = {},
             onAdd = {},
             onCancel = {}

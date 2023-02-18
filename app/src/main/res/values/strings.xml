@@ -47,4 +47,5 @@
     <string name="remove">remove</string>
     <string name="add_new_schedule_block">Add new schedule block</string>
     <string name="ok">Ok</string>
+    <string name="select_todo">Select Todo</string>
 </resources>
