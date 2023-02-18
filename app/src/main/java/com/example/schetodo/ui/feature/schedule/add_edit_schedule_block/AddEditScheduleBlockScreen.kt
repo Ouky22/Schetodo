@@ -38,7 +38,8 @@ import com.example.schetodo.ui.util.showTimePicker
 @Composable
 fun AddEditScheduleBlockScreen(
     modifier: Modifier = Modifier,
-    viewModel: AddEditScheduleBlockViewModel
+    viewModel: AddEditScheduleBlockViewModel,
+    todoPickerNavigation: () -> Unit
 ) {
     val state = viewModel.state
     val context = LocalContext.current
@@ -68,7 +69,7 @@ fun AddEditScheduleBlockScreen(
             }
         },
         onNotesChanged = { viewModel.onEvent(AddEditScheduleBlockEvent.ChangeTodoBlockNotes(it)) },
-        onAddTodoButtonClick = {},
+        onAddTodoButtonClick = todoPickerNavigation,
         onAddTodoCategoryButtonClick = {},
         onRemoveTodo = {},
         onRemoveCategory = {},

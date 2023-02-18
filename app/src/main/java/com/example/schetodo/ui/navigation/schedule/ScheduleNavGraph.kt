@@ -8,6 +8,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockScreen
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockViewModel
+import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.TodoPickerScreen
+import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.TodoPickerViewModel
 import com.example.schetodo.ui.feature.schedule.list.ScheduleScreen
 import com.example.schetodo.ui.feature.schedule.list.ScheduleViewModel
 import com.example.schetodo.ui.navigation.Graph
@@ -38,14 +40,28 @@ fun NavGraphBuilder.scheduleNavGraph(navController: NavHostController) {
             arguments = AddScheduleBlock.args
         ) {
             val viewModel = hiltViewModel<AddEditScheduleBlockViewModel>()
-            AddEditScheduleBlockScreen(viewModel = viewModel)
+            AddEditScheduleBlockScreen(
+                viewModel = viewModel,
+                todoPickerNavigation = {
+                    navController.navigate(TodoPicker.route)
+                }
+            )
         }
         composable(
             route = EditScheduleBlock.routeWithArgs,
             arguments = EditScheduleBlock.args
         ) {
             val viewModel = hiltViewModel<AddEditScheduleBlockViewModel>()
-            AddEditScheduleBlockScreen(viewModel = viewModel)
+            AddEditScheduleBlockScreen(
+                viewModel = viewModel,
+                todoPickerNavigation = {
+                    navController.navigate(TodoPicker.route)
+                }
+            )
+        }
+        composable(route = TodoPicker.route) {
+            val viewModel = hiltViewModel<TodoPickerViewModel>()
+            TodoPickerScreen(viewModel = viewModel)
         }
     }
 }
