@@ -42,9 +42,7 @@ fun NavGraphBuilder.scheduleNavGraph(navController: NavHostController) {
             val viewModel = hiltViewModel<AddEditScheduleBlockViewModel>()
             AddEditScheduleBlockScreen(
                 viewModel = viewModel,
-                todoPickerNavigation = {
-                    navController.navigate(TodoPicker.route)
-                }
+                navController = navController
             )
         }
         composable(
@@ -54,14 +52,12 @@ fun NavGraphBuilder.scheduleNavGraph(navController: NavHostController) {
             val viewModel = hiltViewModel<AddEditScheduleBlockViewModel>()
             AddEditScheduleBlockScreen(
                 viewModel = viewModel,
-                todoPickerNavigation = {
-                    navController.navigate(TodoPicker.route)
-                }
+                navController = navController
             )
         }
         composable(route = TodoPicker.route) {
             val viewModel = hiltViewModel<TodoPickerViewModel>()
-            TodoPickerScreen(viewModel = viewModel)
+            TodoPickerScreen(viewModel = viewModel, navController = navController)
         }
     }
 }

@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.example.schetodo.R
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoFlag
@@ -37,11 +38,13 @@ import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
 
+const val PICKER_RESULT_KEY = "picker_result"
 
 @Composable
 fun TodoPickerScreen(
     modifier: Modifier = Modifier,
-    viewModel: TodoPickerViewModel
+    viewModel: TodoPickerViewModel,
+    navController: NavController
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -59,8 +62,15 @@ fun TodoPickerScreen(
         onMarkTodoForSelection = { viewModel.markItemForSelection(it) },
         onUndoMarkTodoForSelection = { viewModel.undoMarkItemForSelection(it) },
         onClickOnTodoCategory = { viewModel.navigateToTodoCategory(it.categoryId) },
-        onAdd = {},
-        onCancel = {}
+        onAdd = {
+            navController.previousBackStackEntry?.savedStateHandle?.apply {
+                set(PICKER_RESULT_KEY, state.selectedItems.map { it.todoId })
+            }
+            navController.popBackStack()
+        },
+        onCancel = {
+            navController.popBackStack()
+        }
     )
 }
 

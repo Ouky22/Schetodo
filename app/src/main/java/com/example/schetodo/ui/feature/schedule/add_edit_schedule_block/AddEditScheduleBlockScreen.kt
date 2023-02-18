@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.schetodo.R
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoFlag
@@ -28,8 +30,10 @@ import com.example.schetodo.ui.components.AddEditTopBar
 import com.example.schetodo.ui.components.CategoryItem
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.TodoItem
+import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.PICKER_RESULT_KEY
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
+import com.example.schetodo.ui.navigation.schedule.TodoPicker
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.showDatePicker
 import com.example.schetodo.ui.util.showTimePicker
@@ -39,10 +43,18 @@ import com.example.schetodo.ui.util.showTimePicker
 fun AddEditScheduleBlockScreen(
     modifier: Modifier = Modifier,
     viewModel: AddEditScheduleBlockViewModel,
-    todoPickerNavigation: () -> Unit
+    navController: NavController
 ) {
     val state = viewModel.state
     val context = LocalContext.current
+
+    LaunchedEffect(true) {
+        navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Int>>(
+            PICKER_RESULT_KEY, emptyList()
+        )?.collect {
+            viewModel.onEvent(AddEditScheduleBlockEvent.TodosSelected(it))
+        }
+    }
 
     AddEditScheduleBlockScreen(
         modifier = modifier,
@@ -69,7 +81,7 @@ fun AddEditScheduleBlockScreen(
             }
         },
         onNotesChanged = { viewModel.onEvent(AddEditScheduleBlockEvent.ChangeTodoBlockNotes(it)) },
-        onAddTodoButtonClick = todoPickerNavigation,
+        onAddTodoButtonClick = { navController.navigate(TodoPicker.route) },
         onAddTodoCategoryButtonClick = {},
         onRemoveTodo = {},
         onRemoveCategory = {},
@@ -217,14 +229,17 @@ fun TodosColumn(
     Column(modifier = modifier) {
         todos.forEach {
             TodoItem(
-                todo = it, modifier = Modifier
+                todo = it,
+                modifier = Modifier
                     .height(75.dp)
-                    .padding(4.dp),
+                    .padding(4.dp)
+                    .fillMaxWidth(),
                 endSideContent = {
                     RemoveIcon(
                         onRemoveIconClick = { onRemoveTodoIconClick(it) }
                     )
-                }
+                },
+                alignEndSideContentToEnd = true
             )
         }
         AddCircle(
