@@ -53,6 +53,8 @@ fun AddEditScheduleBlockScreen(
             PICKER_RESULT_KEY, emptyList()
         )?.collect {
             viewModel.onEvent(AddEditScheduleBlockEvent.TodosSelected(it))
+            navController.currentBackStackEntry?.savedStateHandle
+                ?.remove<List<Int>>(PICKER_RESULT_KEY)
         }
     }
 
