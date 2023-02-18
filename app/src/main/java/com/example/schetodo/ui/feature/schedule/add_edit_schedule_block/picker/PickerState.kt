@@ -1,10 +1,12 @@
-package com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.todo_picker
+package com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker
 
+import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo_category.TodoCategory
 
-data class TodoPickerState(
+data class PickerState<T>(
     val currentCategory: TodoCategory? = null, // the todos screen starts with no category selected, so currentCategory is initially null
     val childCategories: List<TodoCategory> = emptyList(),
-    val todos: List<TodoWithSelector> = emptyList(),
+    val todos: List<Todo> = emptyList(),
+    val selectedItems: List<T> = emptyList(),
     val showTopBarBackButton: Boolean = false
 )

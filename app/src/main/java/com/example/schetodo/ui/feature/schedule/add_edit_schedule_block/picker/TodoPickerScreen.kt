@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.todo_picker
+package com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -42,19 +42,18 @@ fun TodoPickerScreen(
     modifier: Modifier = Modifier,
     viewModel: TodoPickerViewModel
 ) {
-    val state by viewModel.todoPickerState.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     TodoPickerScreen(
         topAppBarTitle = state.currentCategory?.name ?: stringResource(R.string.select_todo),
         showTopBarBackButton = state.showTopBarBackButton,
-        onTopBarBackButtonClick = { viewModel.onEvent(TodoPickerEvent.NavigateToPreviousTodoCategory) },
+        onTopBarBackButtonClick = { viewModel.navigateToPreviousCategory() },
         todos = state.todos,
         todoCategories = state.childCategories,
-        onMarkTodoForSelection = { viewModel.onEvent(TodoPickerEvent.MarkTodoForSelection(it)) },
-        onUndoMarkTodoForSelection = { viewModel.onEvent(TodoPickerEvent.UndoMarkTodoForSelection(it)) },
-        onClickOnTodoCategory = {
-            viewModel.onEvent(TodoPickerEvent.NavigateToNewTodoCategory(it.categoryId))
-        },
+        selectedTodos = state.selectedItems,
+        onMarkTodoForSelection = { viewModel.markItemForSelection(it) },
+        onUndoMarkTodoForSelection = { viewModel.undoMarkItemForSelection(it) },
+        onClickOnTodoCategory = { viewModel.navigateToTodoCategory(it.categoryId) },
         onAdd = {},
         onCancel = {}
     )
@@ -67,8 +66,9 @@ fun TodoPickerScreen(
     topAppBarTitle: String,
     showTopBarBackButton: Boolean,
     onTopBarBackButtonClick: () -> Unit,
-    todos: List<TodoWithSelector>,
+    todos: List<Todo>,
     todoCategories: List<TodoCategory>,
+    selectedTodos: List<Todo>,
     onMarkTodoForSelection: (Todo) -> Unit,
     onUndoMarkTodoForSelection: (Todo) -> Unit,
     onClickOnTodoCategory: (TodoCategory) -> Unit,
@@ -90,6 +90,7 @@ fun TodoPickerScreen(
             TodoPickerList(
                 todoCategories = todoCategories,
                 todos = todos,
+                selectedTodos = selectedTodos,
                 onMarkTodoForSelection = onMarkTodoForSelection,
                 onUndoMarkTodoForSelection = onUndoMarkTodoForSelection,
                 onClickOnTodoCategory = onClickOnTodoCategory,
@@ -113,7 +114,8 @@ fun TodoPickerScreen(
 @Composable
 fun TodoPickerList(
     modifier: Modifier = Modifier,
-    todos: List<TodoWithSelector>,
+    todos: List<Todo>,
+    selectedTodos: List<Todo>,
     todoCategories: List<TodoCategory>,
     onMarkTodoForSelection: (Todo) -> Unit,
     onUndoMarkTodoForSelection: (Todo) -> Unit,
@@ -132,13 +134,12 @@ fun TodoPickerList(
                     .clickable { onClickOnTodoCategory(todoCategory) }
             )
         }
-        items(todos) { todoWithSelector ->
-            val todo = todoWithSelector.todo
+        items(todos) { todo ->
             TodoItem(
                 todo = todo,
                 endSideContent = {
                     Checkbox(
-                        checked = todoWithSelector.selected,
+                        checked = todo in selectedTodos,
                         onCheckedChange = { selected ->
                             if (selected) onMarkTodoForSelection(todo)
                             else onUndoMarkTodoForSelection(todo)
@@ -165,12 +166,6 @@ fun TodoPickerScreenPreview() {
     )
     val todo2 = Todo(1, "Lorem ipsum dolor", TodoPriority.HIGH, TodoFlag.UNDONE, 1)
 
-    val todosWithSelectors = listOf(
-        TodoWithSelector(todo1, false),
-        TodoWithSelector(todo2, true),
-        TodoWithSelector(todo1, false),
-        TodoWithSelector(todo2, true)
-    )
     val categories = listOf(
         TodoCategory(
             2, "Study", todoCategoryColors[8].toArgb().toLong(),
@@ -179,10 +174,6 @@ fun TodoPickerScreenPreview() {
         TodoCategory(
             1, "Sport", todoCategoryColors[2].toArgb().toLong(),
             null, Icons.Filled.House.name
-        ),
-        TodoCategory(
-            3, "Something", todoCategoryColors[10].toArgb().toLong(),
-            null, Icons.Filled.School.name
         )
     )
 
@@ -191,7 +182,8 @@ fun TodoPickerScreenPreview() {
             topAppBarTitle = "Category Name",
             showTopBarBackButton = true,
             onTopBarBackButtonClick = {},
-            todos = todosWithSelectors,
+            todos = listOf(todo1, todo2),
+            selectedTodos = listOf(todo2),
             todoCategories = categories,
             onMarkTodoForSelection = {},
             onUndoMarkTodoForSelection = {},
