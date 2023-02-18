@@ -7,14 +7,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
+import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoRepository
-import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.PICKER_RESULT_KEY
 import com.example.schetodo.ui.navigation.schedule.AddScheduleBlock
 import com.example.schetodo.ui.navigation.schedule.EditScheduleBlock
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -66,8 +64,13 @@ class AddEditScheduleBlockViewModel @Inject constructor(
             is AddEditScheduleBlockEvent.ChangeDate -> updateCurrentDate(event.date)
             is AddEditScheduleBlockEvent.ChangeStartTime -> updateStartTime(event.startTime)
             is AddEditScheduleBlockEvent.ChangeEndTime -> updateEndTime(event.endTime)
-            is AddEditScheduleBlockEvent.TodosSelected -> addSelectedTodos(event.todoIds)
+            is AddEditScheduleBlockEvent.SelectTodos -> addSelectedTodos(event.todoIds)
+            is AddEditScheduleBlockEvent.RemoveSelectedTodo -> removeSelectedTodo(event.todo)
         }
+    }
+
+    private fun removeSelectedTodo(todo: Todo) {
+        state = state.copy(todos = state.todos - todo)
     }
 
     private fun addSelectedTodos(todoIds: List<Int>) {

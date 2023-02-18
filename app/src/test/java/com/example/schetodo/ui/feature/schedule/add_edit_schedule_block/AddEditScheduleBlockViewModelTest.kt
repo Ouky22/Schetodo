@@ -39,6 +39,30 @@ internal class AddEditScheduleBlockViewModelTest {
     }
 
     @Test
+    fun test_removing_selected_todo() = runTest {
+        val date = LocalDate.of(2023, 2, 15)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(AddScheduleBlock.dateStampArg to date.toEpochDay())
+        )
+        val viewModel = AddEditScheduleBlockViewModel(
+            fakeScheduleBlockRepository,
+            fakeTodoRepository,
+            savedStateHandle
+        )
+
+        val todo1 = Todo(1, "t1", TodoPriority.HIGH, TodoFlag.DONE, 1)
+        val todo2 = Todo(2, "t2", TodoPriority.HIGH, TodoFlag.DONE, 1)
+        fakeTodoRepository.insertTodo(todo1)
+        fakeTodoRepository.insertTodo(todo2)
+
+        viewModel.onEvent(AddEditScheduleBlockEvent.SelectTodos(listOf(todo1.todoId, todo2.todoId)))
+        advanceUntilIdle()
+        viewModel.onEvent(AddEditScheduleBlockEvent.RemoveSelectedTodo(todo1))
+
+        assertThat(viewModel.state.todos).containsExactly(todo2)
+    }
+
+    @Test
     fun when_selecting_element_multiple_times_then_it_occurs_at_maximum_once() = runTest {
         val date = LocalDate.of(2023, 2, 15)
         val savedStateHandle = SavedStateHandle(
@@ -55,8 +79,8 @@ internal class AddEditScheduleBlockViewModelTest {
         fakeTodoRepository.insertTodo(todo1)
         fakeTodoRepository.insertTodo(todo2)
 
-        viewModel.onEvent(AddEditScheduleBlockEvent.TodosSelected(listOf(todo1.todoId, todo2.todoId)))
-        viewModel.onEvent(AddEditScheduleBlockEvent.TodosSelected(listOf(todo1.todoId)))
+        viewModel.onEvent(AddEditScheduleBlockEvent.SelectTodos(listOf(todo1.todoId, todo2.todoId)))
+        viewModel.onEvent(AddEditScheduleBlockEvent.SelectTodos(listOf(todo1.todoId)))
 
         advanceUntilIdle()
 

@@ -52,7 +52,7 @@ fun AddEditScheduleBlockScreen(
         navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Int>>(
             PICKER_RESULT_KEY, emptyList()
         )?.collect {
-            viewModel.onEvent(AddEditScheduleBlockEvent.TodosSelected(it))
+            viewModel.onEvent(AddEditScheduleBlockEvent.SelectTodos(it))
             navController.currentBackStackEntry?.savedStateHandle
                 ?.remove<List<Int>>(PICKER_RESULT_KEY)
         }
@@ -85,7 +85,7 @@ fun AddEditScheduleBlockScreen(
         onNotesChanged = { viewModel.onEvent(AddEditScheduleBlockEvent.ChangeTodoBlockNotes(it)) },
         onAddTodoButtonClick = { navController.navigate(TodoPicker.route) },
         onAddTodoCategoryButtonClick = {},
-        onRemoveTodo = {},
+        onRemoveTodo = { viewModel.onEvent(AddEditScheduleBlockEvent.RemoveSelectedTodo(it)) },
         onRemoveCategory = {},
         onSave = {},
         onDelete = {},
