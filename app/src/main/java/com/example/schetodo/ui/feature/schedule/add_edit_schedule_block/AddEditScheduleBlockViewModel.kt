@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoRepository
+import com.example.schetodo.data.todo_category.TodoCategoryRepository
 import com.example.schetodo.ui.navigation.schedule.AddScheduleBlock
 import com.example.schetodo.ui.navigation.schedule.EditScheduleBlock
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +26,7 @@ import javax.inject.Inject
 class AddEditScheduleBlockViewModel @Inject constructor(
     private val scheduleBlockRepository: ScheduleBlockRepository,
     private val todoRepository: TodoRepository,
+    private val todoCategoryRepository: TodoCategoryRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     var state by mutableStateOf(AddEditScheduleBlockScreenState())
@@ -80,6 +82,22 @@ class AddEditScheduleBlockViewModel @Inject constructor(
             }
             val allSelectedTodos = (state.todos + selectedTodos).toSet().toList()
             state = state.copy(todos = allSelectedTodos)
+
+            addTodoCategoriesOfTodos(allSelectedTodos)
+        }
+    }
+
+    private fun addTodoCategoriesOfTodos(todos: List<Todo>) {
+        addSelectedTodoCategories(todos.map { it.categoryId })
+    }
+
+    private fun addSelectedTodoCategories(todoCategoryIds: List<Int>) {
+        viewModelScope.launch {
+            val selectedCategories = todoCategoryIds.mapNotNull { categoryId ->
+                todoCategoryRepository.getTodoCategory(categoryId).first()
+            }
+            val allSelectedCategories = (state.todoCategories + selectedCategories).toSet().toList()
+            state = state.copy(todoCategories = allSelectedCategories)
         }
     }
 

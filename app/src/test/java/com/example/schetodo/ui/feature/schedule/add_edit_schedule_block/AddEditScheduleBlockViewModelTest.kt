@@ -9,6 +9,7 @@ import com.example.schetodo.data.todo_block.TodoBlock
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.schedule_block.FakeScheduleBlockRepository
 import com.example.schetodo.data.todo.FakeTodoRepository
+import com.example.schetodo.data.todo_category.FakeTodoCategoryRepository
 import com.example.schetodo.ui.navigation.schedule.AddScheduleBlock
 import com.example.schetodo.ui.navigation.schedule.EditScheduleBlock
 import com.example.schetodo.util.MainDispatcherRule
@@ -32,10 +33,39 @@ internal class AddEditScheduleBlockViewModelTest {
 
     private val fakeScheduleBlockRepository = FakeScheduleBlockRepository()
     private val fakeTodoRepository = FakeTodoRepository()
+    private val fakeTodoCategoryRepository = FakeTodoCategoryRepository()
 
     @Before
     fun init() {
         Locale.setDefault(Locale.US)
+    }
+
+    @Test
+    fun when_selecting_todos_then_the_corresponding_todo_categories_are_also_added() = runTest {
+        val date = LocalDate.of(2023, 2, 15)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(AddScheduleBlock.dateStampArg to date.toEpochDay())
+        )
+        val viewModel = AddEditScheduleBlockViewModel(
+            fakeScheduleBlockRepository,
+            fakeTodoRepository,
+            fakeTodoCategoryRepository,
+            savedStateHandle
+        )
+
+        val category1 = TodoCategory(1, "c1", 0, null, "")
+        val category2 = TodoCategory(2, "c2", 0, category1.categoryId, "")
+        val todo1 = Todo(1, "t1", TodoPriority.HIGH, TodoFlag.DONE, category1.categoryId)
+        val todo2 = Todo(2, "t2", TodoPriority.HIGH, TodoFlag.DONE, category2.categoryId)
+        fakeTodoCategoryRepository.insertTodoCategory(category1)
+        fakeTodoCategoryRepository.insertTodoCategory(category2)
+        fakeTodoRepository.insertTodo(todo1)
+        fakeTodoRepository.insertTodo(todo2)
+
+        viewModel.onEvent(AddEditScheduleBlockEvent.SelectTodos(listOf(todo1.todoId, todo2.todoId)))
+        advanceUntilIdle()
+
+        assertThat(viewModel.state.todoCategories).containsExactly(category1, category2)
     }
 
     @Test
@@ -47,6 +77,7 @@ internal class AddEditScheduleBlockViewModelTest {
         val viewModel = AddEditScheduleBlockViewModel(
             fakeScheduleBlockRepository,
             fakeTodoRepository,
+            fakeTodoCategoryRepository,
             savedStateHandle
         )
 
@@ -71,6 +102,7 @@ internal class AddEditScheduleBlockViewModelTest {
         val viewModel = AddEditScheduleBlockViewModel(
             fakeScheduleBlockRepository,
             fakeTodoRepository,
+            fakeTodoCategoryRepository,
             savedStateHandle
         )
 
@@ -95,6 +127,7 @@ internal class AddEditScheduleBlockViewModelTest {
         val viewModel = AddEditScheduleBlockViewModel(
             fakeScheduleBlockRepository,
             fakeTodoRepository,
+            fakeTodoCategoryRepository,
             savedStateHandle
         )
 
@@ -112,6 +145,7 @@ internal class AddEditScheduleBlockViewModelTest {
         val viewModel = AddEditScheduleBlockViewModel(
             fakeScheduleBlockRepository,
             fakeTodoRepository,
+            fakeTodoCategoryRepository,
             savedStateHandle
         )
 
@@ -129,6 +163,7 @@ internal class AddEditScheduleBlockViewModelTest {
         val viewModel = AddEditScheduleBlockViewModel(
             fakeScheduleBlockRepository,
             fakeTodoRepository,
+            fakeTodoCategoryRepository,
             savedStateHandle
         )
 
@@ -147,7 +182,8 @@ internal class AddEditScheduleBlockViewModelTest {
                 mapOf(EditScheduleBlock.todoBlockIdArg to scheduleBlock.todoBlock.todoBlockId)
             )
             val viewModel = AddEditScheduleBlockViewModel(
-                fakeScheduleBlockRepository, fakeTodoRepository, savedStateHandle
+                fakeScheduleBlockRepository, fakeTodoRepository,
+                fakeTodoCategoryRepository, savedStateHandle
             )
             advanceUntilIdle()
 
@@ -176,6 +212,7 @@ internal class AddEditScheduleBlockViewModelTest {
         val viewModel = AddEditScheduleBlockViewModel(
             fakeScheduleBlockRepository,
             fakeTodoRepository,
+            fakeTodoCategoryRepository,
             savedStateHandle
         )
 
@@ -197,6 +234,7 @@ internal class AddEditScheduleBlockViewModelTest {
         val viewModel = AddEditScheduleBlockViewModel(
             fakeScheduleBlockRepository,
             fakeTodoRepository,
+            fakeTodoCategoryRepository,
             savedStateHandle
         )
 
@@ -217,6 +255,7 @@ internal class AddEditScheduleBlockViewModelTest {
         val viewModel = AddEditScheduleBlockViewModel(
             fakeScheduleBlockRepository,
             fakeTodoRepository,
+            fakeTodoCategoryRepository,
             savedStateHandle
         )
 
@@ -233,6 +272,7 @@ internal class AddEditScheduleBlockViewModelTest {
         val viewModel = AddEditScheduleBlockViewModel(
             fakeScheduleBlockRepository,
             fakeTodoRepository,
+            fakeTodoCategoryRepository,
             savedStateHandle
         )
         assertThat(viewModel.state.date).isEqualTo("Wed 15 Feb, 2023")
@@ -247,6 +287,7 @@ internal class AddEditScheduleBlockViewModelTest {
             AddEditScheduleBlockViewModel(
                 fakeScheduleBlockRepository,
                 fakeTodoRepository,
+                fakeTodoCategoryRepository,
                 savedStateHandle
             )
         }
@@ -258,6 +299,7 @@ internal class AddEditScheduleBlockViewModelTest {
             AddEditScheduleBlockViewModel(
                 fakeScheduleBlockRepository,
                 fakeTodoRepository,
+                fakeTodoCategoryRepository,
                 SavedStateHandle()
             )
         }
