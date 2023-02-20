@@ -20,5 +20,9 @@ class FakeScheduleBlockRepository : ScheduleBlockRepository {
         }
     }
 
+    override suspend fun scheduleBlockOverlapsWithOtherScheduleBlock(scheduleBlock: ScheduleBlock): Boolean {
+        TODO("Not yet implemented")
+    }
+
     fun insertScheduleBlock(scheduleBlock: ScheduleBlock) = scheduleBlocks.add(scheduleBlock)
 }
