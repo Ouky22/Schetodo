@@ -18,6 +18,7 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
+import com.example.schetodo.ui.feature.schedule.list.ScheduleEvent.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,6 +42,23 @@ class ScheduleViewModel @Inject constructor(
         loadScheduleBlocksOnCurrentDate()
 
         updateCurrentDate(LocalDate.now())
+    }
+
+    fun onEvent(event: ScheduleEvent) {
+        when (event) {
+            is GoToNextDate -> goToNextDate()
+            is GoToPreviousDate -> goToPreviousDate()
+        }
+    }
+
+    private fun goToPreviousDate() {
+        updateCurrentDate(currentDate.minusDays(1))
+        loadScheduleBlocksOnCurrentDate()
+    }
+
+    private fun goToNextDate() {
+        updateCurrentDate(currentDate.plusDays(1))
+        loadScheduleBlocksOnCurrentDate()
     }
 
     private fun loadScheduleBlocksOnCurrentDate() {

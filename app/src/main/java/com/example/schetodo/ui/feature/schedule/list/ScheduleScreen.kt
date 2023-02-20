@@ -25,6 +25,7 @@ import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.UiText
+import com.example.schetodo.ui.feature.schedule.list.ScheduleEvent.*
 
 @Composable
 fun ScheduleScreen(
@@ -39,8 +40,8 @@ fun ScheduleScreen(
         modifier = modifier,
         uiScheduleBlocks = state.uiScheduleBlocks,
         currentDate = state.currentDate,
-        onPreviousDateButtonClick = {},
-        onNextDateButtonClick = {},
+        onPreviousDateButtonClick = { viewModel.onEvent(GoToPreviousDate) },
+        onNextDateButtonClick = { viewModel.onEvent(GoToNextDate) },
         onCurrentDateButtonClick = {},
         onFabClick = { onAddScheduleBlockNavigation(viewModel.currentDateStamp) },
         onEditScheduleBlock = { todoBlockId -> onEditScheduleBlockNavigation(todoBlockId) }
