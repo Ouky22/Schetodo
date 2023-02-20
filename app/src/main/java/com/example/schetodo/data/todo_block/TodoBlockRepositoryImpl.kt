@@ -32,7 +32,9 @@ class TodoBlockRepositoryImpl @Inject constructor(
     override suspend fun deleteTodoBlockById(todoBlockId: Int) =
         todoBlockDao.deleteTodoBlockById(todoBlockId)
 
-    override suspend fun todoBlockOverlapsWithOtherTodoBlock(todoBlock: TodoBlock): Boolean {
+    override suspend fun todoBlockOverlapsWithOtherTodoBlock(
+        todoBlock: TodoBlock, exceptOfTodoBlockId: Int?
+    ): Boolean {
         val date = todoBlock.date ?: return false
         val startTime = todoBlock.startTime
         val endTime = todoBlock.endTime
@@ -43,8 +45,10 @@ class TodoBlockRepositoryImpl @Inject constructor(
             return false
 
         for (otherTodoBlock in allTodoBlocksOnDate) {
-            val overlapsWithTodoBlock = startTime.isBefore(otherTodoBlock.endTime)
-                    && otherTodoBlock.startTime.isBefore(endTime)
+            val overlapsWithTodoBlock =
+                if (otherTodoBlock.todoBlockId == exceptOfTodoBlockId) false
+                else startTime.isBefore(otherTodoBlock.endTime) and
+                        otherTodoBlock.startTime.isBefore(endTime)
 
             if (overlapsWithTodoBlock)
                 return true

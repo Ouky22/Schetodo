@@ -12,5 +12,7 @@ interface TodoBlockRepository {
     suspend fun updateOrInsertTodoBlock(todoBlock: TodoBlock): Long
     suspend fun deleteTodoBlock(todoBlock: TodoBlock)
     suspend fun deleteTodoBlockById(todoBlockId: Int)
-    suspend fun todoBlockOverlapsWithOtherTodoBlock(todoBlock: TodoBlock): Boolean
+    suspend fun todoBlockOverlapsWithOtherTodoBlock(
+        todoBlock: TodoBlock, exceptOfTodoBlockId: Int? = null
+    ): Boolean
 }
