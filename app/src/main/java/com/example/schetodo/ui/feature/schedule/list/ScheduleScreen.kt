@@ -150,7 +150,8 @@ fun ScheduleList(
                 startTimeString = uiScheduleBlock.startTime,
                 endTimeString = uiScheduleBlock.endTime,
                 durationString = "${uiScheduleBlock.durationHours.asString()} ${uiScheduleBlock.durationMinutes.asString()}",
-                modifier = Modifier.clickable { onListItemClick(uiScheduleBlock.id) }
+                modifier = Modifier.clickable { onListItemClick(uiScheduleBlock.id) },
+                elevate = uiScheduleBlock.isCurrentScheduleBlock
             )
         }
     }

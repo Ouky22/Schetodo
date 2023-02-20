@@ -1,8 +1,6 @@
 package com.example.schetodo.ui.feature.schedule.list
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.House
@@ -34,14 +32,12 @@ fun ScheduleListItem(
     todoBlocKNotes: String,
     startTimeString: String,
     endTimeString: String,
-    durationString: String
+    durationString: String,
+    elevate: Boolean = false
 ) {
-    ElevatedCard(
-        modifier = modifier.border(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.onBackground,
-            shape = RoundedCornerShape(5.dp)
-        )
+    OutlinedCard(
+        modifier = modifier,
+        elevation = if (elevate) CardDefaults.elevatedCardElevation() else CardDefaults.outlinedCardElevation()
     ) {
         Column(
             modifier = Modifier.padding(8.dp)

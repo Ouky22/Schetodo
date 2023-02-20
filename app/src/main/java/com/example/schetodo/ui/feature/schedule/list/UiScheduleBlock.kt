@@ -11,5 +11,6 @@ data class UiScheduleBlock(
     val startTime: String = "",
     val endTime: String = "",
     val durationHours: UiText = UiText.DynamicString(""),
-    val durationMinutes: UiText = UiText.DynamicString("")
+    val durationMinutes: UiText = UiText.DynamicString(""),
+    val isCurrentScheduleBlock: Boolean = false
 )

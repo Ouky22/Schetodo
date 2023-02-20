@@ -19,6 +19,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 import com.example.schetodo.ui.feature.schedule.list.ScheduleEvent.*
+import java.time.LocalTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -91,7 +92,9 @@ class ScheduleViewModel @Inject constructor(
             startTime = todoBlock.startTime.toString(),
             endTime = todoBlock.endTime.toString(),
             durationHours = getDurationHoursUiText(duration),
-            durationMinutes = getDurationMinutesUiText(duration)
+            durationMinutes = getDurationMinutesUiText(duration),
+            isCurrentScheduleBlock = LocalTime.now().isAfter(todoBlock.startTime)
+                    && LocalTime.now().isBefore(todoBlock.endTime)
         )
     }
 
