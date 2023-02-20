@@ -54,4 +54,6 @@
     <string name="not_enough_info_for_schetodo_block_error_msg">Set at least one of the following: todo, todo category or notes</string>
     <string name="go_to_previous_date">go to previous date</string>
     <string name="go_to_next_date">go to next date</string>
+    <string name="hour">%1$d h</string>
+    <string name="minute">%1$d m</string>
 </resources>

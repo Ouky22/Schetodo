@@ -24,6 +24,7 @@ import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
+import com.example.schetodo.ui.util.UiText
 
 @Composable
 fun ScheduleScreen(
@@ -140,15 +141,15 @@ fun ScheduleList(
     ) {
         items(
             items = uiScheduleBlocks, key = { it.id }
-        ) { uiTodoBlock ->
+        ) { uiScheduleBlock ->
             ScheduleListItem(
-                todoCategories = uiTodoBlock.categories,
-                todoDescriptions = uiTodoBlock.todoDescriptions,
-                todoBlocKNotes = uiTodoBlock.notes,
-                startTimeString = uiTodoBlock.startTime,
-                endTimeString = uiTodoBlock.endTime,
-                durationString = uiTodoBlock.duration,
-                modifier = Modifier.clickable { onListItemClick(uiTodoBlock.id) }
+                todoCategories = uiScheduleBlock.categories,
+                todoDescriptions = uiScheduleBlock.todoDescriptions,
+                todoBlocKNotes = uiScheduleBlock.notes,
+                startTimeString = uiScheduleBlock.startTime,
+                endTimeString = uiScheduleBlock.endTime,
+                durationString = "${uiScheduleBlock.durationHours.asString()} ${uiScheduleBlock.durationMinutes.asString()}",
+                modifier = Modifier.clickable { onListItemClick(uiScheduleBlock.id) }
             )
         }
     }
@@ -200,7 +201,8 @@ private fun createTodoBlocksForPreview(): List<UiScheduleBlock> {
             "",
             "13.00",
             "16.30",
-            "3h 30min"
+            UiText.DynamicString("3h"),
+            UiText.DynamicString("30min")
         ),
         UiScheduleBlock(
             1,
@@ -209,14 +211,14 @@ private fun createTodoBlocksForPreview(): List<UiScheduleBlock> {
             "Lorem ipsum dolor sit",
             "10.00",
             "12.00",
-            "2h"
+            UiText.DynamicString("2h")
         ),
         UiScheduleBlock(
             id = 2,
             notes = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna",
             startTime = "20.00",
             endTime = "22.00",
-            duration = "2h"
+            durationHours = UiText.DynamicString("2h")
         )
     )
 }

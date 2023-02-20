@@ -2,16 +2,21 @@ package com.example.schetodo.ui.feature.schedule.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.schetodo.R
 import com.example.schetodo.data.schedule_block.ScheduleBlock
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.data.todo.Todo
+import com.example.schetodo.ui.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 import java.util.*
 import javax.inject.Inject
 
@@ -54,20 +59,39 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
-    private fun convertScheduleBlockToUiScheduleBlock(scheduleBlock: ScheduleBlock) =
-        UiScheduleBlock(
-            id = scheduleBlock.todoBlock.todoBlockId,
+    private fun convertScheduleBlockToUiScheduleBlock(scheduleBlock: ScheduleBlock): UiScheduleBlock {
+        val todoBlock = scheduleBlock.todoBlock
+        val duration = Duration.between(todoBlock.startTime, todoBlock.endTime)
+
+        return UiScheduleBlock(
+            id = todoBlock.todoBlockId,
             categories = scheduleBlock.todoCategories.sortedBy { it.name },
             todoDescriptions = scheduleBlock.todos
                 .sortedWith(compareByDescending(Todo::priority).thenBy(Todo::description))
                 .map { it.description },
-            notes = scheduleBlock.todoBlock.notes ?: "",
-            startTime = scheduleBlock.todoBlock.startTime.toString(),
-            endTime = scheduleBlock.todoBlock.endTime.toString(),
-            duration = scheduleBlock.todoBlock.startTime.until(
-                scheduleBlock.todoBlock.endTime, ChronoUnit.HOURS
-            ).toString()
+            notes = todoBlock.notes ?: "",
+            startTime = todoBlock.startTime.toString(),
+            endTime = todoBlock.endTime.toString(),
+            durationHours = getDurationHoursUiText(duration),
+            durationMinutes = getDurationMinutesUiText(duration)
         )
+    }
+
+    private fun getDurationHoursUiText(duration: Duration): UiText {
+        val durationHours = duration.toHours().toInt()
+        return if (durationHours >= 1)
+            UiText.StringResource(R.string.hour, durationHours)
+        else
+            UiText.DynamicString("")
+    }
+
+    private fun getDurationMinutesUiText(duration: Duration): UiText {
+        val durationMinutes = (duration.toMinutes() % 60).toInt()
+        return if (durationMinutes >= 1)
+            UiText.StringResource(R.string.minute, durationMinutes)
+        else
+            UiText.DynamicString("")
+    }
 
     private fun updateCurrentDate(date: LocalDate) {
         currentDate = date
