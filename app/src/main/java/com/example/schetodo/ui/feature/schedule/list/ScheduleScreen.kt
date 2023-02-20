@@ -4,16 +4,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.House
-import androidx.compose.material.icons.filled.School
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
@@ -41,6 +37,10 @@ fun ScheduleScreen(
     ScheduleScreen(
         modifier = modifier,
         uiScheduleBlocks = state.uiScheduleBlocks,
+        currentDate = state.currentDate,
+        onPreviousDateButtonClick = {},
+        onNextDateButtonClick = {},
+        onCurrentDateButtonClick = {},
         onFabClick = { onAddScheduleBlockNavigation(viewModel.currentDateStamp) },
         onEditScheduleBlock = { todoBlockId -> onEditScheduleBlockNavigation(todoBlockId) }
     )
@@ -51,6 +51,10 @@ fun ScheduleScreen(
 fun ScheduleScreen(
     modifier: Modifier = Modifier,
     uiScheduleBlocks: List<UiScheduleBlock>,
+    currentDate: String,
+    onPreviousDateButtonClick: () -> Unit,
+    onNextDateButtonClick: () -> Unit,
+    onCurrentDateButtonClick: () -> Unit,
     onFabClick: () -> Unit,
     onEditScheduleBlock: (todoBlockId: Int) -> Unit
 ) {
@@ -71,11 +75,53 @@ fun ScheduleScreen(
         }
     ) { contentPadding ->
         Column(
-            modifier = modifier.padding(contentPadding)
+            modifier = modifier.padding(contentPadding),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            DateNavigator(
+                currentDate = currentDate,
+                onPreviousDateButtonClick = onPreviousDateButtonClick,
+                onNextDateButtonClick = onNextDateButtonClick,
+                onCurrentDateButtonClick = onCurrentDateButtonClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp)
+                    .padding(bottom = 8.dp)
+            )
+
             ScheduleList(
                 uiScheduleBlocks = uiScheduleBlocks,
                 onListItemClick = onEditScheduleBlock
+            )
+        }
+    }
+}
+
+@Composable
+fun DateNavigator(
+    modifier: Modifier = Modifier,
+    currentDate: String,
+    onPreviousDateButtonClick: () -> Unit,
+    onNextDateButtonClick: () -> Unit,
+    onCurrentDateButtonClick: () -> Unit
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        IconButton(onClick = onPreviousDateButtonClick) {
+            Icon(
+                imageVector = Icons.Filled.ArrowBackIos,
+                contentDescription = stringResource(R.string.go_to_previous_date)
+            )
+        }
+        OutlinedButton(onClick = onCurrentDateButtonClick) {
+            Text(text = currentDate)
+        }
+        IconButton(onClick = onNextDateButtonClick) {
+            Icon(
+                imageVector = Icons.Filled.ArrowForwardIos,
+                contentDescription = stringResource(R.string.go_to_next_date)
             )
         }
     }
@@ -89,7 +135,7 @@ fun ScheduleList(
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(top = 8.dp, bottom = 100.dp, start = 12.dp, end = 12.dp),
+        contentPadding = PaddingValues(top = 16.dp, bottom = 100.dp, start = 12.dp, end = 12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(
@@ -115,6 +161,10 @@ fun ScheduleScreenPreview() {
         ScheduleScreen(
             modifier = Modifier.fillMaxSize(),
             uiScheduleBlocks = createTodoBlocksForPreview(),
+            currentDate = "2023-02-01",
+            onPreviousDateButtonClick = {},
+            onNextDateButtonClick = {},
+            onCurrentDateButtonClick = {},
             onFabClick = {},
             onEditScheduleBlock = {}
         )

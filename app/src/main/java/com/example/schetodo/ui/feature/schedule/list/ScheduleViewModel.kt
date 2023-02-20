@@ -10,7 +10,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,6 +21,7 @@ class ScheduleViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var currentDate = LocalDate.now()
+
     val currentDateStamp: Long
         get() = currentDate.toEpochDay()
 
@@ -32,11 +35,12 @@ class ScheduleViewModel @Inject constructor(
     init {
         loadScheduleBlocksOnCurrentDate()
 
-        _scheduleState.value = _scheduleState.value.copy(currentDate = currentDate.toString())
+        updateCurrentDate(LocalDate.now())
     }
 
     private fun loadScheduleBlocksOnCurrentDate() {
         collectScheduleBlocksJob?.cancel()
+
         collectScheduleBlocksJob = viewModelScope.launch {
             scheduleBlockRepository.getScheduleBlocksOnDate(currentDate).map { scheduleBlocks ->
                 scheduleBlocks.map { scheduleBlock ->
@@ -64,4 +68,13 @@ class ScheduleViewModel @Inject constructor(
                 scheduleBlock.todoBlock.endTime, ChronoUnit.HOURS
             ).toString()
         )
+
+    private fun updateCurrentDate(date: LocalDate) {
+        currentDate = date
+        _scheduleState.value = scheduleState.value.copy(
+            currentDate = currentDate.format(
+                DateTimeFormatter.ofPattern("EEE dd LLL, yyyy", Locale.getDefault())
+            )
+        )
+    }
 }
