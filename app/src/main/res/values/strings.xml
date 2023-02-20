@@ -49,5 +49,7 @@
     <string name="add_new_schedule_block">Add new schedule block</string>
     <string name="ok">OK</string>
     <string name="select_todo">Select Todo</string>
-    <string name="start_time_bigger_end_time_error">End time must be bigger than start time</string>
+    <string name="start_time_bigger_end_time_error_msg">End time must be bigger than start time</string>
+    <string name="schedule_block_overlap_error_msg">This schedule block overlaps with other schedule block. Please change the time</string>
+    <string name="not_enough_info_for_schetodo_block_error_msg">Set at least one of the following: todo, todo category or notes</string>
 </resources>

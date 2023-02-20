@@ -7,9 +7,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.schetodo.R
+import com.example.schetodo.data.schedule_block.ScheduleBlock
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoRepository
+import com.example.schetodo.data.todo_block.TodoBlock
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.todo_category.TodoCategoryRepository
 import com.example.schetodo.ui.navigation.schedule.AddScheduleBlock
@@ -43,16 +45,19 @@ class AddEditScheduleBlockViewModel @Inject constructor(
     val errorMessages: SharedFlow<UiText>
         get() = _errorMessages.asSharedFlow()
 
+    private var todoBlockId: Int
+    private var todoBlockTemplateId: Int? = null
+
     private lateinit var scheduleBlockDate: LocalDate
     private lateinit var startTime: LocalTime
     private lateinit var endTime: LocalTime
 
     init {
-        val todoBlockId = savedStateHandle.get<Int>(EditScheduleBlock.todoBlockIdArg)
+        todoBlockId = savedStateHandle[EditScheduleBlock.todoBlockIdArg] ?: 0
 
-        val viewModelCreatedForEditing = todoBlockId != null && todoBlockId >= 1
+        val viewModelCreatedForEditing = todoBlockId >= 1
         if (viewModelCreatedForEditing)
-            loadScheduleBlockToEdit(todoBlockId!!)
+            loadScheduleBlockToEdit(todoBlockId)
         else
             loadDataForAddingScheduleBlock(savedStateHandle)
     }
@@ -71,22 +76,32 @@ class AddEditScheduleBlockViewModel @Inject constructor(
         }
     }
 
-    fun saveScheduleBlock() {
-        val endTimeIsBiggerThanStartTime = endTime.isAfter(startTime)
-        if (!endTimeIsBiggerThanStartTime) {
-            viewModelScope.launch {
-                _errorMessages.emit(UiText.StringResource(R.string.start_time_bigger_end_time_error))
-            }
+    private fun saveScheduleBlock() {
+        if (endTimeIsNotAfterStartTime()) {
+            sendEndTimeNotAfterStartTimeErrorMessage()
+            return
+        }
+        if (schetodoBlockHasNotEnoughInformation()) {
+            sendScheduleBlockNotEnoughInfoErrorMessage()
             return
         }
 
-        // schedule block can not overlap with other already existing schedule blocks
+        viewModelScope.launch {
+            val todoBlock = TodoBlock(
+                todoBlockId, state.notes, scheduleBlockDate, startTime, endTime, todoBlockTemplateId
+            )
+            val scheduleBlock = ScheduleBlock(todoBlock, state.todos, state.todoCategories)
 
-        // at least one of the following must be set: notes, todo, todoCategory
+            if (scheduleBlockOverlapsWithOtherScheduleBlock(scheduleBlock)) {
+                sendScheduleBlockOverlapsErrorMessage()
+                return@launch
+            }
 
-        // if todo selected and saved then mark status as IN_PROGRESS
+            // TODO save
+            // TODO if todo selected and saved then mark status as IN_PROGRESS
 
-        state = state.copy(successfullySaved = true)
+            state = state.copy(successfullySaved = true)
+        }
     }
 
     private fun addSelectedTodos(todoIds: List<Int>) {
@@ -178,6 +193,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
                 notes = scheduleBlock.todoBlock.notes ?: "",
                 inEditingMode = true
             )
+            todoBlockTemplateId = scheduleBlock.todoBlock.templateId
         }
     }
 
@@ -196,5 +212,35 @@ class AddEditScheduleBlockViewModel @Inject constructor(
         val endTimeReceived = endTimeStamp != null && endTimeStamp >= 0
         if (endTimeReceived) updateEndTime(endTimeStamp!!)
         else updateEndTime(0)
+    }
+
+    private suspend fun scheduleBlockOverlapsWithOtherScheduleBlock(scheduleBlock: ScheduleBlock) =
+        scheduleBlockRepository.scheduleBlockOverlapsWithOtherScheduleBlock(scheduleBlock)
+
+    private fun endTimeIsNotAfterStartTime() = !endTime.isAfter(startTime)
+
+    private fun schetodoBlockHasNotEnoughInformation(): Boolean {
+        val notesNotSet = state.notes.isBlank()
+        val todosNotSet = state.todos.isEmpty()
+        val categoriesNotSet = state.todoCategories.isEmpty()
+        return notesNotSet and todosNotSet and categoriesNotSet
+    }
+
+    private fun sendScheduleBlockNotEnoughInfoErrorMessage() {
+        viewModelScope.launch {
+            _errorMessages.emit(UiText.StringResource(R.string.not_enough_info_for_schetodo_block_error_msg))
+        }
+    }
+
+    private fun sendScheduleBlockOverlapsErrorMessage() {
+        viewModelScope.launch {
+            _errorMessages.emit(UiText.StringResource(R.string.schedule_block_overlap_error_msg))
+        }
+    }
+
+    private fun sendEndTimeNotAfterStartTimeErrorMessage() {
+        viewModelScope.launch {
+            _errorMessages.emit(UiText.StringResource(R.string.start_time_bigger_end_time_error_msg))
+        }
     }
 }
