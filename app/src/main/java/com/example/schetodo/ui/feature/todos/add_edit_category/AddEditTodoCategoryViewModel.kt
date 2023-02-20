@@ -12,6 +12,8 @@ import com.example.schetodo.ui.navigation.todos.AddTodoCategory
 import com.example.schetodo.ui.navigation.todos.EditTodoCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,7 +39,9 @@ class AddEditTodoCategoryViewModel @Inject constructor(
     var showInvalidTodoCategoryNameError by mutableStateOf(false)
         private set
 
-    var closeAddEditTodoCategoryScreen = MutableStateFlow(false)
+    private val _closeAddEditTodoCategoryScreen = MutableStateFlow(false)
+    val closeAddEditTodoCategoryScreen: StateFlow<Boolean>
+        get() = _closeAddEditTodoCategoryScreen.asStateFlow()
 
     var showColorPicker by mutableStateOf(false)
         private set
@@ -126,7 +130,7 @@ class AddEditTodoCategoryViewModel @Inject constructor(
 
         viewModelScope.launch {
             todoCategoryRepository.deleteTodoCategory(todoCategoryId)
-            closeAddEditTodoCategoryScreen.value = true
+            _closeAddEditTodoCategoryScreen.value = true
         }
     }
 
@@ -145,7 +149,7 @@ class AddEditTodoCategoryViewModel @Inject constructor(
                 todoCategoryIconName
             )
             todoCategoryRepository.insertOrUpdateTodoCategory(todoCategory)
-            closeAddEditTodoCategoryScreen.value = true
+            _closeAddEditTodoCategoryScreen.value = true
         }
     }
 

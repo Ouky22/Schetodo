@@ -10,6 +10,5 @@ data class AddEditScheduleBlockScreenState(
     val todoCategories: List<TodoCategory> = emptyList(),
     val todos: List<Todo> = emptyList(),
     val notes: String = "",
-    val inEditingMode: Boolean = false,
-    val successfullySaved: Boolean = false
+    val inEditingMode: Boolean = false
 )

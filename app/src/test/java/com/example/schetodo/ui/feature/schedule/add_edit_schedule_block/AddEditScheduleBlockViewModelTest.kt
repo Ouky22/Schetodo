@@ -69,7 +69,7 @@ internal class AddEditScheduleBlockViewModelTest {
         viewModel.onEvent(SaveScheduleBlock)
         advanceUntilIdle()
 
-        assertThat(viewModel.state.successfullySaved).isTrue()
+        assertThat(viewModel.state.closeAddEditScheduleBlockScreen).isTrue()
     }
 
     @Test
@@ -98,7 +98,7 @@ internal class AddEditScheduleBlockViewModelTest {
         viewModel.onEvent(SaveScheduleBlock)
         advanceUntilIdle()
 
-        assertThat(viewModel.state.successfullySaved).isTrue()
+        assertThat(viewModel.state.closeAddEditScheduleBlockScreen).isTrue()
     }
 
     @Test
@@ -123,7 +123,7 @@ internal class AddEditScheduleBlockViewModelTest {
         viewModel.onEvent(SaveScheduleBlock)
         advanceUntilIdle()
 
-        assertThat(viewModel.state.successfullySaved).isTrue()
+        assertThat(viewModel.state.closeAddEditScheduleBlockScreen).isTrue()
     }
 
     @Test
@@ -144,7 +144,7 @@ internal class AddEditScheduleBlockViewModelTest {
         viewModel.onEvent(SaveScheduleBlock)
         advanceUntilIdle()
 
-        assertThat(viewModel.state.successfullySaved).isFalse()
+        assertThat(viewModel.state.closeAddEditScheduleBlockScreen).isFalse()
     }
 
     @Test
@@ -168,7 +168,7 @@ internal class AddEditScheduleBlockViewModelTest {
         viewModel.onEvent(SaveScheduleBlock)
         advanceUntilIdle()
 
-        assertThat(viewModel.state.successfullySaved).isFalse()
+        assertThat(viewModel.state.closeAddEditScheduleBlockScreen).isFalse()
     }
 
     @Test
@@ -191,7 +191,7 @@ internal class AddEditScheduleBlockViewModelTest {
         viewModel.onEvent(ChangeEndTime(endTime))
         viewModel.onEvent(SaveScheduleBlock)
 
-        assertThat(viewModel.state.successfullySaved).isFalse()
+        assertThat(viewModel.state.closeAddEditScheduleBlockScreen).isFalse()
     }
 
     @Test

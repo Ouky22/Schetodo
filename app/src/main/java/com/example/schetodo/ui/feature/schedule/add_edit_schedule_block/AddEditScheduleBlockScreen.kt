@@ -56,6 +56,17 @@ fun AddEditScheduleBlockScreen(
 
     LaunchedEffect(true) {
         launch {
+            viewModel.closeAddEditScheduleBlockScreen.collect { closeScreen ->
+                if (closeScreen)
+                    navController.popBackStack()
+            }
+        }
+        launch {
+            viewModel.errorMessages.collect {
+                snackbarHostState.showSnackbar(message = it.asString(context))
+            }
+        }
+        launch {
             navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Int>>(
                 TODO_PICKER_RESULT, emptyList()
             )?.collect {
@@ -71,11 +82,6 @@ fun AddEditScheduleBlockScreen(
                 viewModel.onEvent(SelectTodoCategories(it))
                 navController.currentBackStackEntry?.savedStateHandle
                     ?.remove<List<Int>>(TODO_CATEGORY_PICKER_RESULT)
-            }
-        }
-        launch {
-            viewModel.errorMessages.collect {
-                snackbarHostState.showSnackbar(message = it.asString(context))
             }
         }
     }
@@ -111,8 +117,8 @@ fun AddEditScheduleBlockScreen(
         onRemoveTodo = { viewModel.onEvent(RemoveSelectedTodo(it)) },
         onRemoveCategory = { viewModel.onEvent(RemoveSelectedTodoCategory(it)) },
         onSave = { viewModel.onEvent(SaveScheduleBlock) },
-        onDelete = {},
-        onClose = {}
+        onDelete = { viewModel.onEvent(DeleteScheduleBlock) },
+        onClose = { navController.popBackStack() }
     )
 }
 

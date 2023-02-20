@@ -10,7 +10,6 @@ import com.example.schetodo.R
 import com.example.schetodo.data.schedule_block.ScheduleBlock
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.data.todo.Todo
-import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoRepository
 import com.example.schetodo.data.todo_block.TodoBlock
 import com.example.schetodo.data.todo_block.TodoBlockRepository
@@ -21,10 +20,7 @@ import com.example.schetodo.ui.navigation.schedule.EditScheduleBlock
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockEvent.*
 import com.example.schetodo.ui.util.UiText
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
@@ -47,6 +43,10 @@ class AddEditScheduleBlockViewModel @Inject constructor(
     private val _errorMessages = MutableSharedFlow<UiText>()
     val errorMessages: SharedFlow<UiText>
         get() = _errorMessages.asSharedFlow()
+
+    private val _closeAddEditScheduleBlockScreen = MutableStateFlow(false)
+    val closeAddEditScheduleBlockScreen: StateFlow<Boolean>
+        get() = _closeAddEditScheduleBlockScreen.asStateFlow()
 
     private var todoBlockId: Int
     private var todoBlockTemplateId: Int? = null
@@ -76,6 +76,17 @@ class AddEditScheduleBlockViewModel @Inject constructor(
             is SelectTodoCategories -> addSelectedTodoCategories(event.todoCategoryIds)
             is RemoveSelectedTodoCategory -> removeSelectedTodoCategory(event.category)
             is SaveScheduleBlock -> saveScheduleBlock()
+            is DeleteScheduleBlock -> deleteScheduleBlock()
+        }
+    }
+
+    private fun deleteScheduleBlock() {
+        if (!state.inEditingMode)
+            return
+
+        viewModelScope.launch {
+            todoBlockRepository.deleteTodoBlockById(todoBlockId)
+            _closeAddEditScheduleBlockScreen.value = true
         }
     }
 
@@ -107,7 +118,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
                 )
             )
 
-            state = state.copy(successfullySaved = true)
+            _closeAddEditScheduleBlockScreen.value = true
         }
     }
 
