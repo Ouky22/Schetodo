@@ -36,7 +36,7 @@ internal class ScheduleViewModelTest {
         val todos = listOf(todo1, todo2)
         val todoBlock = TodoBlock(1, "", LocalDate.now(), LocalTime.now(), LocalTime.now(), null)
         val scheduleBlock = ScheduleBlock(todoBlock, todos, categories)
-        fakeScheduleBlockRepository.insertScheduleBlock(scheduleBlock)
+        fakeScheduleBlockRepository.insertOrUpdateScheduleBlock(scheduleBlock)
 
         val viewModel = ScheduleViewModel(fakeScheduleBlockRepository)
         advanceUntilIdle()

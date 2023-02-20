@@ -22,7 +22,7 @@ interface TodoBlockDao {
     suspend fun updateTodoBlock(todoBlock: TodoBlock)
 
     @Upsert
-    suspend fun updateOrInsertTodoBlock(todoBlock: TodoBlock)
+    suspend fun updateOrInsertTodoBlock(todoBlock: TodoBlock): Long
 
     @Delete
     suspend fun deleteTodoBlock(todoBlock: TodoBlock)

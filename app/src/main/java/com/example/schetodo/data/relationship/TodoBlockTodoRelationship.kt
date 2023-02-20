@@ -24,7 +24,7 @@ import com.example.schetodo.data.todo_block.TodoBlock
             onUpdate = ForeignKey.CASCADE
         )
     ],
-    indices = [Index("todoId")]
+    indices = [Index("todoId"), Index("todoBlockId")]
 )
 data class TodoBlockTodoRelationship(
     val todoBlockId: Int,

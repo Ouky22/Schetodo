@@ -9,6 +9,7 @@ import com.example.schetodo.data.todo_block.TodoBlock
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.schedule_block.FakeScheduleBlockRepository
 import com.example.schetodo.data.todo.FakeTodoRepository
+import com.example.schetodo.data.todo_block.FakeTodoBlockRepository
 import com.example.schetodo.data.todo_category.FakeTodoCategoryRepository
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockEvent.*
 import com.example.schetodo.ui.navigation.schedule.AddScheduleBlock
@@ -35,6 +36,7 @@ internal class AddEditScheduleBlockViewModelTest {
     private val fakeScheduleBlockRepository = FakeScheduleBlockRepository()
     private val fakeTodoRepository = FakeTodoRepository()
     private val fakeTodoCategoryRepository = FakeTodoCategoryRepository()
+    private val fakeTodoBlockRepository = FakeTodoBlockRepository()
 
     @Before
     fun init() {
@@ -54,6 +56,7 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeScheduleBlockRepository,
             fakeTodoRepository,
             fakeTodoCategoryRepository,
+            fakeTodoBlockRepository,
             savedStateHandle
         )
 
@@ -82,6 +85,7 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeScheduleBlockRepository,
             fakeTodoRepository,
             fakeTodoCategoryRepository,
+            fakeTodoBlockRepository,
             savedStateHandle
         )
 
@@ -107,6 +111,7 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeScheduleBlockRepository,
             fakeTodoRepository,
             fakeTodoCategoryRepository,
+            fakeTodoBlockRepository,
             savedStateHandle
         )
 
@@ -131,6 +136,7 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeScheduleBlockRepository,
             fakeTodoRepository,
             fakeTodoCategoryRepository,
+            fakeTodoBlockRepository,
             savedStateHandle
         )
 
@@ -151,6 +157,7 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeScheduleBlockRepository,
             fakeTodoRepository,
             fakeTodoCategoryRepository,
+            fakeTodoBlockRepository,
             savedStateHandle
         )
 
@@ -174,6 +181,7 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeScheduleBlockRepository,
             fakeTodoRepository,
             fakeTodoCategoryRepository,
+            fakeTodoBlockRepository,
             savedStateHandle
         )
 
@@ -196,6 +204,7 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeScheduleBlockRepository,
             fakeTodoRepository,
             fakeTodoCategoryRepository,
+            fakeTodoBlockRepository,
             savedStateHandle
         )
 
@@ -224,6 +233,7 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeScheduleBlockRepository,
             fakeTodoRepository,
             fakeTodoCategoryRepository,
+            fakeTodoBlockRepository,
             savedStateHandle
         )
 
@@ -249,6 +259,7 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeScheduleBlockRepository,
             fakeTodoRepository,
             fakeTodoCategoryRepository,
+            fakeTodoBlockRepository,
             savedStateHandle
         )
 
@@ -274,6 +285,7 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeScheduleBlockRepository,
             fakeTodoRepository,
             fakeTodoCategoryRepository,
+            fakeTodoBlockRepository,
             savedStateHandle
         )
 
@@ -292,6 +304,7 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeScheduleBlockRepository,
             fakeTodoRepository,
             fakeTodoCategoryRepository,
+            fakeTodoBlockRepository,
             savedStateHandle
         )
 
@@ -310,6 +323,7 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeScheduleBlockRepository,
             fakeTodoRepository,
             fakeTodoCategoryRepository,
+            fakeTodoBlockRepository,
             savedStateHandle
         )
 
@@ -323,13 +337,14 @@ internal class AddEditScheduleBlockViewModelTest {
     fun when_creating_view_model_for_editing_and_valid_id_passed_then_load_schedule_block_data() =
         runTest {
             val scheduleBlock = createTestScheduleBlock()
-            fakeScheduleBlockRepository.insertScheduleBlock(scheduleBlock)
+            fakeScheduleBlockRepository.insertOrUpdateScheduleBlock(scheduleBlock)
             val savedStateHandle = SavedStateHandle(
                 mapOf(EditScheduleBlock.todoBlockIdArg to scheduleBlock.todoBlock.todoBlockId)
             )
             val viewModel = AddEditScheduleBlockViewModel(
                 fakeScheduleBlockRepository, fakeTodoRepository,
-                fakeTodoCategoryRepository, savedStateHandle
+                fakeTodoCategoryRepository,
+                fakeTodoBlockRepository, savedStateHandle
             )
             advanceUntilIdle()
 
@@ -359,6 +374,7 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeScheduleBlockRepository,
             fakeTodoRepository,
             fakeTodoCategoryRepository,
+            fakeTodoBlockRepository,
             savedStateHandle
         )
 
@@ -381,6 +397,7 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeScheduleBlockRepository,
             fakeTodoRepository,
             fakeTodoCategoryRepository,
+            fakeTodoBlockRepository,
             savedStateHandle
         )
 
@@ -402,6 +419,7 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeScheduleBlockRepository,
             fakeTodoRepository,
             fakeTodoCategoryRepository,
+            fakeTodoBlockRepository,
             savedStateHandle
         )
 
@@ -419,6 +437,7 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeScheduleBlockRepository,
             fakeTodoRepository,
             fakeTodoCategoryRepository,
+            fakeTodoBlockRepository,
             savedStateHandle
         )
         assertThat(viewModel.state.date).isEqualTo("Wed 15 Feb, 2023")
@@ -434,6 +453,7 @@ internal class AddEditScheduleBlockViewModelTest {
                 fakeScheduleBlockRepository,
                 fakeTodoRepository,
                 fakeTodoCategoryRepository,
+                fakeTodoBlockRepository,
                 savedStateHandle
             )
         }
@@ -446,6 +466,7 @@ internal class AddEditScheduleBlockViewModelTest {
                 fakeScheduleBlockRepository,
                 fakeTodoRepository,
                 fakeTodoCategoryRepository,
+                fakeTodoBlockRepository,
                 SavedStateHandle()
             )
         }

@@ -40,16 +40,20 @@ class FakeTodoBlockDao : TodoBlockDao {
         }
     }
 
-    override suspend fun updateOrInsertTodoBlock(todoBlock: TodoBlock) {
+    override suspend fun updateOrInsertTodoBlock(todoBlock: TodoBlock): Long {
         val indexOfTodoBlockInList =
             todoBlocks.indexOfFirst { it.todoBlockId == todoBlock.todoBlockId }
+        var id = todoBlock.todoBlockId
 
         if (indexOfTodoBlockInList >= 0) {
             val oldTodoBlock = todoBlocks.removeAt(indexOfTodoBlockInList)
             val updatedTodoBlock = todoBlock.copy(todoBlockId = oldTodoBlock.todoBlockId)
             todoBlocks.add(updatedTodoBlock)
+            id = updatedTodoBlock.todoBlockId
         } else
             todoBlocks.add(todoBlock)
+
+        return id.toLong()
     }
 
     override suspend fun deleteTodoBlock(todoBlock: TodoBlock) {

@@ -10,8 +10,10 @@ import com.example.schetodo.R
 import com.example.schetodo.data.schedule_block.ScheduleBlock
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.data.todo.Todo
+import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoRepository
 import com.example.schetodo.data.todo_block.TodoBlock
+import com.example.schetodo.data.todo_block.TodoBlockRepository
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.todo_category.TodoCategoryRepository
 import com.example.schetodo.ui.navigation.schedule.AddScheduleBlock
@@ -36,6 +38,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
     private val scheduleBlockRepository: ScheduleBlockRepository,
     private val todoRepository: TodoRepository,
     private val todoCategoryRepository: TodoCategoryRepository,
+    private val todoBlockRepository: TodoBlockRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     var state by mutableStateOf(AddEditScheduleBlockScreenState())
@@ -90,15 +93,19 @@ class AddEditScheduleBlockViewModel @Inject constructor(
             val todoBlock = TodoBlock(
                 todoBlockId, state.notes, scheduleBlockDate, startTime, endTime, todoBlockTemplateId
             )
-            val scheduleBlock = ScheduleBlock(todoBlock, state.todos, state.todoCategories)
 
-            if (scheduleBlockOverlapsWithOtherScheduleBlock(scheduleBlock)) {
-                sendScheduleBlockOverlapsErrorMessage()
+            if (todoBlockOverlapsWithOtherTodoBlock(todoBlock)) {
+                sendTodoBlockOverlapsErrorMessage()
                 return@launch
             }
 
-            // TODO save
-            // TODO if todo selected and saved then mark status as IN_PROGRESS
+            scheduleBlockRepository.insertOrUpdateScheduleBlock(
+                ScheduleBlock(
+                    todoBlock = todoBlock,
+                    todos = state.todos,
+                    todoCategories = state.todoCategories
+                )
+            )
 
             state = state.copy(successfullySaved = true)
         }
@@ -214,8 +221,8 @@ class AddEditScheduleBlockViewModel @Inject constructor(
         else updateEndTime(0)
     }
 
-    private suspend fun scheduleBlockOverlapsWithOtherScheduleBlock(scheduleBlock: ScheduleBlock) =
-        scheduleBlockRepository.scheduleBlockOverlapsWithOtherScheduleBlock(scheduleBlock)
+    private suspend fun todoBlockOverlapsWithOtherTodoBlock(todoBlock: TodoBlock) =
+        todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(todoBlock)
 
     private fun endTimeIsNotAfterStartTime() = !endTime.isAfter(startTime)
 
@@ -232,7 +239,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
         }
     }
 
-    private fun sendScheduleBlockOverlapsErrorMessage() {
+    private fun sendTodoBlockOverlapsErrorMessage() {
         viewModelScope.launch {
             _errorMessages.emit(UiText.StringResource(R.string.schedule_block_overlap_error_msg))
         }

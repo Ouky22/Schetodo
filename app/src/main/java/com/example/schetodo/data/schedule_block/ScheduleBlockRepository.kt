@@ -6,4 +6,5 @@ import java.time.LocalDate
 interface ScheduleBlockRepository {
     fun getScheduleBlocksOnDate(date: LocalDate): Flow<List<ScheduleBlock>>
     fun getScheduleBlockByTodoBlockId(todoBlockId: Int): Flow<ScheduleBlock?>
+    suspend fun insertOrUpdateScheduleBlock(scheduleBlock: ScheduleBlock)
 }
