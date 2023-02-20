@@ -1,6 +1,7 @@
 package com.example.schetodo.data.todo_block
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -30,4 +31,25 @@ class TodoBlockRepositoryImpl @Inject constructor(
 
     override suspend fun deleteTodoBlockById(todoBlockId: Int) =
         todoBlockDao.deleteTodoBlockById(todoBlockId)
+
+    override suspend fun todoBlockOverlapsWithOtherTodoBlock(todoBlock: TodoBlock): Boolean {
+        val date = todoBlock.date ?: return false
+        val startTime = todoBlock.startTime
+        val endTime = todoBlock.endTime
+
+        val allTodoBlocksOnDate = getTodoBlocksOnDate(date).first()
+
+        if (allTodoBlocksOnDate.isEmpty())
+            return false
+
+        for (otherTodoBlock in allTodoBlocksOnDate) {
+            val overlapsWithTodoBlock = startTime.isBefore(otherTodoBlock.endTime)
+                    && otherTodoBlock.startTime.isBefore(endTime)
+
+            if (overlapsWithTodoBlock)
+                return true
+        }
+
+        return false
+    }
 }
