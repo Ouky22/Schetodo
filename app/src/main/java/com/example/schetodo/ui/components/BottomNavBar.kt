@@ -1,16 +1,15 @@
 package com.example.schetodo.ui.components
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.example.schetodo.ui.navigation.MainSchetodoDestination
 import com.example.schetodo.ui.navigation.SchetodoDestination
 
@@ -30,7 +29,9 @@ fun BottomNavBar(
             BottomNavigationItem(
                 selected = selected,
                 onClick = { onItemClick(destination) },
-                icon = { BottomNavIconWithLabel(destination = destination, selected = selected) }
+                icon = { BottomNavIconWithLabel(destination = destination, selected = selected) },
+                unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                selectedContentColor = MaterialTheme.colorScheme.onSurface
             )
         }
     }
