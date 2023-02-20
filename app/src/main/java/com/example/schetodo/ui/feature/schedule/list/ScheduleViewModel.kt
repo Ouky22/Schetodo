@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.schetodo.data.schedule_block.ScheduleBlock
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
+import com.example.schetodo.data.todo.Todo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -52,8 +53,10 @@ class ScheduleViewModel @Inject constructor(
     private fun convertScheduleBlockToUiScheduleBlock(scheduleBlock: ScheduleBlock) =
         UiScheduleBlock(
             id = scheduleBlock.todoBlock.todoBlockId,
-            categories = scheduleBlock.todoCategories,
-            todoDescriptions = scheduleBlock.todos.map { it.description },
+            categories = scheduleBlock.todoCategories.sortedBy { it.name },
+            todoDescriptions = scheduleBlock.todos
+                .sortedWith(compareByDescending(Todo::priority).thenBy(Todo::description))
+                .map { it.description },
             notes = scheduleBlock.todoBlock.notes ?: "",
             startTime = scheduleBlock.todoBlock.startTime.toString(),
             endTime = scheduleBlock.todoBlock.endTime.toString(),

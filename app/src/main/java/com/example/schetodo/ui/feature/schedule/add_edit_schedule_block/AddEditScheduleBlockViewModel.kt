@@ -128,8 +128,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
                 todoRepository.getTodoById(it).first()
             }
             val allSelectedTodos = (state.todos + selectedTodos).toSet().toList()
-            state = state.copy(todos = allSelectedTodos)
-
+            setTodosState(allSelectedTodos)
             addTodoCategoriesOfTodos(allSelectedTodos)
         }
     }
@@ -139,7 +138,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
     }
 
     private fun removeSelectedTodo(todo: Todo) {
-        state = state.copy(todos = state.todos - todo)
+        setTodosState((state.todos - todo))
     }
 
     private fun addSelectedTodoCategories(todoCategoryIds: List<Int>) {
@@ -148,12 +147,14 @@ class AddEditScheduleBlockViewModel @Inject constructor(
                 todoCategoryRepository.getTodoCategory(categoryId).first()
             }
             val allSelectedCategories = (state.todoCategories + selectedCategories).toSet().toList()
-            state = state.copy(todoCategories = allSelectedCategories)
+            state = state.copy(todoCategories = allSelectedCategories.sortedBy { it.name })
         }
     }
 
     private fun removeSelectedTodoCategory(todoCategory: TodoCategory) {
-        state = state.copy(todoCategories = state.todoCategories - todoCategory)
+        state = state.copy(
+            todoCategories = (state.todoCategories - todoCategory).sortedBy { it.name }
+        )
     }
 
     private fun updateTodoBlockNotes(notes: String) {
@@ -206,11 +207,11 @@ class AddEditScheduleBlockViewModel @Inject constructor(
             updateStartTime(scheduleBlock.todoBlock.startTime.toSecondOfDay())
             updateEndTime(scheduleBlock.todoBlock.endTime.toSecondOfDay())
             state = state.copy(
-                todoCategories = scheduleBlock.todoCategories,
-                todos = scheduleBlock.todos,
+                todoCategories = scheduleBlock.todoCategories.sortedBy { it.name },
                 notes = scheduleBlock.todoBlock.notes ?: "",
                 inEditingMode = true
             )
+            setTodosState(scheduleBlock.todos)
             todoBlockTemplateId = scheduleBlock.todoBlock.templateId
         }
     }
@@ -265,5 +266,13 @@ class AddEditScheduleBlockViewModel @Inject constructor(
         viewModelScope.launch {
             _errorMessages.emit(UiText.StringResource(R.string.start_time_bigger_end_time_error_msg))
         }
+    }
+
+    private fun setTodosState(todos: List<Todo>) {
+        state = state.copy(
+            todos = todos.sortedWith(
+                compareByDescending(Todo::priority).thenBy(Todo::description)
+            )
+        )
     }
 }
