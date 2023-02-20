@@ -26,7 +26,11 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
 
     override suspend fun insertOrUpdateScheduleBlock(scheduleBlock: ScheduleBlock) {
         val todoBlock = scheduleBlock.todoBlock
-        val todoBlockId = todoBlockDao.updateOrInsertTodoBlock(todoBlock).toInt()
+        var todoBlockId = todoBlockDao.updateOrInsertTodoBlock(todoBlock).toInt()
+
+        val todoBlockInserted = todoBlockId <= 0
+        if (todoBlockInserted)
+            todoBlockId = todoBlock.todoBlockId
 
         todoBlockTodoRelationshipDao.disconnectAllTodosFromTodoBlock(todoBlock.todoBlockId)
         scheduleBlock.todos.forEach {
