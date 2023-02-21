@@ -6,6 +6,7 @@ import com.example.schetodo.R
 import com.example.schetodo.data.schedule_block.ScheduleBlock
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.data.todo.Todo
+import com.example.schetodo.data.todo_block.TodoBlock
 import com.example.schetodo.ui.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -93,10 +94,14 @@ class ScheduleViewModel @Inject constructor(
             endTime = todoBlock.endTime.toString(),
             durationHours = getDurationHoursUiText(duration),
             durationMinutes = getDurationMinutesUiText(duration),
-            isCurrentScheduleBlock = LocalTime.now().isAfter(todoBlock.startTime)
-                    && LocalTime.now().isBefore(todoBlock.endTime)
+            isCurrentScheduleBlock = isCurrentScheduleBlock(todoBlock)
         )
     }
+
+    private fun isCurrentScheduleBlock(todoBlockOfScheduleBlock: TodoBlock) =
+        LocalDate.now() == todoBlockOfScheduleBlock.date &&
+                LocalTime.now().isAfter(todoBlockOfScheduleBlock.startTime) &&
+                LocalTime.now().isBefore(todoBlockOfScheduleBlock.endTime)
 
     private fun getDurationHoursUiText(duration: Duration): UiText {
         val durationHours = duration.toHours().toInt()
