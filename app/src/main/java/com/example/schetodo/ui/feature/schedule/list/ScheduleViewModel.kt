@@ -71,9 +71,9 @@ class ScheduleViewModel @Inject constructor(
                 scheduleBlocks.map { scheduleBlock ->
                     convertScheduleBlockToUiScheduleBlock(scheduleBlock)
                 }
-            }.collect {
+            }.collect { uiScheduleBlocks ->
                 _scheduleState.value = _scheduleState.value.copy(
-                    uiScheduleBlocks = it
+                    uiScheduleBlocks = uiScheduleBlocks.sortedBy { it.startTime }
                 )
             }
         }
