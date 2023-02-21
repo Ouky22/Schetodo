@@ -28,10 +28,7 @@ import com.example.schetodo.R
 import com.example.schetodo.ui.components.ElementPickerDialog
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.AddEditTopBar
-import com.example.schetodo.ui.feature.todos.getIconByName
-import com.example.schetodo.ui.feature.todos.householdIcons
-import com.example.schetodo.ui.feature.todos.sportIcons
-import com.example.schetodo.ui.feature.todos.todoCategoryColors
+import com.example.schetodo.ui.feature.todos.*
 import com.example.schetodo.ui.theme.SchetodoTheme
 
 @ExperimentalMaterial3Api
@@ -265,7 +262,7 @@ fun IconPicker(
     ElementPickerDialog(
         modifier = modifier,
         title = stringResource(R.string.todo_category_icon),
-        elements = listOf(sportIcons.values, householdIcons.values).flatten(),
+        elements = allTodoCategoryIcons.map { it.values }.flatten(),
         onDismiss = onDismiss
     ) { icon ->
         SelectorCircle(
