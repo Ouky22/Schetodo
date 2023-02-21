@@ -150,8 +150,8 @@ fun AddEditScheduleBlockScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             AddEditTopBar(
-                title = if (inEditingMode) stringResource(R.string.edit_todo_block)
-                else stringResource(R.string.add_todo_block),
+                title = if (inEditingMode) stringResource(R.string.edit_schedule_block)
+                else stringResource(R.string.add_schedule_block),
                 showDeleteIconButton = inEditingMode,
                 onDeleteClick = onDelete,
                 onCloseDialog = onClose

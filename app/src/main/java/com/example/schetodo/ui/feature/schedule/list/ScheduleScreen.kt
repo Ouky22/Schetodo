@@ -63,7 +63,7 @@ fun ScheduleScreen(
     Scaffold(
         topBar = {
             SchetodoTopAppBar(
-                title = "Schedule",
+                title = stringResource(R.string.schedule),
                 showBackButton = false,
                 onBackButtonClick = { })
         },

@@ -47,7 +47,8 @@ fun TodoCategoryPickerScreen(
 
     PickerScreen(
         modifier = modifier,
-        topAppBarTitle = state.currentCategory?.name ?: stringResource(R.string.select_todo),
+        topAppBarTitle = state.currentCategory?.name
+            ?: stringResource(R.string.select_todo_category),
         showTopBarBackButton = state.showTopBarBackButton,
         onTopBarBackButtonClick = { viewModel.navigateToPreviousCategory() },
         selectedItemCount = state.selectedItems.count(),
