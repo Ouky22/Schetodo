@@ -45,7 +45,7 @@ val socialIcons = mapOf(
     mapEntryOf(Icons.Filled.MoodBad),
     mapEntryOf(Icons.Filled.Diamond),
     mapEntryOf(Icons.Filled.Diversity1),
-    mapEntryOf(Icons.Filled.Man),
+    mapEntryOf(Icons.Filled.Male),
     mapEntryOf(Icons.Filled.Female),
     mapEntryOf(Icons.Filled.Transgender)
 )
@@ -73,7 +73,6 @@ val natureIcons = mapOf(
 
 val householdIcons = mapOf(
     mapEntryOf(Icons.Filled.House),
-    mapEntryOf(Icons.Filled.Bed),
     mapEntryOf(Icons.Filled.KingBed),
     mapEntryOf(Icons.Filled.Chair),
     mapEntryOf(Icons.Filled.Coffee),
@@ -81,7 +80,6 @@ val householdIcons = mapOf(
     mapEntryOf(Icons.Filled.Checkroom),
     mapEntryOf(Icons.Filled.Shower),
     mapEntryOf(Icons.Filled.Bathtub),
-    mapEntryOf(Icons.Filled.Moped),
     mapEntryOf(Icons.Filled.Kitchen),
     mapEntryOf(Icons.Filled.RoomService),
     mapEntryOf(Icons.Filled.Yard),
@@ -203,6 +201,10 @@ val allTodoCategoryIcons = listOf(
     foodIcons,
     otherIcons
 )
+
+val spacerIcon = Icons.Filled.Category
+
+fun getIconsWithCategorySpacer() = allTodoCategoryIcons.flatMap { it.values + spacerIcon }
 
 fun mapEntryOf(vector: ImageVector) = vector.name to vector
 

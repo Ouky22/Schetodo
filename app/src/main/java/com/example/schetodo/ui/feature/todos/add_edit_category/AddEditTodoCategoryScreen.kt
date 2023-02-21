@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
@@ -158,13 +159,13 @@ fun AddEditTodoCategoryScreen(
 
         if (showColorPicker)
             ColorPicker(
-                modifier = Modifier.fillMaxHeight(0.7f),
+                modifier = Modifier.fillMaxHeight(0.8f),
                 onSelectColor = { selectedColor -> onColorSelected(selectedColor) },
                 onDismiss = { onColorSelected(todoCategoryColor) }
             )
         else if (showIconPicker) {
             IconPicker(
-                modifier = Modifier.fillMaxHeight(0.7f),
+                modifier = Modifier.fillMaxHeight(0.8f),
                 onSelectIcon = onIconSelected,
                 onDismiss = { onIconSelected(todoCategoryIcon) }
             )
@@ -262,14 +263,21 @@ fun IconPicker(
     ElementPickerDialog(
         modifier = modifier,
         title = stringResource(R.string.todo_category_icon),
-        elements = allTodoCategoryIcons.map { it.values }.flatten(),
-        onDismiss = onDismiss
+        elements = getIconsWithCategorySpacer(),
+        onDismiss = onDismiss,
+        span = { item ->
+            if (item === spacerIcon) GridItemSpan(maxLineSpan)
+            else GridItemSpan(1)
+        }
     ) { icon ->
-        SelectorCircle(
-            icon = icon,
-            contentDescription = icon.name,
-            onClick = { onSelectIcon(icon) }
-        )
+        if (icon === spacerIcon)
+            Spacer(modifier = Modifier.size(50.dp))
+        else
+            SelectorCircle(
+                icon = icon,
+                contentDescription = icon.name,
+                onClick = { onSelectIcon(icon) }
+            )
     }
 }
 

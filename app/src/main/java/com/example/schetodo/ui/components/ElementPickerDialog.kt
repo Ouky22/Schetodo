@@ -2,13 +2,11 @@ package com.example.schetodo.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +23,7 @@ fun <T> ElementPickerDialog(
     title: String,
     elements: List<T>,
     onDismiss: () -> Unit,
+    span: (LazyGridItemSpanScope.(T) -> GridItemSpan)? = null,
     itemSelector: @Composable (T) -> Unit
 ) {
     Dialog(
@@ -47,7 +46,10 @@ fun <T> ElementPickerDialog(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(elements) { element ->
+                    items(
+                        items = elements,
+                        span = span
+                    ) { element ->
                         itemSelector(element)
                     }
                 }
