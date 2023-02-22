@@ -7,6 +7,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import com.example.schetodo.ui.feature.todos.list.TodosEvent.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Category
@@ -30,6 +31,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
 import com.example.schetodo.data.todo.Todo
+import com.example.schetodo.data.todo.TodoFilterSettings
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.ui.components.CategoryItem
 import com.example.schetodo.ui.components.OverflowMenu
@@ -54,13 +56,13 @@ fun TodosScreen(
     val state by viewModel.todosState.collectAsStateWithLifecycle()
 
     if (state.currentCategoryIsChildCategory)
-        BackHandler(onBack = { viewModel.onEvent(TodosEvent.NavigateToPreviousTodoCategory) })
+        BackHandler(onBack = { viewModel.onEvent(NavigateToPreviousTodoCategory) })
 
     if (state.showAddCategoryOrTodoDialog)
         AddCategoryOrTodoDialog(
-            onDismiss = { viewModel.onEvent(TodosEvent.CloseAddCategoryOrTodoDialog) },
-            onAddTodo = { viewModel.onEvent(TodosEvent.NavigateToAddTodoScreen) },
-            onAddTodoCategory = { viewModel.onEvent(TodosEvent.NavigateToAddTodoCategoryScreen) },
+            onDismiss = { viewModel.onEvent(CloseAddCategoryOrTodoDialog) },
+            onAddTodo = { viewModel.onEvent(NavigateToAddTodoScreen) },
+            onAddTodoCategory = { viewModel.onEvent(NavigateToAddTodoCategoryScreen) },
             modifier = Modifier.fillMaxHeight(0.6f)
         )
 
@@ -85,19 +87,19 @@ fun TodosScreen(
                 title = state.currentCategory?.name ?: stringResource(id = R.string.todos),
                 showBackButton = state.currentCategoryIsChildCategory,
                 onBackButtonClick = {
-                    viewModel.onEvent(TodosEvent.NavigateToPreviousTodoCategory)
+                    viewModel.onEvent(NavigateToPreviousTodoCategory)
                 },
                 actions = {
                     TodosFilterOverflowMenu(
                         todoFilterSettings = state.todoFilterSettings,
-                        filterSettingsChanged = {}
+                        filterSettingsChanged = {viewModel.onEvent(ChangeTodoFilterSettings(it))}
                     )
                 }
             )
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { viewModel.onEvent(TodosEvent.ClickOnAddCategoryOrTodoButton) }
+                onClick = { viewModel.onEvent(ClickOnAddCategoryOrTodoButton) }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
@@ -118,7 +120,7 @@ fun TodosScreen(
                 categories = state.childCategories,
                 todos = state.todos,
                 onClickOnTodoCategory = { todoCategory ->
-                    viewModel.onEvent(TodosEvent.NavigateToNewTodoCategory(todoCategory.categoryId))
+                    viewModel.onEvent(NavigateToNewTodoCategory(todoCategory.categoryId))
                 },
                 onLongClickOnTodoCategory = { todoCategory -> onEditTodoCategory(todoCategory.categoryId) },
                 onClickOnTodo = { todo -> onEditTodo(todo.todoId) }

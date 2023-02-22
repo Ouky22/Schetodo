@@ -2,6 +2,7 @@ package com.example.schetodo.ui.feature.todos.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.schetodo.data.todo.TodoFilterSettings
 import com.example.schetodo.data.todo_category.TodoCategoryRepository
 import com.example.schetodo.data.todo.TodoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,7 +50,8 @@ class TodosViewModel @Inject constructor(
     }
 
     private fun onChangeTodoFilterSettings(newFilterSettings: TodoFilterSettings) {
-        // TODO
+        _todosState.value = _todosState.value.copy(todoFilterSettings = newFilterSettings)
+        setCurrentTodoCategory(_todosState.value.currentCategory?.categoryId)
     }
 
     private fun onCloseAddCategoryOrTodoDialog() {
@@ -105,7 +107,9 @@ class TodosViewModel @Inject constructor(
         stateJob = combine(
             todoCategoryRepository.getTodoCategory(currentTodoCategoryId),
             todoCategoryRepository.getChildTodoCategoriesOf(currentTodoCategoryId),
-            todoRepository.getTodosOfTodoCategory(currentTodoCategoryId)
+            todoRepository.getTodosOfTodoCategory(
+                currentTodoCategoryId, _todosState.value.todoFilterSettings
+            )
         ) { currentCategory, childCategories, todos ->
             _todosState.value = _todosState.value.copy(
                 currentCategory = currentCategory,

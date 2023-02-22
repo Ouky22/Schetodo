@@ -6,8 +6,11 @@ interface TodoRepository {
     suspend fun insertTodo(todo: Todo)
     suspend fun insertOrUpdateTodo(todo: Todo)
     suspend fun deleteTodoById(todoId: Int)
-    suspend fun getTodoById(todoId: Int) : Flow<Todo?>
-    fun getTodosOfTodoCategory(todoCategoryId: Int?): Flow<List<Todo>>
+    suspend fun getTodoById(todoId: Int): Flow<Todo?>
+    fun getTodosOfTodoCategory(
+        todoCategoryId: Int?,
+        todoFilterSettings: TodoFilterSettings = TodoFilterSettings()
+    ): Flow<List<Todo>>
     fun getTodosInProgress(): Flow<List<Todo>>
     suspend fun updateTodo(todo: Todo)
 }

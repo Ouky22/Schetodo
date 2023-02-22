@@ -1,7 +1,7 @@
 package com.example.schetodo.data.todo
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,12 +25,24 @@ class TodoRepositoryImpl @Inject constructor(
     override suspend fun getTodoById(todoId: Int): Flow<Todo?> =
         todoDao.getTodoById(todoId)
 
-    override fun getTodosOfTodoCategory(todoCategoryId: Int?): Flow<List<Todo>> {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getTodosOfTodoCategory(
+        todoCategoryId: Int?,
+        todoFilterSettings: TodoFilterSettings
+    ): Flow<List<Todo>> {
         // all todos must have a TodoCategory, that's why an empty list is returned if no todoCategoryId is passed
         return if (todoCategoryId == null)
             flow { emit(emptyList()) }
         else
             todoDao.getAllTodosOfTodoCategory(todoCategoryId)
+                .mapLatest { todos ->
+                    todos.filter {
+                        it.flag == TodoFlag.DONE && todoFilterSettings.showDoneTodos
+                                || it.flag == TodoFlag.UNDONE && todoFilterSettings.showUndoneTodos
+                                || it.flag == TodoFlag.IN_PROGRESS && todoFilterSettings.showInProgressTodos
+                                || it.flag == TodoFlag.RECURRING && todoFilterSettings.showRecurringTodos
+                    }
+                }
     }
 
     override fun getTodosInProgress(): Flow<List<Todo>> =
@@ -40,3 +52,10 @@ class TodoRepositoryImpl @Inject constructor(
         todoDao.updateTodo(todo)
     }
 }
+
+data class TodoFilterSettings(
+    val showRecurringTodos: Boolean = true,
+    val showUndoneTodos: Boolean = true,
+    val showInProgressTodos: Boolean = true,
+    val showDoneTodos: Boolean = false
+)

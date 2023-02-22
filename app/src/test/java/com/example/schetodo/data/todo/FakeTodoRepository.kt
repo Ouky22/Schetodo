@@ -31,7 +31,9 @@ class FakeTodoRepository : TodoRepository {
             emit(todo)
         }
 
-    override fun getTodosOfTodoCategory(todoCategoryId: Int?): Flow<List<Todo>> {
+    override fun getTodosOfTodoCategory(
+        todoCategoryId: Int?, todoFilterSettings: TodoFilterSettings
+    ): Flow<List<Todo>> {
         return flow {
             val todosOfCategory = todos.filter { it.categoryId == todoCategoryId }
             emit(todosOfCategory)

@@ -1,6 +1,7 @@
 package com.example.schetodo.ui.feature.todos.list
 
 import com.example.schetodo.data.todo.Todo
+import com.example.schetodo.data.todo.TodoFilterSettings
 import com.example.schetodo.data.todo_category.TodoCategory
 
 data class TodosState(
@@ -14,10 +15,3 @@ data class TodosState(
     val currentCategoryIsChildCategory
         get() = currentCategory != null
 }
-
-data class TodoFilterSettings(
-    val showRecurringTodos: Boolean = true,
-    val showUndoneTodos : Boolean = true,
-    val showInProgressTodos: Boolean = true,
-    val showDoneTodos: Boolean = false
-)

@@ -1,5 +1,7 @@
 package com.example.schetodo.ui.feature.todos.list
 
+import com.example.schetodo.data.todo.TodoFilterSettings
+
 sealed class TodosEvent {
     data class NavigateToNewTodoCategory(val newTodoCategoryId: Int?) : TodosEvent()
     object NavigateToPreviousTodoCategory : TodosEvent()
