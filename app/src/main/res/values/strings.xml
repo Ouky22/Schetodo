@@ -57,4 +57,5 @@
     <string name="hour">%1$d h</string>
     <string name="minute">%1$d m</string>
     <string name="select_todo_category">Select Todo Category</string>
+    <string name="filter_todos">Filter Todos</string>
 </resources>

@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import com.example.schetodo.ui.feature.todos.list.TodosEvent.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,13 +38,18 @@ class TodosViewModel @Inject constructor(
 
     fun onEvent(event: TodosEvent) {
         when (event) {
-            is TodosEvent.NavigateToNewTodoCategory -> setCurrentTodoCategory(event.newTodoCategoryId)
-            is TodosEvent.NavigateToPreviousTodoCategory -> loadPreviousCategory()
-            is TodosEvent.ClickOnAddCategoryOrTodoButton -> onClickAddCategoryOrTodoButton()
-            is TodosEvent.CloseAddCategoryOrTodoDialog -> onCloseAddCategoryOrTodoDialog()
-            is TodosEvent.NavigateToAddTodoCategoryScreen -> onNavigateToAddTodoCategoryScreen()
-            is TodosEvent.NavigateToAddTodoScreen -> onNavigateToAddTodoScreen()
+            is NavigateToNewTodoCategory -> setCurrentTodoCategory(event.newTodoCategoryId)
+            is NavigateToPreviousTodoCategory -> loadPreviousCategory()
+            is ClickOnAddCategoryOrTodoButton -> onClickAddCategoryOrTodoButton()
+            is CloseAddCategoryOrTodoDialog -> onCloseAddCategoryOrTodoDialog()
+            is NavigateToAddTodoCategoryScreen -> onNavigateToAddTodoCategoryScreen()
+            is NavigateToAddTodoScreen -> onNavigateToAddTodoScreen()
+            is ChangeTodoFilterSettings -> onChangeTodoFilterSettings(event.newFilterSettings)
         }
+    }
+
+    private fun onChangeTodoFilterSettings(newFilterSettings: TodoFilterSettings) {
+        // TODO
     }
 
     private fun onCloseAddCategoryOrTodoDialog() {

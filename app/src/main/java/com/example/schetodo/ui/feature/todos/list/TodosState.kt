@@ -8,8 +8,16 @@ data class TodosState(
     val childCategories: List<TodoCategory> = emptyList(),
     val todos: List<Todo> = emptyList(),
     val showAddCategoryOrTodoDialog: Boolean = false,
-    val checkOffTodosButtonActivated: Boolean = false
+    val checkOffTodosButtonActivated: Boolean = false,
+    val todoFilterSettings: TodoFilterSettings = TodoFilterSettings()
 ) {
     val currentCategoryIsChildCategory
         get() = currentCategory != null
 }
+
+data class TodoFilterSettings(
+    val showRecurringTodos: Boolean = true,
+    val showUndoneTodos : Boolean = true,
+    val showInProgressTodos: Boolean = true,
+    val showDoneTodos: Boolean = false
+)

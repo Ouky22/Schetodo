@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.TaskAlt
 import androidx.compose.material.icons.outlined.Checklist
 import androidx.compose.material3.*
@@ -17,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -30,6 +32,7 @@ import com.example.schetodo.R
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.ui.components.CategoryItem
+import com.example.schetodo.ui.components.OverflowMenu
 import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.components.TodoItem
 import com.example.schetodo.ui.feature.todos.getIconByName
@@ -83,6 +86,12 @@ fun TodosScreen(
                 showBackButton = state.currentCategoryIsChildCategory,
                 onBackButtonClick = {
                     viewModel.onEvent(TodosEvent.NavigateToPreviousTodoCategory)
+                },
+                actions = {
+                    TodosFilterOverflowMenu(
+                        todoFilterSettings = state.todoFilterSettings,
+                        filterSettingsChanged = {}
+                    )
                 }
             )
         },
@@ -130,6 +139,72 @@ fun TodosScreen(
                 Text(text = stringResource(id = R.string.check_off_todos))
             }
         }
+    }
+}
+
+@Composable
+fun TodosFilterOverflowMenu(
+    modifier: Modifier = Modifier,
+    todoFilterSettings: TodoFilterSettings,
+    filterSettingsChanged: (TodoFilterSettings) -> Unit,
+) {
+    OverflowMenu(
+        modifier = modifier,
+        icon = Icons.Filled.FilterList,
+        contentDescription = stringResource(R.string.filter_todos)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(id = R.string.filter_todos),
+                modifier = Modifier.align(CenterHorizontally).padding(bottom = 10.dp)
+            )
+            Divider()
+            FilterDropdownItem(
+                text = stringResource(id = R.string.recurring),
+                checked = todoFilterSettings.showRecurringTodos,
+                onCheckChange = { checked ->
+                    filterSettingsChanged(todoFilterSettings.copy(showRecurringTodos = checked))
+                }
+            )
+            FilterDropdownItem(
+                text = stringResource(id = R.string.undone),
+                checked = todoFilterSettings.showUndoneTodos,
+                onCheckChange = { checked ->
+                    filterSettingsChanged(todoFilterSettings.copy(showUndoneTodos = checked))
+                }
+            )
+            FilterDropdownItem(
+                text = stringResource(id = R.string.todo_in_progress),
+                checked = todoFilterSettings.showInProgressTodos,
+                onCheckChange = { checked ->
+                    filterSettingsChanged(todoFilterSettings.copy(showInProgressTodos = checked))
+                }
+            )
+            FilterDropdownItem(
+                text = stringResource(id = R.string.done),
+                checked = todoFilterSettings.showDoneTodos,
+                onCheckChange = { checked ->
+                    filterSettingsChanged(todoFilterSettings.copy(showDoneTodos = checked))
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun FilterDropdownItem(
+    modifier: Modifier = Modifier,
+    text: String,
+    checked: Boolean,
+    onCheckChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = text)
+        Checkbox(checked = checked, onCheckedChange = onCheckChange)
     }
 }
 
