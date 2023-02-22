@@ -21,32 +21,30 @@ internal class TodoRepositoryImplTest {
     }
 
     @Test
-    fun when_filter_is_set_to_only_show_recurring_todos_then_return_recurring_todos_only() = runTest {
-        val todo1 = Todo(1, "t1", TodoPriority.HIGH, TodoFlag.UNDONE, 1)
-        val todo2 = Todo(2, "t2", TodoPriority.LOW, TodoFlag.IN_PROGRESS, 1)
-        val todo3 = Todo(3, "t3", TodoPriority.LOW, TodoFlag.RECURRING, 1)
-        fakeTodoDao.insertTodo(todo1)
-        fakeTodoDao.insertTodo(todo2)
-        fakeTodoDao.insertTodo(todo3)
+    fun when_filter_is_set_to_only_show_recurring_todos_then_return_recurring_todos_only() =
+        runTest {
+            val todo1 = Todo(1, "t1", TodoPriority.HIGH, TodoFlag.UNDONE, 1)
+            val todo2 = Todo(2, "t2", TodoPriority.LOW, TodoFlag.IN_PROGRESS, 1)
+            val todo3 = Todo(3, "t3", TodoPriority.LOW, TodoFlag.RECURRING, 1)
+            fakeTodoDao.insertTodo(todo1)
+            fakeTodoDao.insertTodo(todo2)
+            fakeTodoDao.insertTodo(todo3)
 
-        val todoFilterSettings = TodoFilterSettings(
-            showDoneTodos = false,
-            showInProgressTodos = false,
-            showUndoneTodos = false,
-            showRecurringTodos = true
-        )
+            val todoFilterSettings = TodoFilterSettings(
+                showDoneTodos = false,
+                showInProgressTodos = false,
+                showUndoneTodos = false,
+                showRecurringTodos = true
+            )
 
-        val todos = todoRepositoryImpl.getTodosOfTodoCategory(1, todoFilterSettings).first()
-        assertThat(todos).containsExactly(todo3)
-    }
+            val todos = todoRepositoryImpl.getTodosOfTodoCategory(1, todoFilterSettings).first()
+            assertThat(todos).containsExactly(todo3)
+        }
 
     @Test
     fun when_null_as_todo_category_id_provided_then_return_flow_with_empty_list() = runTest {
-        todoRepositoryImpl.getTodosOfTodoCategory(null).test {
-            val todos = awaitItem()
-            assertThat(todos).isEmpty()
-            awaitComplete()
-        }
+        val todos = todoRepositoryImpl.getTodosOfTodoCategory(null).first()
+        assertThat(todos).isEmpty()
     }
 
     @Test
@@ -56,11 +54,8 @@ internal class TodoRepositoryImplTest {
         fakeTodoDao.insertTodo(todo1)
         fakeTodoDao.insertTodo(todo2)
 
-        todoRepositoryImpl.getTodosOfTodoCategory(2).test {
-            val todos = awaitItem()
-            assertThat(todos).isEmpty()
-            awaitComplete()
-        }
+        val todos = todoRepositoryImpl.getTodosOfTodoCategory(2).first()
+        assertThat(todos).isEmpty()
     }
 
     @Test
@@ -74,12 +69,9 @@ internal class TodoRepositoryImplTest {
         fakeTodoDao.insertTodo(todo2)
         fakeTodoDao.insertTodo(todo3)
 
-        todoRepositoryImpl.getTodosOfTodoCategory(todoCategoryId).test {
-            val todos = awaitItem()
-            assertThat(todos).contains(todo1)
-            assertThat(todos).contains(todo2)
-            assertThat(todos.size).isEqualTo(2)
-            awaitComplete()
-        }
+        val todos = todoRepositoryImpl.getTodosOfTodoCategory(todoCategoryId).first()
+        assertThat(todos).contains(todo1)
+        assertThat(todos).contains(todo2)
+        assertThat(todos.size).isEqualTo(2)
     }
 }
