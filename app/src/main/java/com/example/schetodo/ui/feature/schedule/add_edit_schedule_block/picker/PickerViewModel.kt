@@ -2,6 +2,7 @@ package com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.schetodo.data.todo.TodoFilterSettings
 import com.example.schetodo.data.todo.TodoRepository
 import com.example.schetodo.data.todo_category.TodoCategoryRepository
 import kotlinx.coroutines.Job
@@ -15,6 +16,13 @@ open class PickerViewModel<T>(
     private val _state = MutableStateFlow(PickerState<T>())
     val state: StateFlow<PickerState<T>>
         get() = _state.asStateFlow()
+    
+    private val todoFilterSettings = TodoFilterSettings(
+        showRecurringTodos = true,
+        showUndoneTodos = true,
+        showInProgressTodos = true,
+        showDoneTodos = false
+    )
 
     private var stateJob: Job? = null
 
@@ -51,7 +59,7 @@ open class PickerViewModel<T>(
         stateJob = combine(
             todoCategoryRepository.getTodoCategory(todoCategoryId),
             todoCategoryRepository.getChildTodoCategoriesOf(todoCategoryId),
-            todoRepository.getTodosOfTodoCategory(todoCategoryId)
+            todoRepository.getTodosOfTodoCategory(todoCategoryId, todoFilterSettings)
         ) { currentCategory, childCategories, todos ->
             _state.value = _state.value.copy(
                 currentCategory = currentCategory,
