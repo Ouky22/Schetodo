@@ -45,7 +45,8 @@ fun ScheduleScreen(
         onNextDateButtonClick = { viewModel.onEvent(GoToNextDate) },
         onCurrentDateButtonClick = {},
         onFabClick = { onAddScheduleBlockNavigation(viewModel.currentDateStamp) },
-        onEditScheduleBlock = { todoBlockId -> onEditScheduleBlockNavigation(todoBlockId) }
+        onEditScheduleBlock = { todoBlockId -> onEditScheduleBlockNavigation(todoBlockId) },
+        onAddScheduleGapButtonClick = { _, _ -> }
     )
 }
 
@@ -59,7 +60,8 @@ fun ScheduleScreen(
     onNextDateButtonClick: () -> Unit,
     onCurrentDateButtonClick: () -> Unit,
     onFabClick: () -> Unit,
-    onEditScheduleBlock: (todoBlockId: Int) -> Unit
+    onEditScheduleBlock: (todoBlockId: Int) -> Unit,
+    onAddScheduleGapButtonClick: (startTime: LocalTime, endTime: LocalTime) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -94,7 +96,8 @@ fun ScheduleScreen(
 
             ScheduleList(
                 scheduleListItems = scheduleListItems,
-                onListItemClick = onEditScheduleBlock
+                onListItemClick = onEditScheduleBlock,
+                onAddScheduleGapButtonClick = onAddScheduleGapButtonClick
             )
         }
     }
@@ -134,12 +137,14 @@ fun DateNavigator(
 fun ScheduleList(
     modifier: Modifier = Modifier,
     scheduleListItems: List<ScheduleListItem>,
-    onListItemClick: (todoBlockId: Int) -> Unit
+    onListItemClick: (todoBlockId: Int) -> Unit,
+    onAddScheduleGapButtonClick: (startTime: LocalTime, endTime: LocalTime) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(top = 16.dp, bottom = 100.dp, start = 12.dp, end = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(
             items = scheduleListItems, key = { it.startTime.toSecondOfDay() }
@@ -157,7 +162,16 @@ fun ScheduleList(
                         elevate = scheduleListItem.isCurrentScheduleBlock
                     )
                 is ScheduleGap ->
-                    Text(text = "${scheduleListItem.durationHours.asString()} ${scheduleListItem.durationMinutes.asString()}")
+                    OutlinedButton(
+                        onClick = {
+                            onAddScheduleGapButtonClick(
+                                scheduleListItem.startTime,
+                                scheduleListItem.endTime
+                            )
+                        }, modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = "${scheduleListItem.durationHours.asString()} ${scheduleListItem.durationMinutes.asString()}")
+                    }
             }
         }
     }
@@ -175,7 +189,8 @@ fun ScheduleScreenPreview() {
             onNextDateButtonClick = {},
             onCurrentDateButtonClick = {},
             onFabClick = {},
-            onEditScheduleBlock = {}
+            onEditScheduleBlock = {},
+            onAddScheduleGapButtonClick = { _, _ -> }
         )
     }
 }
