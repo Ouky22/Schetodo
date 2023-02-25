@@ -41,7 +41,7 @@ internal class ScheduleViewModelTest {
         val viewModel = ScheduleViewModel(fakeScheduleBlockRepository)
         advanceUntilIdle()
 
-        val uiScheduleBlocks = viewModel.scheduleState.value.uiScheduleBlocks
+        val uiScheduleBlocks = viewModel.scheduleState.value.scheduleListItems
         assertThat(uiScheduleBlocks.size).isEqualTo(1)
 
         val uiScheduleBlock = uiScheduleBlocks.first()

@@ -26,6 +26,7 @@ import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.UiText
 import com.example.schetodo.ui.feature.schedule.list.ScheduleEvent.*
+import java.time.LocalTime
 
 @Composable
 fun ScheduleScreen(
@@ -38,7 +39,7 @@ fun ScheduleScreen(
 
     ScheduleScreen(
         modifier = modifier,
-        uiScheduleBlocks = state.uiScheduleBlocks,
+        scheduleListItems = state.scheduleListItems,
         currentDate = state.currentDate,
         onPreviousDateButtonClick = { viewModel.onEvent(GoToPreviousDate) },
         onNextDateButtonClick = { viewModel.onEvent(GoToNextDate) },
@@ -52,7 +53,7 @@ fun ScheduleScreen(
 @Composable
 fun ScheduleScreen(
     modifier: Modifier = Modifier,
-    uiScheduleBlocks: List<UiScheduleBlock>,
+    scheduleListItems: List<ScheduleListItem>,
     currentDate: String,
     onPreviousDateButtonClick: () -> Unit,
     onNextDateButtonClick: () -> Unit,
@@ -92,7 +93,7 @@ fun ScheduleScreen(
             )
 
             ScheduleList(
-                uiScheduleBlocks = uiScheduleBlocks,
+                scheduleListItems = scheduleListItems,
                 onListItemClick = onEditScheduleBlock
             )
         }
@@ -132,7 +133,7 @@ fun DateNavigator(
 @Composable
 fun ScheduleList(
     modifier: Modifier = Modifier,
-    uiScheduleBlocks: List<UiScheduleBlock>,
+    scheduleListItems: List<ScheduleListItem>,
     onListItemClick: (todoBlockId: Int) -> Unit
 ) {
     LazyColumn(
@@ -141,18 +142,23 @@ fun ScheduleList(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(
-            items = uiScheduleBlocks, key = { it.id }
-        ) { uiScheduleBlock ->
-            ScheduleListItem(
-                todoCategories = uiScheduleBlock.categories,
-                todoDescriptions = uiScheduleBlock.todoDescriptions,
-                todoBlocKNotes = uiScheduleBlock.notes,
-                startTimeString = uiScheduleBlock.startTime,
-                endTimeString = uiScheduleBlock.endTime,
-                durationString = "${uiScheduleBlock.durationHours.asString()} ${uiScheduleBlock.durationMinutes.asString()}",
-                modifier = Modifier.clickable { onListItemClick(uiScheduleBlock.id) },
-                elevate = uiScheduleBlock.isCurrentScheduleBlock
-            )
+            items = scheduleListItems, key = { it.startTime.toSecondOfDay() }
+        ) { scheduleListItem ->
+            when (scheduleListItem) {
+                is UiScheduleBlock ->
+                    ScheduleBlockItem(
+                        todoCategories = scheduleListItem.categories,
+                        todoDescriptions = scheduleListItem.todoDescriptions,
+                        todoBlocKNotes = scheduleListItem.notes,
+                        startTimeString = scheduleListItem.startTimeText,
+                        endTimeString = scheduleListItem.endTimeText,
+                        durationString = "${scheduleListItem.durationHours.asString()} ${scheduleListItem.durationMinutes.asString()}",
+                        modifier = Modifier.clickable { onListItemClick(scheduleListItem.todoBlockId) },
+                        elevate = scheduleListItem.isCurrentScheduleBlock
+                    )
+                is ScheduleGap ->
+                    Text(text = "${scheduleListItem.durationHours.asString()} ${scheduleListItem.durationMinutes.asString()}")
+            }
         }
     }
 }
@@ -163,7 +169,7 @@ fun ScheduleScreenPreview() {
     SchetodoTheme {
         ScheduleScreen(
             modifier = Modifier.fillMaxSize(),
-            uiScheduleBlocks = createTodoBlocksForPreview(),
+            scheduleListItems = createTodoBlocksForPreview(),
             currentDate = "2023-02-01",
             onPreviousDateButtonClick = {},
             onNextDateButtonClick = {},
@@ -174,7 +180,7 @@ fun ScheduleScreenPreview() {
     }
 }
 
-private fun createTodoBlocksForPreview(): List<UiScheduleBlock> {
+private fun createTodoBlocksForPreview(): List<ScheduleListItem> {
     val todoCategories = listOf(
         TodoCategory(
             1, "Household", todoCategoryColors[0].toArgb().toLong(), null,
@@ -196,31 +202,56 @@ private fun createTodoBlocksForPreview(): List<UiScheduleBlock> {
         Todo(3, "Bake a cake", TodoPriority.LOW, TodoFlag.UNDONE, 1)
     )
     return listOf(
-        UiScheduleBlock(
-            0,
-            todoCategories.subList(0, 1),
-            todos.subList(0, 1).map { it.description },
-            "",
-            "13.00",
-            "16.30",
-            UiText.DynamicString("3h"),
-            UiText.DynamicString("30min")
+        ScheduleGap(
+            startTime = LocalTime.of(0, 0),
+            endTime = LocalTime.of(12, 0),
+            durationHours = UiText.DynamicString("12h")
         ),
         UiScheduleBlock(
-            1,
-            todoCategories,
-            todos.map { it.description },
-            "Lorem ipsum dolor sit",
-            "10.00",
-            "12.00",
-            UiText.DynamicString("2h")
+            todoBlockId = 1,
+            startTime = LocalTime.of(12, 0),
+            endTime = LocalTime.of(15, 0),
+            startTimeText = "12:00",
+            endTimeText = "15:00",
+            durationHours = UiText.DynamicString("3h"),
+            durationMinutes = UiText.DynamicString("30min"),
+            categories = todoCategories.subList(0, 1),
+            todoDescriptions = todos.subList(0, 1).map { it.description },
+            notes = "",
+            isCurrentScheduleBlock = false
+        ),
+        ScheduleGap(
+            startTime = LocalTime.of(15, 0),
+            endTime = LocalTime.of(15, 30),
+            durationMinutes = UiText.DynamicString("30min")
         ),
         UiScheduleBlock(
-            id = 2,
+            todoBlockId = 3,
+            startTime = LocalTime.of(15, 30),
+            endTime = LocalTime.of(16, 0),
+            startTimeText = "15:30",
+            endTimeText = "16:00",
+            durationMinutes = UiText.DynamicString("30min"),
+            categories = todoCategories,
+            todoDescriptions = todos.map { it.description },
+            notes = "Lorem ipsum dolor sit",
+            isCurrentScheduleBlock = true
+        ),
+        UiScheduleBlock(
+            todoBlockId = 4,
+            startTime = LocalTime.of(16, 0),
+            endTime = LocalTime.of(17, 0),
+            startTimeText = "16:00",
+            endTimeText = "17:00",
+            durationHours = UiText.DynamicString("1h"),
             notes = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna",
-            startTime = "20.00",
-            endTime = "22.00",
-            durationHours = UiText.DynamicString("2h")
+            isCurrentScheduleBlock = false
+        ),
+        ScheduleGap(
+            startTime = LocalTime.of(17, 0),
+            endTime = LocalTime.of(23, 59),
+            durationHours = UiText.DynamicString("6h"),
+            durationMinutes = UiText.DynamicString("59min")
         )
     )
 }
