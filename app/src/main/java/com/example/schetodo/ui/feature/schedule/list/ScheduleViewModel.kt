@@ -21,6 +21,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import com.example.schetodo.ui.feature.schedule.list.ScheduleEvent.*
 import java.time.LocalTime
+import java.time.format.FormatStyle
 import javax.inject.Inject
 
 @HiltViewModel
@@ -90,8 +91,8 @@ class ScheduleViewModel @Inject constructor(
                 .sortedWith(compareByDescending(Todo::priority).thenBy(Todo::description))
                 .map { it.description },
             notes = todoBlock.notes ?: "",
-            startTime = todoBlock.startTime.toString(),
-            endTime = todoBlock.endTime.toString(),
+            startTime = formatTime(todoBlock.startTime),
+            endTime = formatTime(todoBlock.endTime),
             durationHours = getDurationHoursUiText(duration),
             durationMinutes = getDurationMinutesUiText(duration),
             isCurrentScheduleBlock = isCurrentScheduleBlock(todoBlock)
@@ -102,6 +103,11 @@ class ScheduleViewModel @Inject constructor(
         LocalDate.now() == todoBlockOfScheduleBlock.date &&
                 LocalTime.now().isAfter(todoBlockOfScheduleBlock.startTime) &&
                 LocalTime.now().isBefore(todoBlockOfScheduleBlock.endTime)
+
+    private fun formatTime(time: LocalTime): String {
+        val formatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+        return formatter.format(time)
+    }
 
     private fun getDurationHoursUiText(duration: Duration): UiText {
         val durationHours = duration.toHours().toInt()
