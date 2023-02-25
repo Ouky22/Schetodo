@@ -33,7 +33,8 @@ fun ScheduleScreen(
     modifier: Modifier = Modifier,
     viewModel: ScheduleViewModel,
     onAddScheduleBlockNavigation: (dateStamp: Long) -> Unit,
-    onEditScheduleBlockNavigation: (todoBlockId: Int) -> Unit
+    onEditScheduleBlockNavigation: (todoBlockId: Int) -> Unit,
+    onAddScheduleBlockInGapNavigation: (dateStamp: Long, startTimeStamp: Int, endTimeStamp: Int) -> Unit
 ) {
     val state by viewModel.scheduleState.collectAsStateWithLifecycle()
 
@@ -46,7 +47,13 @@ fun ScheduleScreen(
         onCurrentDateButtonClick = {},
         onFabClick = { onAddScheduleBlockNavigation(viewModel.currentDateStamp) },
         onEditScheduleBlock = { todoBlockId -> onEditScheduleBlockNavigation(todoBlockId) },
-        onAddScheduleGapButtonClick = { _, _ -> }
+        onAddScheduleGapButtonClick = { startTime, endTime ->
+            onAddScheduleBlockInGapNavigation(
+                viewModel.currentDateStamp,
+                startTime.toSecondOfDay(),
+                endTime.toSecondOfDay()
+            )
+        }
     )
 }
 

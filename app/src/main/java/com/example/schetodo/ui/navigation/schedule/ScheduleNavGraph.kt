@@ -34,6 +34,13 @@ fun NavGraphBuilder.scheduleNavGraph(navController: NavHostController) {
                 },
                 onEditScheduleBlockNavigation = { todoBlockId ->
                     navController.navigateToEditScheduleBlockScreen(todoBlockId)
+                },
+                onAddScheduleBlockInGapNavigation = { dateStamp, startTimeStamp, endTimeStamp ->
+                    navController.navigateToAddScheduleBlockScreen(
+                        dateStamp,
+                        startTimeStamp,
+                        endTimeStamp
+                    )
                 }
             )
         }
@@ -66,6 +73,18 @@ fun NavGraphBuilder.scheduleNavGraph(navController: NavHostController) {
             TodoCategoryPickerScreen(viewModel = viewModel, navController = navController)
         }
     }
+}
+
+fun NavHostController.navigateToAddScheduleBlockScreen(
+    dateStamp: Long,
+    startTimeStamp: Int,
+    endTimeStamp: Int
+) {
+    navigate(
+        "${AddScheduleBlock.route}/$dateStamp" +
+                "?${AddScheduleBlock.startTimeStampArg}=$startTimeStamp" +
+                "&${AddScheduleBlock.endTimeStampArg}=$endTimeStamp"
+    )
 }
 
 fun NavHostController.navigateToAddScheduleBlockScreen(dateStamp: Long) {
