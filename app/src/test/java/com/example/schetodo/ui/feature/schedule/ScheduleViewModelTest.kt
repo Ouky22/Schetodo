@@ -8,6 +8,7 @@ import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_block.TodoBlock
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.ui.feature.schedule.list.ScheduleViewModel
+import com.example.schetodo.ui.feature.schedule.list.UiScheduleBlock
 import com.example.schetodo.util.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -34,21 +35,28 @@ internal class ScheduleViewModelTest {
         val todo2 = Todo(2, "t2", TodoPriority.LOW, TodoFlag.DONE, category1.categoryId)
         val categories = listOf(category1, category2)
         val todos = listOf(todo1, todo2)
-        val todoBlock = TodoBlock(1, "", LocalDate.now(), LocalTime.now(), LocalTime.now(), null)
+        val todoBlock =
+            TodoBlock(1, "", LocalDate.now(), LocalTime.of(10, 0), LocalTime.now().plusHours(1), null)
         val scheduleBlock = ScheduleBlock(todoBlock, todos, categories)
         fakeScheduleBlockRepository.insertOrUpdateScheduleBlock(scheduleBlock)
 
         val viewModel = ScheduleViewModel(fakeScheduleBlockRepository)
         advanceUntilIdle()
 
-        val uiScheduleBlocks = viewModel.scheduleState.value.scheduleListItems
-        assertThat(uiScheduleBlocks.size).isEqualTo(1)
+        val scheduleListItems = viewModel.scheduleState.value.scheduleListItems
 
-        val uiScheduleBlock = uiScheduleBlocks.first()
-        assertThat(uiScheduleBlock.id).isEqualTo(todoBlock.todoBlockId)
-        assertThat(uiScheduleBlock.categories).containsAtLeastElementsIn(categories)
-        assertThat(uiScheduleBlock.todoDescriptions).containsAtLeastElementsIn(todos.map { it.description })
+        val scheduleGap1 = scheduleListItems[0]
+        assertThat(scheduleGap1.startTime).isEqualTo(LocalTime.of(0, 0))
+        assertThat(scheduleGap1.endTime).isEqualTo(todoBlock.startTime)
+
+        val uiScheduleBlock = scheduleListItems[1] as UiScheduleBlock
+        assertThat(uiScheduleBlock.todoBlockId).isEqualTo(todoBlock.todoBlockId)
+        assertThat(uiScheduleBlock.categories).containsExactlyElementsIn(categories)
+        assertThat(uiScheduleBlock.todoDescriptions).containsExactlyElementsIn(todos.map { it.description })
         assertThat(uiScheduleBlock.notes).isEqualTo(todoBlock.notes)
-        // TODO check start time, end time and duration string
+
+        val scheduleGap2 = scheduleListItems[2]
+        assertThat(scheduleGap2.startTime).isEqualTo(todoBlock.endTime)
+        assertThat(scheduleGap2.endTime).isEqualTo(LocalTime.of(23, 59))
     }
 }
