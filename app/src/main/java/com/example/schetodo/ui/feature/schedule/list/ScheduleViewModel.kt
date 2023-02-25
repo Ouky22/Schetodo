@@ -48,7 +48,13 @@ class ScheduleViewModel @Inject constructor(
         when (event) {
             is GoToNextDate -> goToNextDate()
             is GoToPreviousDate -> goToPreviousDate()
+            is GoToCurrentDate -> goToCurrentDate()
         }
+    }
+
+    private fun goToCurrentDate() {
+        updateCurrentDate(LocalDate.now())
+        loadScheduleBlocksOnCurrentDate()
     }
 
     private fun goToPreviousDate() {

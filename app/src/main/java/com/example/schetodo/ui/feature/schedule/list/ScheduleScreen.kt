@@ -45,6 +45,7 @@ fun ScheduleScreen(
         onPreviousDateButtonClick = { viewModel.onEvent(GoToPreviousDate) },
         onNextDateButtonClick = { viewModel.onEvent(GoToNextDate) },
         onCurrentDateButtonClick = {},
+        onGoToCurrentDateButtonClick = { viewModel.onEvent(GoToCurrentDate) },
         onFabClick = { onAddScheduleBlockNavigation(viewModel.currentDateStamp) },
         onEditScheduleBlock = { todoBlockId -> onEditScheduleBlockNavigation(todoBlockId) },
         onAddScheduleGapButtonClick = { startTime, endTime ->
@@ -66,16 +67,26 @@ fun ScheduleScreen(
     onPreviousDateButtonClick: () -> Unit,
     onNextDateButtonClick: () -> Unit,
     onCurrentDateButtonClick: () -> Unit,
+    onGoToCurrentDateButtonClick: () -> Unit,
     onFabClick: () -> Unit,
     onEditScheduleBlock: (todoBlockId: Int) -> Unit,
-    onAddScheduleGapButtonClick: (startTime: LocalTime, endTime: LocalTime) -> Unit
+    onAddScheduleGapButtonClick: (startTime: LocalTime, endTime: LocalTime) -> Unit,
 ) {
     Scaffold(
         topBar = {
             SchetodoTopAppBar(
                 title = stringResource(R.string.schedule),
                 showBackButton = false,
-                onBackButtonClick = { })
+                onBackButtonClick = { },
+                actions = {
+                    IconButton(onClick = onGoToCurrentDateButtonClick) {
+                        Icon(
+                            imageVector = Icons.Filled.Today,
+                            contentDescription = stringResource(R.string.go_to_current_date)
+                        )
+                    }
+                }
+            )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onFabClick) {
@@ -195,6 +206,7 @@ fun ScheduleScreenPreview() {
             onPreviousDateButtonClick = {},
             onNextDateButtonClick = {},
             onCurrentDateButtonClick = {},
+            onGoToCurrentDateButtonClick = {},
             onFabClick = {},
             onEditScheduleBlock = {},
             onAddScheduleGapButtonClick = { _, _ -> }

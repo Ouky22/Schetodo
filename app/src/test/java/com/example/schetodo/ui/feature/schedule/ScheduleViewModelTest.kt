@@ -7,6 +7,7 @@ import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_block.TodoBlock
 import com.example.schetodo.data.todo_category.TodoCategory
+import com.example.schetodo.ui.feature.schedule.list.ScheduleEvent.*
 import com.example.schetodo.ui.feature.schedule.list.ScheduleViewModel
 import com.example.schetodo.ui.feature.schedule.list.UiScheduleBlock
 import com.example.schetodo.util.MainDispatcherRule
@@ -26,6 +27,19 @@ internal class ScheduleViewModelTest {
     val dispatcherRule = MainDispatcherRule()
 
     private val fakeScheduleBlockRepository = FakeScheduleBlockRepository()
+
+
+    @Test
+    fun test_go_to_current_date_event() = runTest {
+        val viewModel = ScheduleViewModel(fakeScheduleBlockRepository)
+
+        viewModel.onEvent(GoToNextDate)
+        viewModel.onEvent(GoToNextDate)
+        viewModel.onEvent(GoToPreviousDate)
+        viewModel.onEvent(GoToCurrentDate)
+
+        assertThat(viewModel.currentDateStamp).isEqualTo(LocalDate.now().toEpochDay())
+    }
 
     @Test
     fun when_view_model_initializes_then_load_schedule_blocks_of_current_date() = runTest {
