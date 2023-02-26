@@ -23,7 +23,7 @@ import com.example.schetodo.data.todo_template.TodoTemplate
         Todo::class, TodoBlock::class, TodoCategory::class, TodoTemplate::class, Notification::class,
         TodoBlockCategoryRelationship::class, TodoBlockTodoRelationship::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @androidx.room.TypeConverters(RoomTypeConverters::class)
@@ -45,7 +45,9 @@ abstract class SchetodoDatabase : RoomDatabase() {
                 context,
                 SchetodoDatabase::class.java,
                 "schetodo_database"
-            ).build()
+            )
+                .fallbackToDestructiveMigration()
+                .build()
 
             INSTANCE = instance
             instance

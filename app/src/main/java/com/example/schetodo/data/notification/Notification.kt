@@ -6,6 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.schetodo.data.todo_block.TodoBlock
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 @Entity(
@@ -22,7 +23,6 @@ import java.time.LocalTime
 )
 data class Notification(
     @PrimaryKey(autoGenerate = true) val notificationId: Int,
-    val time: LocalTime,
-    val date: LocalDate,
+    val dateTime: LocalDateTime,
     val todoBlockId: Int
 )
