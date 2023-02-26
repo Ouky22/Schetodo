@@ -1,0 +1,10 @@
+package com.example.schetodo.data.notification
+
+import kotlinx.coroutines.flow.Flow
+
+interface NotificationRepository {
+    suspend fun getNextNotification(): Notification?
+    fun getNotificationsOfTodoBlock(todoBlockId: Int): Flow<List<Notification>>
+    suspend fun insertNotification(notification: Notification): Long
+    suspend fun deleteNotification(notification: Notification)
+}
