@@ -59,4 +59,6 @@
     <string name="select_todo_category">Select Todo Category</string>
     <string name="filter_todos">Filter Todos</string>
     <string name="go_to_current_date">Go to current date</string>
+    <string name="show_notification_at_beginning">Show notification at the beginning</string>
+    <string name="show_notification_at_end">Show notification at the end</string>
 </resources>

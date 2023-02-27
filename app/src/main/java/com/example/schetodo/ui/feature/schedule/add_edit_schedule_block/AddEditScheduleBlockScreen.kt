@@ -96,6 +96,8 @@ fun AddEditScheduleBlockScreen(
         startTime = state.startTime,
         endTime = state.endTime,
         inEditingMode = state.inEditingMode,
+        showNotificationAtBeginning = false,
+        showNotificationAtEnd = false,
         onDateClick = {
             showDatePicker(context) { selectedDate ->
                 viewModel.onEvent(ChangeDate(selectedDate))
@@ -112,6 +114,12 @@ fun AddEditScheduleBlockScreen(
             }
         },
         onNotesChanged = { viewModel.onEvent(ChangeTodoBlockNotes(it)) },
+        onChangeShowNotificationAtBeginning = {
+            // TODO
+        },
+        onChangeShowNotificationAtEnd = {
+            // TODO
+        },
         onAddTodoButtonClick = { navController.navigate(TodoPicker.route) },
         onAddTodoCategoryButtonClick = { navController.navigate(TodoCategoryPicker.route) },
         onRemoveTodo = { viewModel.onEvent(RemoveSelectedTodo(it)) },
@@ -133,6 +141,8 @@ fun AddEditScheduleBlockScreen(
     date: String,
     startTime: String,
     endTime: String,
+    showNotificationAtBeginning: Boolean,
+    showNotificationAtEnd: Boolean,
     inEditingMode: Boolean,
     onDateClick: () -> Unit,
     onStartTimeButtonClick: () -> Unit,
@@ -142,6 +152,8 @@ fun AddEditScheduleBlockScreen(
     onAddTodoCategoryButtonClick: () -> Unit,
     onRemoveCategory: (TodoCategory) -> Unit,
     onRemoveTodo: (Todo) -> Unit,
+    onChangeShowNotificationAtBeginning: (Boolean) -> Unit,
+    onChangeShowNotificationAtEnd: (Boolean) -> Unit,
     onSave: () -> Unit,
     onDelete: () -> Unit,
     onClose: () -> Unit
@@ -212,6 +224,18 @@ fun AddEditScheduleBlockScreen(
                     onValueChange = onNotesChanged,
                     modifier = Modifier.fillMaxWidth()
                 )
+                HorizontalDividerWithText(
+                    text = "Notifications",
+                    modifier = Modifier.padding(vertical = 16.dp)
+                )
+
+                NotificationSection(
+                    showNotificationAtBeginning = showNotificationAtBeginning,
+                    showNotificationAtEnd = showNotificationAtEnd,
+                    onChangeShowNotificationAtBeginning = onChangeShowNotificationAtBeginning,
+                    onChangeShowNotificationAtEnd = onChangeShowNotificationAtEnd,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
 
             PositiveNegativeButtonRow(
@@ -249,40 +273,6 @@ fun SelectTimeButtonRow(
         Button(onClick = onClickEndTimeButton) {
             Text(text = endTimeButtonText)
         }
-    }
-}
-
-@Composable
-fun TodosColumn(
-    modifier: Modifier = Modifier,
-    todos: List<Todo>,
-    onAddTodoButtonClick: () -> Unit,
-    onRemoveTodoIconClick: (Todo) -> Unit
-) {
-    Column(modifier = modifier) {
-        todos.forEach {
-            TodoItem(
-                todo = it,
-                modifier = Modifier
-                    .height(75.dp)
-                    .padding(4.dp)
-                    .fillMaxWidth(),
-                endSideContent = {
-                    RemoveIcon(
-                        onRemoveIconClick = { onRemoveTodoIconClick(it) }
-                    )
-                },
-                alignEndSideContentToEnd = true
-            )
-        }
-        AddCircle(
-            onClick = onAddTodoButtonClick,
-            contentDescription = stringResource(id = R.string.add_todo),
-            modifier = Modifier
-                .height(60.dp)
-                .padding(top = 4.dp)
-                .align(Alignment.CenterHorizontally)
-        )
     }
 }
 
@@ -329,6 +319,66 @@ fun CategoriesFlowRow(
                 modifier = Modifier.height(60.dp)
             )
         }
+}
+
+@Composable
+fun TodosColumn(
+    modifier: Modifier = Modifier,
+    todos: List<Todo>,
+    onAddTodoButtonClick: () -> Unit,
+    onRemoveTodoIconClick: (Todo) -> Unit
+) {
+    Column(modifier = modifier) {
+        todos.forEach {
+            TodoItem(
+                todo = it,
+                modifier = Modifier
+                    .height(75.dp)
+                    .padding(4.dp)
+                    .fillMaxWidth(),
+                endSideContent = {
+                    RemoveIcon(
+                        onRemoveIconClick = { onRemoveTodoIconClick(it) }
+                    )
+                },
+                alignEndSideContentToEnd = true
+            )
+        }
+        AddCircle(
+            onClick = onAddTodoButtonClick,
+            contentDescription = stringResource(id = R.string.add_todo),
+            modifier = Modifier
+                .height(60.dp)
+                .padding(top = 4.dp)
+                .align(Alignment.CenterHorizontally)
+        )
+    }
+}
+
+@Composable
+fun NotificationSection(
+    modifier: Modifier = Modifier,
+    showNotificationAtBeginning: Boolean,
+    showNotificationAtEnd: Boolean,
+    onChangeShowNotificationAtBeginning: (Boolean) -> Unit,
+    onChangeShowNotificationAtEnd: (Boolean) -> Unit
+) {
+    Column(modifier = modifier) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(
+                checked = showNotificationAtBeginning,
+                onCheckedChange = onChangeShowNotificationAtBeginning
+            )
+            Text(text = stringResource(R.string.show_notification_at_beginning))
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(
+                checked = showNotificationAtEnd,
+                onCheckedChange = onChangeShowNotificationAtEnd
+            )
+            Text(text = stringResource(R.string.show_notification_at_end))
+        }
+    }
 }
 
 @Composable
@@ -394,6 +444,10 @@ fun AddScheduleBlockScreenPreview() {
             startTime = "13.00",
             endTime = "15.30",
             inEditingMode = false,
+            showNotificationAtBeginning = true,
+            showNotificationAtEnd = false,
+            onChangeShowNotificationAtBeginning = {},
+            onChangeShowNotificationAtEnd = {},
             onStartTimeButtonClick = {},
             onEndTimeButtonClick = {},
             onNotesChanged = {},
@@ -446,6 +500,10 @@ fun EditScheduleBlockScreenPreview() {
             startTime = "13.00",
             endTime = "15.30",
             inEditingMode = true,
+            showNotificationAtBeginning = true,
+            showNotificationAtEnd = false,
+            onChangeShowNotificationAtBeginning = {},
+            onChangeShowNotificationAtEnd = {},
             onStartTimeButtonClick = {},
             onEndTimeButtonClick = {},
             onNotesChanged = {},
