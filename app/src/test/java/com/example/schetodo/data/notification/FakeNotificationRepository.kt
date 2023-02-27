@@ -3,14 +3,11 @@ package com.example.schetodo.data.notification
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class FakeNotificationDao : NotificationDao {
-
+class FakeNotificationRepository : NotificationRepository {
     private val notifications = mutableListOf<Notification>()
 
-    override fun getAllNotifications(): Flow<List<Notification>> {
-        return flow {
-            emit(notifications)
-        }
+    override suspend fun getNextNotification(): Notification? {
+        return notifications.minByOrNull { it.dateTime }
     }
 
     override fun getNotificationsOfTodoBlock(todoBlockId: Int): Flow<List<Notification>> {
@@ -20,17 +17,19 @@ class FakeNotificationDao : NotificationDao {
     }
 
     override suspend fun insertNotification(notification: Notification): Long {
-        notifications.add(notification)
+        notifications += notification
         return notification.notificationId.toLong()
     }
 
     override suspend fun deleteNotification(notification: Notification) {
-        notifications.remove(notification)
+        notifications -= notification
     }
 
-    override suspend fun deleteAllNotificationsOfTodoBlock(todoBlockId: Int) {
-        notifications.removeIf {
-            it.todoBlockId == todoBlockId
-        }
+    override suspend fun setNotificationsOfTodoBlock(
+        todoBlockId: Int,
+        notifications: List<Notification>
+    ) {
+        this.notifications.removeIf { it.todoBlockId == todoBlockId }
+        this.notifications += notifications
     }
 }

@@ -19,4 +19,7 @@ interface NotificationDao {
 
     @Delete
     suspend fun deleteNotification(notification: Notification)
+
+    @Query("DELETE FROM Notification WHERE todoBlockId = :todoBlockId")
+    suspend fun deleteAllNotificationsOfTodoBlock(todoBlockId: Int)
 }

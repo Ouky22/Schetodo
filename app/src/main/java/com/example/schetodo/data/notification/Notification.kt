@@ -22,7 +22,7 @@ import java.time.LocalTime
     indices = [Index("todoBlockId")]
 )
 data class Notification(
-    @PrimaryKey(autoGenerate = true) val notificationId: Int,
+    @PrimaryKey(autoGenerate = true) val notificationId: Int = 0,
     val dateTime: LocalDateTime,
     val todoBlockId: Int
 )

@@ -8,6 +8,7 @@ import com.example.schetodo.data.todo_block.TodoBlockDao
 import com.example.schetodo.data.todo_category.TodoCategoryDao
 import com.example.schetodo.data.todo.TodoDao
 import com.example.schetodo.data.notification.Notification
+import com.example.schetodo.data.notification.NotificationDao
 import com.example.schetodo.data.relationship.TodoBlockCategoryRelationship
 import com.example.schetodo.data.relationship.TodoBlockCategoryRelationshipDao
 import com.example.schetodo.data.relationship.TodoBlockTodoRelationship
@@ -35,6 +36,7 @@ abstract class SchetodoDatabase : RoomDatabase() {
     abstract val todoBlockCategoryRelationshipDao: TodoBlockCategoryRelationshipDao
     abstract val todoBlockTodoRelationshipDao: TodoBlockTodoRelationshipDao
     abstract val scheduleBlockDao: ScheduleBlockDao
+    abstract val notificationDao: NotificationDao
 
     companion object {
         @Volatile

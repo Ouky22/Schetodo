@@ -31,4 +31,14 @@ class NotificationRepositoryImpl @Inject constructor(
 
     override suspend fun deleteNotification(notification: Notification) =
         notificationDao.deleteNotification(notification)
+
+    override suspend fun setNotificationsOfTodoBlock(
+        todoBlockId: Int,
+        notifications: List<Notification>
+    ) {
+        notificationDao.deleteAllNotificationsOfTodoBlock(todoBlockId)
+        notifications.forEach { notification ->
+            notificationDao.insertNotification(notification)
+        }
+    }
 }
