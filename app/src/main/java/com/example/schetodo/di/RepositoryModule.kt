@@ -1,5 +1,7 @@
 package com.example.schetodo.di
 
+import com.example.schetodo.data.notification.NotificationRepository
+import com.example.schetodo.data.notification.NotificationRepositoryImpl
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepositoryImpl
 import com.example.schetodo.data.todo_category.TodoCategoryRepository
@@ -33,4 +35,8 @@ interface RepositoryModule {
     @Singleton
     @Binds
     fun bindScheduleBlockRepository(scheduleBlockRepositoryImpl: ScheduleBlockRepositoryImpl): ScheduleBlockRepository
+
+    @Singleton
+    @Binds
+    fun bindNotificationRepository(notificationRepository: NotificationRepositoryImpl): NotificationRepository
 }
