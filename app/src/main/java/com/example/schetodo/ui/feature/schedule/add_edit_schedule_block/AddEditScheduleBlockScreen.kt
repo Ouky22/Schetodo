@@ -96,8 +96,8 @@ fun AddEditScheduleBlockScreen(
         startTime = state.startTime,
         endTime = state.endTime,
         inEditingMode = state.inEditingMode,
-        showNotificationAtBeginning = false,
-        showNotificationAtEnd = false,
+        showNotificationAtBeginning = state.showNotificationAtBeginning,
+        showNotificationAtEnd = state.showNotificationAtEnd,
         onDateClick = {
             showDatePicker(context) { selectedDate ->
                 viewModel.onEvent(ChangeDate(selectedDate))
@@ -114,11 +114,11 @@ fun AddEditScheduleBlockScreen(
             }
         },
         onNotesChanged = { viewModel.onEvent(ChangeTodoBlockNotes(it)) },
-        onChangeShowNotificationAtBeginning = {
-            // TODO
+        onChangeShowNotificationAtBeginning = { showNotification ->
+            viewModel.onEvent(ChangeShowNotificationAtBeginning(showNotification))
         },
-        onChangeShowNotificationAtEnd = {
-            // TODO
+        onChangeShowNotificationAtEnd = { showNotification ->
+            viewModel.onEvent(ChangeShowNotificationAtEnd(showNotification))
         },
         onAddTodoButtonClick = { navController.navigate(TodoPicker.route) },
         onAddTodoCategoryButtonClick = { navController.navigate(TodoCategoryPicker.route) },

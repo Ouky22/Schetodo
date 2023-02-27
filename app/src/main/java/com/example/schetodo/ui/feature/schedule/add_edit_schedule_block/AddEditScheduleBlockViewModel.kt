@@ -77,7 +77,21 @@ class AddEditScheduleBlockViewModel @Inject constructor(
             is RemoveSelectedTodoCategory -> removeSelectedTodoCategory(event.category)
             is SaveScheduleBlock -> saveScheduleBlock()
             is DeleteScheduleBlock -> deleteScheduleBlock()
+            is ChangeShowNotificationAtBeginning -> onChangeShowNotificationAtBeginning(event.showNotification)
+            is ChangeShowNotificationAtEnd -> onChangeShowNotificationAtEnd(event.showNotification)
         }
+    }
+
+    private fun onChangeShowNotificationAtBeginning(showNotification: Boolean) {
+        state = state.copy(
+            showNotificationAtBeginning = showNotification
+        )
+    }
+
+    private fun onChangeShowNotificationAtEnd(showNotification: Boolean) {
+        state = state.copy(
+            showNotificationAtEnd = showNotification
+        )
     }
 
     private fun deleteScheduleBlock() {
