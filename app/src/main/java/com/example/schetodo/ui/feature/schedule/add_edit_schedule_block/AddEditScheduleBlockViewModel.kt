@@ -7,6 +7,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.schetodo.R
+import com.example.schetodo.data.notification.Notification
+import com.example.schetodo.data.notification.NotificationRepository
 import com.example.schetodo.data.schedule_block.ScheduleBlock
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.data.todo.Todo
@@ -23,6 +25,7 @@ import com.example.schetodo.ui.util.UiText
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -35,6 +38,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
     private val todoRepository: TodoRepository,
     private val todoCategoryRepository: TodoCategoryRepository,
     private val todoBlockRepository: TodoBlockRepository,
+    private val notificationRepository: NotificationRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     var state by mutableStateOf(AddEditScheduleBlockScreenState())
@@ -131,7 +135,6 @@ class AddEditScheduleBlockViewModel @Inject constructor(
                     todoCategories = state.todoCategories
                 )
             )
-
             _closeAddEditScheduleBlockScreen.value = true
         }
     }
@@ -220,14 +223,36 @@ class AddEditScheduleBlockViewModel @Inject constructor(
             )
             updateStartTime(scheduleBlock.todoBlock.startTime.toSecondOfDay())
             updateEndTime(scheduleBlock.todoBlock.endTime.toSecondOfDay())
+
             state = state.copy(
                 todoCategories = scheduleBlock.todoCategories.sortedBy { it.name },
                 notes = scheduleBlock.todoBlock.notes ?: "",
                 inEditingMode = true
             )
             setTodosState(scheduleBlock.todos)
+            setNotificationsState(scheduleBlock)
             todoBlockTemplateId = scheduleBlock.todoBlock.templateId
         }
+    }
+
+    private fun setNotificationsState(scheduleBlock: ScheduleBlock) {
+        val showNotificationAtBeginning = scheduleBlock.notifications.any {
+            it.dateTime == LocalDateTime.of(
+                scheduleBlock.todoBlock.date,
+                scheduleBlock.todoBlock.startTime
+            )
+        }
+        val showNotificationAtEnd = scheduleBlock.notifications.any {
+            it.dateTime == LocalDateTime.of(
+                scheduleBlock.todoBlock.date,
+                scheduleBlock.todoBlock.endTime
+            )
+        }
+
+        state = state.copy(
+            showNotificationAtBeginning = showNotificationAtBeginning,
+            showNotificationAtEnd = showNotificationAtEnd
+        )
     }
 
     private fun loadDataForAddingScheduleBlock(savedStateHandle: SavedStateHandle) {
