@@ -16,11 +16,15 @@ class TodoBlockNotificationSchedulerImpl @Inject constructor(
     private val notificationRepository: NotificationRepository,
     @ApplicationContext private val context: Context
 ) : TodoBlockNotificationScheduler {
+
+    private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
     override suspend fun scheduleNextNotificationIfExists() {
         val nextNotification = notificationRepository.getNextNotification()
 
         if (nextNotification == null) {
-            // todo cancel active notification intents and deactivate reboot broadcast receiver
+            // todo deactivate reboot broadcast receiver
+            cancelActiveAlarmForNotification()
             return
         }
 
@@ -28,20 +32,31 @@ class TodoBlockNotificationSchedulerImpl @Inject constructor(
     }
 
     private fun scheduleNotification(notification: Notification) {
-        val notificationIntent = PendingIntent.getBroadcast(
-            context,
-            0,
-            Intent(context, NotificationBroadcastReceiver::class.java)
-                .putExtra(TODO_BLOCK_ID_EXTRA_KEY, notification.todoBlockId),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
         val triggerDateTimeMilliseconds =
             notification.dateTime.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
 
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val notificationIntent = getNotificationIntent(notification)
+
         alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP, triggerDateTimeMilliseconds, notificationIntent
+            AlarmManager.RTC_WAKEUP,
+            triggerDateTimeMilliseconds,
+            notificationIntent
         )
+    }
+
+    private fun cancelActiveAlarmForNotification() {
+        alarmManager.cancel(getNotificationIntent())
+    }
+
+    private fun getNotificationIntent(notification: Notification? = null): PendingIntent {
+        val intent = PendingIntent.getBroadcast(
+            context,
+            0,
+            Intent(context, NotificationBroadcastReceiver::class.java).apply {
+                notification?.let { putExtra(TODO_BLOCK_ID_EXTRA_KEY, it.todoBlockId) }
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        return intent
     }
 }
