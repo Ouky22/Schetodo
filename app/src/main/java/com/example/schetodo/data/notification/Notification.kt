@@ -24,5 +24,5 @@ import java.time.LocalTime
 data class Notification(
     @PrimaryKey(autoGenerate = true) val notificationId: Int = 0,
     val dateTime: LocalDateTime,
-    val todoBlockId: Int
+    val todoBlockId: Int = 0
 )

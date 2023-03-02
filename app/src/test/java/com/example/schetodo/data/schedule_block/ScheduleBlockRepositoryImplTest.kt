@@ -1,5 +1,6 @@
 package com.example.schetodo.data.schedule_block
 
+import com.example.schetodo.data.notification.FakeNotificationRepository
 import com.example.schetodo.data.relationship.FakeTodoBlockCategoryRelationshipDao
 import com.example.schetodo.data.relationship.FakeTodoBlockTodoRelationshipDao
 import com.example.schetodo.data.todo.FakeTodoDao
@@ -24,13 +25,15 @@ internal class ScheduleBlockRepositoryImplTest {
     private val fakeTodoBlockTodoRelationshipDao = FakeTodoBlockTodoRelationshipDao()
     private val fakeTodoBlockDao = FakeTodoBlockDao()
     private val fakeTodoDao = FakeTodoDao()
+    private val fakeNotificationRepository = FakeNotificationRepository()
     private val scheduleBlockRepository =
         ScheduleBlockRepositoryImpl(
             fakeScheduleBlockDao,
             fakeTodoBlockCategoryRelationshipDao,
             fakeTodoBlockTodoRelationshipDao,
             fakeTodoBlockDao,
-            fakeTodoDao
+            fakeTodoDao,
+            fakeNotificationRepository
         )
 
     @Test

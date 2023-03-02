@@ -17,11 +17,12 @@ import com.example.schetodo.data.todo_block.TodoBlock
 import com.example.schetodo.data.todo_block.TodoBlockRepository
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.todo_category.TodoCategoryRepository
+import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockEvent.*
+import com.example.schetodo.ui.feature.schedule.notification.TodoBlockNotificationScheduler
 import com.example.schetodo.ui.navigation.schedule.AddScheduleBlock
 import com.example.schetodo.ui.navigation.schedule.EditScheduleBlock
-import dagger.hilt.android.lifecycle.HiltViewModel
-import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockEvent.*
 import com.example.schetodo.ui.util.UiText
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -38,7 +39,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
     private val todoRepository: TodoRepository,
     private val todoCategoryRepository: TodoCategoryRepository,
     private val todoBlockRepository: TodoBlockRepository,
-    private val notificationRepository: NotificationRepository,
+    private val todoBlockNotificationScheduler: TodoBlockNotificationScheduler,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     var state by mutableStateOf(AddEditScheduleBlockScreenState())
@@ -52,7 +53,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
     val closeAddEditScheduleBlockScreen: StateFlow<Boolean>
         get() = _closeAddEditScheduleBlockScreen.asStateFlow()
 
-    private var todoBlockId: Int
+    private val todoBlockId: Int
     private var todoBlockTemplateId: Int? = null
 
     private lateinit var scheduleBlockDate: LocalDate
@@ -104,6 +105,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
 
         viewModelScope.launch {
             todoBlockRepository.deleteTodoBlockById(todoBlockId)
+            todoBlockNotificationScheduler.scheduleNextNotificationIfExists()
             _closeAddEditScheduleBlockScreen.value = true
         }
     }
@@ -132,11 +134,27 @@ class AddEditScheduleBlockViewModel @Inject constructor(
                 ScheduleBlock(
                     todoBlock = todoBlock,
                     todos = state.todos,
-                    todoCategories = state.todoCategories
+                    todoCategories = state.todoCategories,
+                    notifications = getNotifications(todoBlock)
                 )
             )
+
+            todoBlockNotificationScheduler.scheduleNextNotificationIfExists()
             _closeAddEditScheduleBlockScreen.value = true
         }
+    }
+
+    private fun getNotifications(todoBlock: TodoBlock): List<Notification> {
+        val notifications = mutableListOf<Notification>()
+        if (state.showNotificationAtBeginning)
+            notifications += Notification(
+                dateTime = LocalDateTime.of(todoBlock.date, todoBlock.startTime)
+            )
+        if (state.showNotificationAtEnd)
+            notifications += Notification(
+                dateTime = LocalDateTime.of(todoBlock.date, todoBlock.endTime)
+            )
+        return notifications
     }
 
     private fun addSelectedTodos(todoIds: List<Int>) {

@@ -16,8 +16,7 @@ class NotificationRepositoryImpl @Inject constructor(
 
         return allNotifications
             .filter { notification ->
-                val currentDateTime = LocalDateTime.now(ZoneOffset.UTC)
-                notification.dateTime.isAfter(currentDateTime)
+                notification.dateTime.isAfter(LocalDateTime.now())
             }.minByOrNull { notification ->
                 notification.dateTime
             }
