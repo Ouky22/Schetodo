@@ -2,8 +2,10 @@ package com.example.schetodo.ui.feature.schedule.notification
 
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import com.example.schetodo.data.notification.Notification
 import com.example.schetodo.data.notification.NotificationRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -23,12 +25,13 @@ class TodoBlockNotificationSchedulerImpl @Inject constructor(
         val nextNotification = notificationRepository.getNextNotification()
 
         if (nextNotification == null) {
-            // todo deactivate reboot broadcast receiver
             cancelActiveAlarmForNotification()
+            deactivateRebootBroadcastReceiver()
             return
         }
 
         scheduleNotification(nextNotification)
+        activateRebootBroadcastReceiver()
     }
 
     private fun scheduleNotification(notification: Notification) {
@@ -58,5 +61,21 @@ class TodoBlockNotificationSchedulerImpl @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         return intent
+    }
+
+    private fun activateRebootBroadcastReceiver() {
+        context.packageManager.setComponentEnabledSetting(
+            ComponentName(context.applicationContext, RebootReceiver::class.java),
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+            PackageManager.DONT_KILL_APP
+        )
+    }
+
+    private fun deactivateRebootBroadcastReceiver() {
+        context.packageManager.setComponentEnabledSetting(
+            ComponentName(context.applicationContext, RebootReceiver::class.java),
+            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+            PackageManager.DONT_KILL_APP
+        )
     }
 }

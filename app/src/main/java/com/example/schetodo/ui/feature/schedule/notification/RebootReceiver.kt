@@ -9,14 +9,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class NotificationBroadcastReceiver : BroadcastReceiver() {
-    
+class RebootReceiver : BroadcastReceiver() {
+
     @Inject
-    lateinit var todoBlockNotificationScheduler: TodoBlockNotificationScheduler
+    lateinit var notificationScheduler: TodoBlockNotificationScheduler
 
     override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action != "android.intent.action.BOOT_COMPLETED")
+            return
+
         MainScope().launch {
-            todoBlockNotificationScheduler.scheduleNextNotificationIfExists()
+            notificationScheduler.scheduleNextNotificationIfExists()
         }
     }
 }
