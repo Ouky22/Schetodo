@@ -20,7 +20,6 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-@ExperimentalMaterial3Api
 @ExperimentalFoundationApi
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,8 +31,8 @@ class MainActivity : ComponentActivity() {
 }
 
 @ExperimentalFoundationApi
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@ExperimentalMaterial3Api
 fun SchetodoApp() {
     SchetodoTheme {
         val navController = rememberNavController()

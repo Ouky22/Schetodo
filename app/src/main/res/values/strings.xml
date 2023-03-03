@@ -61,4 +61,6 @@
     <string name="go_to_current_date">Go to current date</string>
     <string name="show_notification_at_beginning">Show notification at the beginning</string>
     <string name="show_notification_at_end">Show notification at the end</string>
+    <string name="schedule_block_notification">Schedule block notification</string>
+    <string name="schedule_notification_description">Used to send you notifications for your schedule</string>
 </resources>

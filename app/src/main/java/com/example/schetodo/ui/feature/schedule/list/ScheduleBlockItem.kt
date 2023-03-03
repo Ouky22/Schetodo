@@ -22,6 +22,7 @@ import com.example.schetodo.ui.components.CategoryItem
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
+import com.example.schetodo.ui.util.formatToListWithDotsString
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -63,15 +64,7 @@ fun ScheduleBlockItem(
             if (todoDescriptions.isNotEmpty()) {
                 Text(
                     modifier = Modifier.padding(8.dp),
-                    text = buildAnnotatedString {
-                        todoDescriptions.forEach {
-                            withStyle(style = ParagraphStyle(textIndent = TextIndent(restLine = 12.sp))) {
-                                append("\u2022")
-                                append("\t\t")
-                                append(it)
-                            }
-                        }
-                    }
+                    text = formatToListWithDotsString(todoDescriptions)
                 )
             }
             if (todoBlocKNotes.isNotEmpty()) {
