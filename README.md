@@ -19,8 +19,9 @@ Schetodo is an android app that allows you to structure your todos and plan your
   - todo categories
   - todos
   - additional notes
+  - notifications (at the beginning or end of schedule block)
 
-<img src="./docs/edit_schedule_block.jpg" width="200px" alt="edit schedule block screen">
+<img src="./docs/edit_schedule_block_screen_light.png" width="200px" alt="edit schedule block screen">
 
 ## Todo and todo categories
 
@@ -36,6 +37,8 @@ Schetodo is an android app that allows you to structure your todos and plan your
   - color
 - Check off todos
   - scheduled one-time todos can be checked off in a separate screen (which sets the status of the todo to "done")
+- filter your todos
+  - only show undone, in progress, done or recurring todos
 
 <img src="./docs/todos_screens.png" width="700px" alt="todo screens">
 
