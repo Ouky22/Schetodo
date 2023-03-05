@@ -33,6 +33,18 @@ class TodoCategoryDaoTest {
     }
 
     @Test
+    fun when_deleting_category_then_also_delete_child_categories() = runTest {
+        val parentCategory = TodoCategory(1, "c1", 0, null, "")
+        val childCategory = TodoCategory(2, "c2", 0, parentCategory.categoryId, "")
+        todoCategoryDao.insertTodoCategory(parentCategory)
+        todoCategoryDao.insertTodoCategory(childCategory)
+        todoCategoryDao.deleteTodoCategoryById(parentCategory.categoryId)
+
+        assertThat(todoCategoryDao.getTodoCategoryById(parentCategory.categoryId).first()).isNull()
+        assertThat(todoCategoryDao.getTodoCategoryById(childCategory.categoryId).first()).isNull()
+    }
+
+    @Test
     fun when_deleting_non_existing_category_by_id_then_nothing_happens() = runTest {
         todoCategoryDao.deleteTodoCategoryById(1)
     }

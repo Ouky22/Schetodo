@@ -24,7 +24,7 @@ import com.example.schetodo.data.todo_template.TodoTemplate
         Todo::class, TodoBlock::class, TodoCategory::class, TodoTemplate::class, Notification::class,
         TodoBlockCategoryRelationship::class, TodoBlockTodoRelationship::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @androidx.room.TypeConverters(RoomTypeConverters::class)

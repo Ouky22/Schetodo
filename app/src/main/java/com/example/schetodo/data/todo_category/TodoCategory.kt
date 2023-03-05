@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
         ForeignKey(
             entity = TodoCategory::class,
             parentColumns = ["categoryId"],
-            childColumns = ["categoryId"],
+            childColumns = ["parentTodoCategoryId"],
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
