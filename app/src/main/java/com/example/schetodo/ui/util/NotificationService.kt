@@ -54,6 +54,7 @@ class NotificationService(
             .setContentText(if (contentText != bigContentText) "$contentText..." else contentText)
             .setContentIntent(getOpenMainActivityIntent())
             .setStyle(NotificationCompat.BigTextStyle().bigText(bigContentText))
+            .setAutoCancel(true)
         icon?.let { notification.setLargeIcon(it) }
 
         notificationManager.notify(notificationId, notification.build())
