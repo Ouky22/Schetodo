@@ -49,7 +49,7 @@ class NotificationService(
         icon: Bitmap? = null
     ) {
         val notification = NotificationCompat.Builder(context, SCHEDULE_NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.schetodo_logo_foreground)
             .setContentTitle(contentTitle)
             .setContentText(if (contentText != bigContentText) "$contentText..." else contentText)
             .setContentIntent(getOpenMainActivityIntent())
