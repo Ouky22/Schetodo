@@ -183,7 +183,7 @@ fun AddEditScheduleBlockScreen(
         ) {
             Column(
                 modifier = modifier
-                    .verticalScroll(rememberScrollState(), reverseScrolling = true)
+                    .verticalScroll(rememberScrollState(), reverseScrolling = false)
                     .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
