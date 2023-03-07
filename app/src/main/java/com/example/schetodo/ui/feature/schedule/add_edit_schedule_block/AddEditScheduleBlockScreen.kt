@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,12 +54,15 @@ fun AddEditScheduleBlockScreen(
     val state = viewModel.state
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+    val keyBoardController = LocalFocusManager.current
 
     LaunchedEffect(true) {
         launch {
             viewModel.closeAddEditScheduleBlockScreen.collect { closeScreen ->
-                if (closeScreen)
+                if (closeScreen) {
+                    keyBoardController.clearFocus()
                     navController.popBackStack()
+                }
             }
         }
         launch {
