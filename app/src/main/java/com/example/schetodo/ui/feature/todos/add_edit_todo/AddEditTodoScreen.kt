@@ -98,12 +98,15 @@ fun AddEditTodoScreen(
         Column(
             modifier = modifier
                 .padding(contentPadding)
-                .padding(24.dp)
-                .verticalScroll(rememberScrollState(), reverseScrolling = true),
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Column {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState(), reverseScrolling = true)
+                    .weight(1f)
+            ) {
                 CategoryItem(
                     modifier = Modifier
                         .fillMaxWidth()
