@@ -14,6 +14,9 @@ interface NotificationDao {
     @Query("SELECT * FROM Notification WHERE todoBlockId = :todoBlockId")
     fun getNotificationsOfTodoBlock(todoBlockId: Int): Flow<List<Notification>>
 
+    @Query("SELECT * FROM Notification WHERE notificationId = :notificationId")
+    fun getNotificationById(notificationId: Int): Flow<Notification?>
+
     @Insert
     suspend fun insertNotification(notification: Notification): Long
 

@@ -19,6 +19,12 @@ class FakeNotificationDao : NotificationDao {
         }
     }
 
+    override fun getNotificationById(notificationId: Int): Flow<Notification?> {
+        return flow {
+            emit(notifications.firstOrNull { it.notificationId == notificationId })
+        }
+    }
+
     override suspend fun insertNotification(notification: Notification): Long {
         notifications.add(notification)
         return notification.notificationId.toLong()

@@ -12,7 +12,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.ZoneId
 import javax.inject.Inject
 
-const val TODO_BLOCK_ID_EXTRA_KEY = "todoBlockId"
+const val NOTIFICATION_ID_EXTRA_KEY = "notificationIdExtra"
 
 class TodoBlockNotificationSchedulerImpl @Inject constructor(
     private val notificationRepository: NotificationRepository,
@@ -56,7 +56,7 @@ class TodoBlockNotificationSchedulerImpl @Inject constructor(
             context,
             0,
             Intent(context, NotificationBroadcastReceiver::class.java).apply {
-                notification?.let { putExtra(TODO_BLOCK_ID_EXTRA_KEY, it.todoBlockId) }
+                notification?.let { putExtra(NOTIFICATION_ID_EXTRA_KEY, it.notificationId) }
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

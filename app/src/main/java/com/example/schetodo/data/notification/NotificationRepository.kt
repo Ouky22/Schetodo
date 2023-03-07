@@ -8,4 +8,5 @@ interface NotificationRepository {
     suspend fun insertNotification(notification: Notification): Long
     suspend fun deleteNotification(notification: Notification)
     suspend fun setNotificationsOfTodoBlock(todoBlockId: Int, notifications: List<Notification>)
+    fun getNotificationById(id: Int): Flow<Notification?>
 }

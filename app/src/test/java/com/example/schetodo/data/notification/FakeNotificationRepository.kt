@@ -32,4 +32,10 @@ class FakeNotificationRepository : NotificationRepository {
         this.notifications.removeIf { it.todoBlockId == todoBlockId }
         this.notifications += notifications
     }
+
+    override fun getNotificationById(id: Int): Flow<Notification?> {
+        return flow {
+            emit(notifications.firstOrNull { it.notificationId == id })
+        }
+    }
 }

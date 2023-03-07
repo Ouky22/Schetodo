@@ -3,6 +3,7 @@ package com.example.schetodo.ui.feature.schedule.notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.example.schetodo.data.notification.NotificationRepository
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.ui.util.NotificationService
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,23 +21,31 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
     @Inject
     lateinit var scheduleBlockRepository: ScheduleBlockRepository
 
+    @Inject
+    lateinit var notificationRepository: NotificationRepository
+
 
     override fun onReceive(context: Context, intent: Intent) {
-        val todoBlockId = intent.getIntExtra(TODO_BLOCK_ID_EXTRA_KEY, -1)
-        if (todoBlockId <= 0)
+        val notificationId = intent.getIntExtra(NOTIFICATION_ID_EXTRA_KEY, -1)
+        if (notificationId <= 0)
             return
 
         MainScope().launch {
-            todoBlockNotificationScheduler.scheduleNextNotificationIfExists()
+            val notification =
+                notificationRepository.getNotificationById(notificationId).first() ?: return@launch
 
-            val scheduleBlock =
-                scheduleBlockRepository.getScheduleBlockByTodoBlockId(todoBlockId).first()
-                    ?: return@launch
+            val scheduleBlock = scheduleBlockRepository.getScheduleBlockByTodoBlockId(
+                notification.todoBlockId
+            ).first() ?: return@launch
 
             val notificationService = NotificationService(context)
             notificationService.showScheduleNotification(
-                scheduleBlock, scheduleBlock.todoBlock.todoBlockId
+                scheduleBlock,
+                scheduleBlock.todoBlock.todoBlockId
             )
+
+            notificationRepository.deleteNotification(notification)
+            todoBlockNotificationScheduler.scheduleNextNotificationIfExists()
         }
     }
 }

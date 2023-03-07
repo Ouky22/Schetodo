@@ -22,6 +22,8 @@ class NotificationRepositoryImpl @Inject constructor(
             }
     }
 
+    override fun getNotificationById(id: Int) = notificationDao.getNotificationById(id)
+
     override fun getNotificationsOfTodoBlock(todoBlockId: Int) =
         notificationDao.getNotificationsOfTodoBlock(todoBlockId)
 
