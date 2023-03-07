@@ -1,7 +1,8 @@
 package com.example.schetodo.ui.util
 
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.SnackbarResult
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+
 
 suspend fun SnackbarHostState.showSnackbarWithActionHandler(
     message: String,

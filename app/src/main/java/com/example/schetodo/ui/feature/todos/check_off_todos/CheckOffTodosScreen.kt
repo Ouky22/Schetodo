@@ -19,10 +19,14 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -57,21 +61,21 @@ fun CheckOffTodosScreen(
     modifier: Modifier = Modifier
 ) {
     val todosInProgress by viewModel.todosInProgress.collectAsStateWithLifecycle()
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
         viewModel.snackBarFlow.collect { snackBarType ->
             when (snackBarType) {
                 CheckOffTodosSnackBarType.UNDO_CHECK_OFF_TODOS -> {
-                    scaffoldState.snackbarHostState.showSnackbarWithActionHandler(
+                    snackbarHostState.showSnackbarWithActionHandler(
                         message = context.getString(R.string.checked_off),
                         actionLabel = context.getString(R.string.undo),
                         onActionPerformed = { viewModel.onEvent(CheckOffTodosEvent.UndoCheckOffTodos) }
                     )
                 }
                 CheckOffTodosSnackBarType.UNDO_MARK_TODO_AS_UNDONE -> {
-                    scaffoldState.snackbarHostState.showSnackbarWithActionHandler(
+                    snackbarHostState.showSnackbarWithActionHandler(
                         message = "Marked as undone",
                         actionLabel = context.getString(R.string.undo),
                         onActionPerformed = { viewModel.onEvent(CheckOffTodosEvent.UndoMarkTodoAsUndone) }
@@ -82,7 +86,7 @@ fun CheckOffTodosScreen(
     }
 
     CheckOffTodosScreen(
-        scaffoldState = scaffoldState,
+        snackbarHostState = snackbarHostState,
         todoCategoryTodoPairs = todosInProgress,
         modifier = modifier,
         onMarkTodoForCheckOff = { viewModel.onEvent(CheckOffTodosEvent.MarkTodoForCheckOff(it)) },
@@ -101,7 +105,7 @@ fun CheckOffTodosScreen(
 @Composable
 fun CheckOffTodosScreen(
     modifier: Modifier = Modifier,
-    scaffoldState: ScaffoldState = rememberScaffoldState(),
+    snackbarHostState: SnackbarHostState,
     todoCategoryTodoPairs: List<TodoCategoryTodoPair>,
     onMarkTodoForCheckOff: (todoId: Int) -> Unit,
     onUndoMarkTodoForCheckOff: (todoId: Int) -> Unit,
@@ -112,8 +116,7 @@ fun CheckOffTodosScreen(
     checkOffTodosButtonActivated: Boolean
 ) {
     Scaffold(
-        scaffoldState = scaffoldState,
-        backgroundColor = MaterialTheme.colorScheme.background,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             SchetodoTopAppBar(
                 title = stringResource(R.string.check_off_done_todos),
@@ -279,7 +282,9 @@ fun CheckOffTodoItem(
                     .padding(8.dp)
             ) {
                 CategoryItem(
-                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
                     todoCategoryName = parentTodoCategoryName,
                     todoCategoryColor = parentTodoCategoryColor,
                     todoCategoryIcon = parentTodoCategoryIcon
@@ -321,8 +326,8 @@ fun CheckOffTodosScreenPreview() {
         "test test test test test test test test test test test test test test test test test test test test test test test test test test test test "
     val testTodos = listOf(
         Todo(1, longText, TodoPriority.LOW, TodoFlag.DONE, 1),
-        Todo(1, "test 2", TodoPriority.LOW, TodoFlag.DONE, 1),
-        Todo(1, "test 3", TodoPriority.LOW, TodoFlag.DONE, 1)
+        Todo(2, "test 2", TodoPriority.LOW, TodoFlag.DONE, 1),
+        Todo(3, "test 3", TodoPriority.LOW, TodoFlag.DONE, 1)
     )
     val todoCategoryTodoPairs = testTodos.map { todo ->
         val category = TodoCategory(
@@ -334,6 +339,7 @@ fun CheckOffTodosScreenPreview() {
     SchetodoTheme {
         CheckOffTodosScreen(
             modifier = Modifier.fillMaxSize(),
+            snackbarHostState = SnackbarHostState(),
             todoCategoryTodoPairs = todoCategoryTodoPairs,
             onCheckOffTodos = {},
             onUndoMarkTodoForCheckOff = {},
@@ -355,6 +361,7 @@ fun CheckOffTodosScreenWhenNoTodosInProgressPreview() {
     SchetodoTheme {
         CheckOffTodosScreen(
             modifier = Modifier.fillMaxSize(),
+            snackbarHostState = SnackbarHostState(),
             todoCategoryTodoPairs = emptyList(),
             onCheckOffTodos = {},
             onUndoMarkTodoForCheckOff = {},
