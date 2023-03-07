@@ -67,7 +67,10 @@ fun AddEditScheduleBlockScreen(
         }
         launch {
             viewModel.errorMessages.collect {
-                snackbarHostState.showSnackbar(message = it.asString(context))
+                snackbarHostState.showSnackbar(
+                    message = it.asString(context),
+                    withDismissAction = true
+                )
             }
         }
         launch {
