@@ -40,9 +40,8 @@ class TodoBlockNotificationSchedulerImpl @Inject constructor(
 
         val notificationIntent = getNotificationIntent(notification)
 
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            triggerDateTimeMilliseconds,
+        alarmManager.setAlarmClock(
+            AlarmManager.AlarmClockInfo(triggerDateTimeMilliseconds, null),
             notificationIntent
         )
     }
