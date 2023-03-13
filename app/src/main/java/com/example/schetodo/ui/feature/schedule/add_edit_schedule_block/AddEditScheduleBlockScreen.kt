@@ -1,5 +1,9 @@
 package com.example.schetodo.ui.feature.schedule.add_edit_schedule_block
 
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,7 +15,9 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,12 +28,14 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
 import com.example.schetodo.R
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_category.TodoCategory
+import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.AddEditTopBar
 import com.example.schetodo.ui.components.CategoryItem
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
@@ -44,17 +52,18 @@ import com.example.schetodo.ui.util.showDatePicker
 import com.example.schetodo.ui.util.showTimePicker
 import kotlinx.coroutines.launch
 
-
 @Composable
 fun AddEditScheduleBlockScreen(
     modifier: Modifier = Modifier,
     viewModel: AddEditScheduleBlockViewModel,
-    navController: NavController
+    navController: NavController,
+    schetodoAppState: SchetodoAppState
 ) {
     val state = viewModel.state
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val keyBoardController = LocalFocusManager.current
+    val showScheduleExactAlarmRationaleDialog = rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(true) {
         launch {
@@ -122,9 +131,13 @@ fun AddEditScheduleBlockScreen(
         },
         onNotesChanged = { viewModel.onEvent(ChangeTodoBlockNotes(it)) },
         onChangeShowNotificationAtBeginning = { showNotification ->
+            if (showNotification && !schetodoAppState.allowedToScheduleExactAlarms())
+                showScheduleExactAlarmRationaleDialog.value = true
             viewModel.onEvent(ChangeShowNotificationAtBeginning(showNotification))
         },
         onChangeShowNotificationAtEnd = { showNotification ->
+            if (showNotification && !schetodoAppState.allowedToScheduleExactAlarms())
+                showScheduleExactAlarmRationaleDialog.value = true
             viewModel.onEvent(ChangeShowNotificationAtEnd(showNotification))
         },
         onAddTodoButtonClick = { navController.navigate(TodoPicker.route) },
@@ -135,6 +148,12 @@ fun AddEditScheduleBlockScreen(
         onDelete = { viewModel.onEvent(DeleteScheduleBlock) },
         onClose = { navController.popBackStack() }
     )
+
+    if (showScheduleExactAlarmRationaleDialog.value)
+        ScheduleExactAlarmRationaleDialog(
+            context = context,
+            onCloseDialog = { showScheduleExactAlarmRationaleDialog.value = false }
+        )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -434,6 +453,37 @@ fun HorizontalDividerWithText(text: String, modifier: Modifier = Modifier) {
             color = MaterialTheme.colorScheme.onSurface
         )
     }
+}
+
+@Composable
+fun ScheduleExactAlarmRationaleDialog(
+    context: Context,
+    onCloseDialog: () -> Unit
+) {
+    AlertDialog(
+        title = { Text(stringResource(R.string.alarms_and_reminders_permission)) },
+        text = { Text(stringResource(id = R.string.alarms_and_reminders_permission_rationale)) },
+        onDismissRequest = onCloseDialog,
+        confirmButton = {
+            Button(onClick = {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                    ActivityCompat.startActivity(
+                        context,
+                        Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM),
+                        null
+                    )
+                onCloseDialog()
+            }
+            ) {
+                Text(stringResource(R.string.grant_permission))
+            }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = onCloseDialog) {
+                Text(stringResource(R.string.cancel))
+            }
+        }
+    )
 }
 
 @Preview(showBackground = true)

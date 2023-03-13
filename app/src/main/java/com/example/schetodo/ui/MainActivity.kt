@@ -9,7 +9,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -24,6 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             SchetodoApp()
         }
@@ -44,6 +47,10 @@ fun SchetodoApp() {
         val shouldShowBottomNavigation =
             currentBackStack?.destination?.route in bottomNavDestinations.map { it.route }
 
+        val schetodoAppState = rememberSchetodoAppState(
+            context = LocalContext.current.applicationContext
+        )
+
         Scaffold(
             bottomBar = {
                 if (shouldShowBottomNavigation)
@@ -57,6 +64,7 @@ fun SchetodoApp() {
             }
         ) { innerPadding ->
             SchetodoNavHost(
+                schetodoAppState = schetodoAppState,
                 navController = navController,
                 modifier = Modifier.padding(innerPadding)
             )

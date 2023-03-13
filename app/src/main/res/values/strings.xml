@@ -63,4 +63,7 @@
     <string name="show_notification_at_end">Show notification at the end</string>
     <string name="schedule_block_notification">Schedule block notification</string>
     <string name="schedule_notification_description">Used to send you notifications for your schedule</string>
+    <string name="alarms_and_reminders_permission_rationale">To show notifications at a specific time, Schetodo needs the \"Alarms &amp; reminders\" permission.</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="alarms_and_reminders_permission">Alarms and reminders permission</string>
 </resources>

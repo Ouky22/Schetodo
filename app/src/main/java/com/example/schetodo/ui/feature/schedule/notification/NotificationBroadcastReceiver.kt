@@ -3,6 +3,7 @@ package com.example.schetodo.ui.feature.schedule.notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.example.schetodo.data.notification.NotificationRepository
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.ui.util.NotificationService

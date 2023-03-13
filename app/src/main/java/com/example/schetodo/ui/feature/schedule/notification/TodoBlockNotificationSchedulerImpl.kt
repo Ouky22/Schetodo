@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import com.example.schetodo.data.notification.Notification
 import com.example.schetodo.data.notification.NotificationRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -40,10 +41,11 @@ class TodoBlockNotificationSchedulerImpl @Inject constructor(
 
         val notificationIntent = getNotificationIntent(notification)
 
-        alarmManager.setAlarmClock(
-            AlarmManager.AlarmClockInfo(triggerDateTimeMilliseconds, null),
-            notificationIntent
-        )
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms())
+            alarmManager.setAlarmClock(
+                AlarmManager.AlarmClockInfo(triggerDateTimeMilliseconds, null),
+                notificationIntent
+            )
     }
 
     private fun cancelActiveAlarmForNotification() {

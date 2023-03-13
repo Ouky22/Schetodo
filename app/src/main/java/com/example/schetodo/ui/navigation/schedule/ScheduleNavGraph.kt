@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockScreen
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockViewModel
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.category.TodoCategoryPickerScreen
@@ -16,7 +17,10 @@ import com.example.schetodo.ui.feature.schedule.list.ScheduleScreen
 import com.example.schetodo.ui.feature.schedule.list.ScheduleViewModel
 import com.example.schetodo.ui.navigation.Graph
 
-fun NavGraphBuilder.scheduleNavGraph(navController: NavHostController) {
+fun NavGraphBuilder.scheduleNavGraph(
+    schetodoAppState: SchetodoAppState,
+    navController: NavHostController
+) {
     navigation(
         startDestination = Schedule.route,
         route = Graph.SCHEDULE
@@ -51,7 +55,8 @@ fun NavGraphBuilder.scheduleNavGraph(navController: NavHostController) {
             val viewModel = hiltViewModel<AddEditScheduleBlockViewModel>()
             AddEditScheduleBlockScreen(
                 viewModel = viewModel,
-                navController = navController
+                navController = navController,
+                schetodoAppState = schetodoAppState
             )
         }
         composable(
@@ -61,7 +66,8 @@ fun NavGraphBuilder.scheduleNavGraph(navController: NavHostController) {
             val viewModel = hiltViewModel<AddEditScheduleBlockViewModel>()
             AddEditScheduleBlockScreen(
                 viewModel = viewModel,
-                navController = navController
+                navController = navController,
+                schetodoAppState = schetodoAppState
             )
         }
         composable(route = TodoPicker.route) {
