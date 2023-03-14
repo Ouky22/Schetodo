@@ -7,24 +7,18 @@ import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.text.ParagraphStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextIndent
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.ui.components.CategoryItem
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
-import com.example.schetodo.ui.util.formatToListWithDotsString
+import com.example.schetodo.ui.util.appendDotsToStrings
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -66,7 +60,7 @@ fun ScheduleBlockItem(
             if (todoDescriptions.isNotEmpty()) {
                 Text(
                     modifier = Modifier.padding(8.dp),
-                    text = formatToListWithDotsString(todoDescriptions)
+                    text = appendDotsToStrings(todoDescriptions, separator = "\n")
                 )
             }
             if (todoBlocKNotes.isNotEmpty()) {

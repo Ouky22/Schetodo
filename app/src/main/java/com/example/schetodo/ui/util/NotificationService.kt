@@ -25,13 +25,13 @@ class NotificationService(
         val contentTitle = scheduleBlock.todoCategories.joinToString(", ") { it.name }
         val todoDescriptions = scheduleBlock.todos.map { it.description }
 
-        val contentText =
-            if (todoDescriptions.isNotEmpty())
-                formatToListWithDotsString(todoDescriptions.subList(0, 1)).toString()
-            else scheduleBlock.todoBlock.notes ?: ""
+        val contentText = appendDotsToStrings(
+            strings = todoDescriptions, separator = "\t\t"
+        ).toString() + "\t\t" + scheduleBlock.todoBlock.notes
 
-        val bigContentText =
-            formatToListWithDotsString(todoDescriptions).toString() + "\n" + scheduleBlock.todoBlock.notes
+        val bigContentText = appendDotsToStrings(
+            strings = todoDescriptions, separator = "\n"
+        ).toString() + "\n" + scheduleBlock.todoBlock.notes
 
         showNotification(
             contentTitle = contentTitle,
@@ -50,12 +50,17 @@ class NotificationService(
     ) {
         val notification = NotificationCompat.Builder(context, SCHEDULE_NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.schetodo_logo_foreground)
-            .setContentTitle(contentTitle)
-            .setContentText(if (contentText != bigContentText) "$contentText..." else contentText)
             .setContentIntent(getOpenMainActivityIntent())
-            .setStyle(NotificationCompat.BigTextStyle().bigText(bigContentText))
             .setAutoCancel(true)
-        icon?.let { notification.setLargeIcon(it) }
+
+        if (contentTitle.isNotEmpty())
+            notification.setContentTitle(contentTitle)
+        if (contentText.isNotEmpty())
+            notification.setContentText(contentText)
+        if (bigContentText.isNotEmpty())
+            notification.setStyle(NotificationCompat.BigTextStyle().bigText(bigContentText))
+        if (icon != null)
+            notification.setLargeIcon(icon)
 
         notificationManager.notify(notificationId, notification.build())
     }

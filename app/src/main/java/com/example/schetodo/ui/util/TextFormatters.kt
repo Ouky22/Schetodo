@@ -6,14 +6,15 @@ import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 
-fun formatToListWithDotsString(listItems: List<String>) =
+fun appendDotsToStrings(strings: List<String>, separator: String) =
     buildAnnotatedString {
-        listItems.forEach {
+        strings.forEachIndexed { index, element ->
             withStyle(style = ParagraphStyle(textIndent = TextIndent(restLine = 12.sp))) {
                 append("\u2022")
                 append("\t\t")
-                append(it)
-                append("\n")
+                append(element)
+                if (index != strings.lastIndex)
+                    append(separator)
             }
         }
     }
