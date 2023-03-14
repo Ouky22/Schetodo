@@ -66,4 +66,6 @@
     <string name="alarms_and_reminders_permission_rationale">To show notifications at a specific time, Schetodo needs the \"Alarms &amp; reminders\" permission.</string>
     <string name="grant_permission">Grant Permission</string>
     <string name="alarms_and_reminders_permission">Alarms and reminders permission</string>
+    <string name="notification_permission">Notification Permission</string>
+    <string name="notification_permission_rationale">Allow Schetodo to send notifications to get notified about schedule blocks</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.schetodo.ui.feature.schedule.add_edit_schedule_block
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -50,6 +51,7 @@ import com.example.schetodo.ui.navigation.schedule.TodoPicker
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.showDatePicker
 import com.example.schetodo.ui.util.showTimePicker
+import com.google.accompanist.permissions.*
 import kotlinx.coroutines.launch
 
 @Composable
@@ -63,7 +65,9 @@ fun AddEditScheduleBlockScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val keyBoardController = LocalFocusManager.current
+
     val showScheduleExactAlarmRationaleDialog = rememberSaveable { mutableStateOf(false) }
+    val showNotificationPermissionDialog = rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(true) {
         launch {
@@ -131,13 +135,21 @@ fun AddEditScheduleBlockScreen(
         },
         onNotesChanged = { viewModel.onEvent(ChangeTodoBlockNotes(it)) },
         onChangeShowNotificationAtBeginning = { showNotification ->
-            if (showNotification && !schetodoAppState.allowedToScheduleExactAlarms())
-                showScheduleExactAlarmRationaleDialog.value = true
+            if (showNotification) {
+                if (!schetodoAppState.allowedToScheduleExactAlarms())
+                    showScheduleExactAlarmRationaleDialog.value = true
+                if (!schetodoAppState.allowedToShowNotifications())
+                    showNotificationPermissionDialog.value = true
+            }
             viewModel.onEvent(ChangeShowNotificationAtBeginning(showNotification))
         },
         onChangeShowNotificationAtEnd = { showNotification ->
-            if (showNotification && !schetodoAppState.allowedToScheduleExactAlarms())
-                showScheduleExactAlarmRationaleDialog.value = true
+            if (showNotification) {
+                if (!schetodoAppState.allowedToScheduleExactAlarms())
+                    showScheduleExactAlarmRationaleDialog.value = true
+                if (!schetodoAppState.allowedToShowNotifications())
+                    showNotificationPermissionDialog.value = true
+            }
             viewModel.onEvent(ChangeShowNotificationAtEnd(showNotification))
         },
         onAddTodoButtonClick = { navController.navigate(TodoPicker.route) },
@@ -150,9 +162,13 @@ fun AddEditScheduleBlockScreen(
     )
 
     if (showScheduleExactAlarmRationaleDialog.value)
-        ScheduleExactAlarmRationaleDialog(
+        ScheduleExactAlarmPermissionRationaleDialog(
             context = context,
             onCloseDialog = { showScheduleExactAlarmRationaleDialog.value = false }
+        )
+    if (showNotificationPermissionDialog.value)
+        ShowNotificationPermissionDialog(
+            onCloseDialog = { showNotificationPermissionDialog.value = false }
         )
 }
 
@@ -456,7 +472,7 @@ fun HorizontalDividerWithText(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ScheduleExactAlarmRationaleDialog(
+fun ScheduleExactAlarmPermissionRationaleDialog(
     context: Context,
     onCloseDialog: () -> Unit
 ) {
@@ -484,6 +500,44 @@ fun ScheduleExactAlarmRationaleDialog(
             }
         }
     )
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun ShowNotificationPermissionDialog(
+    onCloseDialog: () -> Unit
+) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+        return
+
+    val notificationPermissionState =
+        rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS)
+
+    if (notificationPermissionState.status.shouldShowRationale)
+        AlertDialog(
+            title = { Text(stringResource(R.string.notification_permission)) },
+            text = { Text(stringResource(R.string.notification_permission_rationale)) },
+            onDismissRequest = onCloseDialog,
+            confirmButton = {
+                Button(onClick = {
+                    notificationPermissionState.launchPermissionRequest()
+                    onCloseDialog()
+                }
+                ) {
+                    Text(stringResource(R.string.grant_permission))
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = onCloseDialog) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    else if (!notificationPermissionState.status.isGranted) {
+        LaunchedEffect(key1 = true) {
+            notificationPermissionState.launchPermissionRequest()
+        }
+    }
 }
 
 @Preview(showBackground = true)
