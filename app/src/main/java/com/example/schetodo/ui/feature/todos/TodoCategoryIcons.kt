@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 val sportIcons = mapOf(
     mapEntryOf(Icons.Filled.Sports),
     mapEntryOf(Icons.Filled.SportsScore),
+    mapEntryOf(Icons.Filled.FitnessCenter),
     mapEntryOf(Icons.Filled.SportsBaseball),
     mapEntryOf(Icons.Filled.SportsCricket),
     mapEntryOf(Icons.Filled.SportsEsports),
@@ -25,6 +26,7 @@ val sportIcons = mapOf(
     mapEntryOf(Icons.Filled.SportsSoccer),
     mapEntryOf(Icons.Filled.SportsMma),
     mapEntryOf(Icons.Filled.Hiking),
+    mapEntryOf(Icons.Filled.Surfing),
 )
 
 val socialIcons = mapOf(
@@ -47,7 +49,8 @@ val socialIcons = mapOf(
     mapEntryOf(Icons.Filled.Diversity1),
     mapEntryOf(Icons.Filled.Male),
     mapEntryOf(Icons.Filled.Female),
-    mapEntryOf(Icons.Filled.Transgender)
+    mapEntryOf(Icons.Filled.Transgender),
+    mapEntryOf(Icons.Filled.SelfImprovement)
 )
 
 val natureIcons = mapOf(
@@ -115,6 +118,10 @@ val businessIcons = mapOf(
     mapEntryOf(Icons.Filled.BarChart),
     mapEntryOf(Icons.Filled.Domain),
     mapEntryOf(Icons.Filled.Security),
+    mapEntryOf(Icons.Filled.Science),
+    mapEntryOf(Icons.Filled.Biotech),
+    mapEntryOf(Icons.Filled.Calculate),
+    mapEntryOf(Icons.Filled.Functions)
 )
 
 val transportationIcons = mapOf(
@@ -123,13 +130,14 @@ val transportationIcons = mapOf(
     mapEntryOf(Icons.Filled.FlightTakeoff),
     mapEntryOf(Icons.Filled.DirectionsCar),
     mapEntryOf(Icons.Filled.DirectionsBike),
+    mapEntryOf(Icons.Filled.TwoWheeler),
     mapEntryOf(Icons.Filled.DirectionsBus),
     mapEntryOf(Icons.Filled.DirectionsRailway),
     mapEntryOf(Icons.Filled.DirectionsBoat),
     mapEntryOf(Icons.Filled.DirectionsSubway),
     mapEntryOf(Icons.Filled.DirectionsWalk),
     mapEntryOf(Icons.Filled.Tram),
-    mapEntryOf(Icons.Filled.Snowmobile),
+    mapEntryOf(Icons.Filled.Snowmobile)
 )
 
 val hardwareIcons = mapOf(
@@ -187,7 +195,10 @@ val otherIcons = mapOf(
     mapEntryOf(Icons.Filled.Hotel),
     mapEntryOf(Icons.Filled.Festival),
     mapEntryOf(Icons.Filled.Villa),
-    mapEntryOf(Icons.Filled.Attractions)
+    mapEntryOf(Icons.Filled.Attractions),
+    mapEntryOf(Icons.Filled.MusicNote),
+    mapEntryOf(Icons.Filled.Headphones),
+    mapEntryOf(Icons.Filled.Piano)
 )
 
 val allTodoCategoryIcons = listOf(
