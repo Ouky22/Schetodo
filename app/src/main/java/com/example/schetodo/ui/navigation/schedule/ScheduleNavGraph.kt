@@ -18,8 +18,7 @@ import com.example.schetodo.ui.feature.schedule.list.ScheduleViewModel
 import com.example.schetodo.ui.navigation.Graph
 
 fun NavGraphBuilder.scheduleNavGraph(
-    schetodoAppState: SchetodoAppState,
-    navController: NavHostController
+    schetodoAppState: SchetodoAppState
 ) {
     navigation(
         startDestination = Schedule.route,
@@ -27,20 +26,20 @@ fun NavGraphBuilder.scheduleNavGraph(
     ) {
         composable(route = Schedule.route) { navBackStackEntry ->
             val parentEntry = remember(navBackStackEntry) {
-                navController.getBackStackEntry(Graph.SCHEDULE)
+                schetodoAppState.navController.getBackStackEntry(Graph.SCHEDULE)
             }
 
             val viewModel = hiltViewModel<ScheduleViewModel>(parentEntry)
             ScheduleScreen(
                 viewModel = viewModel,
                 onAddScheduleBlockNavigation = { dateStamp ->
-                    navController.navigateToAddScheduleBlockScreen(dateStamp)
+                    schetodoAppState.navController.navigateToAddScheduleBlockScreen(dateStamp)
                 },
                 onEditScheduleBlockNavigation = { todoBlockId ->
-                    navController.navigateToEditScheduleBlockScreen(todoBlockId)
+                    schetodoAppState.navController.navigateToEditScheduleBlockScreen(todoBlockId)
                 },
                 onAddScheduleBlockInGapNavigation = { dateStamp, startTimeStamp, endTimeStamp ->
-                    navController.navigateToAddScheduleBlockScreen(
+                    schetodoAppState.navController.navigateToAddScheduleBlockScreen(
                         dateStamp,
                         startTimeStamp,
                         endTimeStamp
@@ -55,7 +54,6 @@ fun NavGraphBuilder.scheduleNavGraph(
             val viewModel = hiltViewModel<AddEditScheduleBlockViewModel>()
             AddEditScheduleBlockScreen(
                 viewModel = viewModel,
-                navController = navController,
                 schetodoAppState = schetodoAppState
             )
         }
@@ -66,17 +64,19 @@ fun NavGraphBuilder.scheduleNavGraph(
             val viewModel = hiltViewModel<AddEditScheduleBlockViewModel>()
             AddEditScheduleBlockScreen(
                 viewModel = viewModel,
-                navController = navController,
                 schetodoAppState = schetodoAppState
             )
         }
         composable(route = TodoPicker.route) {
             val viewModel = hiltViewModel<TodoPickerViewModel>()
-            TodoPickerScreen(viewModel = viewModel, navController = navController)
+            TodoPickerScreen(viewModel = viewModel, navController = schetodoAppState.navController)
         }
         composable(route = TodoCategoryPicker.route) {
             val viewModel = hiltViewModel<TodoCategoryPickerViewModel>()
-            TodoCategoryPickerScreen(viewModel = viewModel, navController = navController)
+            TodoCategoryPickerScreen(
+                viewModel = viewModel,
+                navController = schetodoAppState.navController
+            )
         }
     }
 }

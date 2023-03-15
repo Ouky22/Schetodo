@@ -58,7 +58,6 @@ import kotlinx.coroutines.launch
 fun AddEditScheduleBlockScreen(
     modifier: Modifier = Modifier,
     viewModel: AddEditScheduleBlockViewModel,
-    navController: NavController,
     schetodoAppState: SchetodoAppState
 ) {
     val state = viewModel.state
@@ -74,7 +73,7 @@ fun AddEditScheduleBlockScreen(
             viewModel.closeAddEditScheduleBlockScreen.collect { closeScreen ->
                 if (closeScreen) {
                     keyBoardController.clearFocus()
-                    navController.popBackStack()
+                    schetodoAppState.navController.popBackStack()
                 }
             }
         }
@@ -87,20 +86,20 @@ fun AddEditScheduleBlockScreen(
             }
         }
         launch {
-            navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Int>>(
+            schetodoAppState.navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Int>>(
                 TODO_PICKER_RESULT, emptyList()
             )?.collect {
                 viewModel.onEvent(SelectTodos(it))
-                navController.currentBackStackEntry?.savedStateHandle
+                schetodoAppState.navController.currentBackStackEntry?.savedStateHandle
                     ?.remove<List<Int>>(TODO_PICKER_RESULT)
             }
         }
         launch {
-            navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Int>>(
+            schetodoAppState.navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Int>>(
                 TODO_CATEGORY_PICKER_RESULT, emptyList()
             )?.collect {
                 viewModel.onEvent(SelectTodoCategories(it))
-                navController.currentBackStackEntry?.savedStateHandle
+                schetodoAppState.navController.currentBackStackEntry?.savedStateHandle
                     ?.remove<List<Int>>(TODO_CATEGORY_PICKER_RESULT)
             }
         }
@@ -136,29 +135,29 @@ fun AddEditScheduleBlockScreen(
         onNotesChanged = { viewModel.onEvent(ChangeTodoBlockNotes(it)) },
         onChangeShowNotificationAtBeginning = { showNotification ->
             if (showNotification) {
-                if (!schetodoAppState.allowedToScheduleExactAlarms())
+                if (!schetodoAppState.allowedToScheduleExactAlarms)
                     showScheduleExactAlarmRationaleDialog.value = true
-                if (!schetodoAppState.allowedToShowNotifications())
+                if (!schetodoAppState.allowedToShowNotifications)
                     showNotificationPermissionDialog.value = true
             }
             viewModel.onEvent(ChangeShowNotificationAtBeginning(showNotification))
         },
         onChangeShowNotificationAtEnd = { showNotification ->
             if (showNotification) {
-                if (!schetodoAppState.allowedToScheduleExactAlarms())
+                if (!schetodoAppState.allowedToScheduleExactAlarms)
                     showScheduleExactAlarmRationaleDialog.value = true
-                if (!schetodoAppState.allowedToShowNotifications())
+                if (!schetodoAppState.allowedToShowNotifications)
                     showNotificationPermissionDialog.value = true
             }
             viewModel.onEvent(ChangeShowNotificationAtEnd(showNotification))
         },
-        onAddTodoButtonClick = { navController.navigate(TodoPicker.route) },
-        onAddTodoCategoryButtonClick = { navController.navigate(TodoCategoryPicker.route) },
+        onAddTodoButtonClick = { schetodoAppState.navController.navigate(TodoPicker.route) },
+        onAddTodoCategoryButtonClick = { schetodoAppState.navController.navigate(TodoCategoryPicker.route) },
         onRemoveTodo = { viewModel.onEvent(RemoveSelectedTodo(it)) },
         onRemoveCategory = { viewModel.onEvent(RemoveSelectedTodoCategory(it)) },
         onSave = { viewModel.onEvent(SaveScheduleBlock) },
         onDelete = { viewModel.onEvent(DeleteScheduleBlock) },
-        onClose = { navController.popBackStack() }
+        onClose = { schetodoAppState.navController.popBackStack() }
     )
 
     if (showScheduleExactAlarmRationaleDialog.value)

@@ -25,9 +25,9 @@ fun SchetodoNavHost(
         startDestination = Graph.SCHEDULE,
         modifier = modifier
     ) {
-        scheduleNavGraph(schetodoAppState, navController)
-        todosNavGraph(navController)
-        statisticsNavGraph(navController)
+        scheduleNavGraph(schetodoAppState)
+        todosNavGraph(schetodoAppState)
+        statisticsNavGraph(schetodoAppState)
     }
 }
 

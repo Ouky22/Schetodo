@@ -10,6 +10,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.feature.todos.list.TodosScreen
 import com.example.schetodo.ui.feature.todos.list.TodosViewModel
 import com.example.schetodo.ui.feature.todos.add_edit_category.AddEditTodoCategoryScreen
@@ -19,35 +20,38 @@ import com.example.schetodo.ui.feature.todos.add_edit_todo.AddEditTodoViewModel
 import com.example.schetodo.ui.feature.todos.check_off_todos.CheckOffTodosScreen
 import com.example.schetodo.ui.feature.todos.check_off_todos.CheckOffTodosViewModel
 import com.example.schetodo.ui.navigation.*
+import com.example.schetodo.ui.navigation.schedule.scheduleNavGraph
 
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
-fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
+fun NavGraphBuilder.todosNavGraph(
+    schetodoAppState: SchetodoAppState
+) {
     navigation(
         startDestination = Todos.route,
         route = Graph.TODOS
     ) {
         composable(route = Todos.route) { navBackStackEntry ->
             val parentEntry = remember(navBackStackEntry) {
-                navController.getBackStackEntry(Graph.TODOS)
+                schetodoAppState.navController.getBackStackEntry(Graph.TODOS)
             }
             val todosViewModel = hiltViewModel<TodosViewModel>(parentEntry)
             TodosScreen(
                 viewModel = todosViewModel,
                 onCheckOffCompletedTodos = {
-                    navController.navigateToCheckOffTodosScreen()
+                    schetodoAppState.navController.navigateToCheckOffTodosScreen()
                 },
                 onAddTodoCategory = { parentCategoryId ->
-                    navController.navigateToAddTodoCategoryScreen(parentCategoryId)
+                    schetodoAppState.navController.navigateToAddTodoCategoryScreen(parentCategoryId)
                 },
                 onEditTodoCategory = { todoCategoryId ->
-                    navController.navigateToEditTodoCategoryScreen(todoCategoryId)
+                    schetodoAppState.navController.navigateToEditTodoCategoryScreen(todoCategoryId)
                 },
                 onAddTodo = { parentCategoryId ->
-                    navController.navigateToAddTodoScreen(parentCategoryId)
+                    schetodoAppState.navController.navigateToAddTodoScreen(parentCategoryId)
                 },
                 onEditTodo = { todoId ->
-                    navController.navigateToEditTodoScreen(todoId)
+                    schetodoAppState.navController.navigateToEditTodoScreen(todoId)
                 }
             )
         }
@@ -55,7 +59,7 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
             val viewModel = hiltViewModel<CheckOffTodosViewModel>()
             CheckOffTodosScreen(
                 viewModel = viewModel,
-                navController = navController,
+                schetodoAppState = schetodoAppState,
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -66,7 +70,7 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
             val viewModel = hiltViewModel<AddEditTodoCategoryViewModel>()
             AddEditTodoCategoryScreen(
                 viewModel = viewModel,
-                navController = navController,
+                schetodoAppState = schetodoAppState,
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -77,7 +81,7 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
             val viewModel = hiltViewModel<AddEditTodoCategoryViewModel>()
             AddEditTodoCategoryScreen(
                 viewModel = viewModel,
-                navController = navController,
+                schetodoAppState = schetodoAppState,
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -88,7 +92,7 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
             val viewModel = hiltViewModel<AddEditTodoViewModel>()
             AddEditTodoScreen(
                 viewModel = viewModel,
-                navController = navController,
+                schetodoAppState = schetodoAppState,
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -99,7 +103,7 @@ fun NavGraphBuilder.todosNavGraph(navController: NavHostController) {
             val viewModel = hiltViewModel<AddEditTodoViewModel>()
             AddEditTodoScreen(
                 viewModel = viewModel,
-                navController = navController,
+                schetodoAppState = schetodoAppState,
                 modifier = Modifier.fillMaxSize()
             )
         }

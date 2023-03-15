@@ -20,7 +20,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,12 +38,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.example.schetodo.R
 import com.example.schetodo.data.todo.Todo
-import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
+import com.example.schetodo.data.todo_category.TodoCategory
+import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.CategoryItem
 import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.feature.todos.getIconByName
@@ -57,7 +56,7 @@ import com.example.schetodo.ui.util.showSnackbarWithActionHandler
 @Composable
 fun CheckOffTodosScreen(
     viewModel: CheckOffTodosViewModel,
-    navController: NavController,
+    schetodoAppState: SchetodoAppState,
     modifier: Modifier = Modifier
 ) {
     val todosInProgress by viewModel.todosInProgress.collectAsStateWithLifecycle()
@@ -96,7 +95,7 @@ fun CheckOffTodosScreen(
         onCheckOffTodo = { viewModel.onEvent(CheckOffTodosEvent.CheckOffTodo(it)) },
         onCheckOffTodos = { viewModel.onEvent(CheckOffTodosEvent.CheckOffMarkedTodos) },
         onMarkTodoAsUndone = { viewModel.onEvent(CheckOffTodosEvent.MarkTodoAsUndone(it)) },
-        onBackButtonClick = { navController.popBackStack() },
+        onBackButtonClick = { schetodoAppState.navController.popBackStack() },
         checkOffTodosButtonActivated = viewModel.todosMarkedForCheckOff
     )
 }

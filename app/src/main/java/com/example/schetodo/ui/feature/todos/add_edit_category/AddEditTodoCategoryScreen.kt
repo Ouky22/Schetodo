@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.schetodo.R
+import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.ElementPickerDialog
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.AddEditTopBar
@@ -36,15 +37,15 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 @Composable
 fun AddEditTodoCategoryScreen(
     modifier: Modifier = Modifier,
-    viewModel: AddEditTodoCategoryViewModel,
-    navController: NavController
+    schetodoAppState: SchetodoAppState,
+    viewModel: AddEditTodoCategoryViewModel
 ) {
     val keyBoardController = LocalFocusManager.current
     LaunchedEffect(key1 = true) {
         viewModel.closeAddEditTodoCategoryScreen.collect { closeScreen ->
             if (closeScreen) {
                 keyBoardController.clearFocus()
-                navController.popBackStack()
+                schetodoAppState.navController.popBackStack()
             }
         }
     }
@@ -71,7 +72,7 @@ fun AddEditTodoCategoryScreen(
         },
         onCloseDialog = {
             keyBoardController.clearFocus()
-            navController.popBackStack()
+            schetodoAppState.navController.popBackStack()
         },
         onSaveClicked = { viewModel.onEvent(AddEditTodoCategoryEvent.SaveTodoCategory) },
         onDeleteClick = { viewModel.onEvent(AddEditTodoCategoryEvent.DeleteTodoCategory) },

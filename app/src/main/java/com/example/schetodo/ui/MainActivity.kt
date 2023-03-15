@@ -40,32 +40,27 @@ fun SchetodoApp() {
     SchetodoTheme {
         val navController = rememberNavController()
         val currentBackStack by navController.currentBackStackEntryAsState()
-        val currentDestination = bottomNavDestinations.find { schetodoDestination ->
-            currentBackStack?.destination?.route == schetodoDestination.route
-        } ?: Schedule
-
-        val shouldShowBottomNavigation =
-            currentBackStack?.destination?.route in bottomNavDestinations.map { it.route }
-
         val schetodoAppState = rememberSchetodoAppState(
-            context = LocalContext.current.applicationContext
+            navController = navController
         )
 
         Scaffold(
             bottomBar = {
-                if (shouldShowBottomNavigation)
+                if (schetodoAppState.shouldShowBottomNavigation(currentBackStack))
                     BottomNavBar(
                         destinations = bottomNavDestinations,
-                        currentDestination = currentDestination,
+                        currentDestination = schetodoAppState.getCurrentMainDestination(
+                            currentBackStack
+                        ) ?: Schedule,
                         onItemClick = { selectedDestination ->
-                            navController.navigateSingleTopTo(selectedDestination.route)
+                            schetodoAppState.navController.navigateSingleTopTo(selectedDestination.route)
                         }
                     )
             }
         ) { innerPadding ->
             SchetodoNavHost(
                 schetodoAppState = schetodoAppState,
-                navController = navController,
+                navController = schetodoAppState.navController,
                 modifier = Modifier.padding(innerPadding)
             )
         }

@@ -21,6 +21,7 @@ import androidx.navigation.NavController
 import com.example.schetodo.R
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
+import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.AddEditTopBar
 import com.example.schetodo.ui.components.CategoryItem
@@ -33,7 +34,7 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 fun AddEditTodoScreen(
     modifier: Modifier = Modifier,
     viewModel: AddEditTodoViewModel,
-    navController: NavController
+    schetodoAppState: SchetodoAppState
 ) {
     val state = viewModel.addEditTodoState.value
     val keyBoardController = LocalFocusManager.current
@@ -42,7 +43,7 @@ fun AddEditTodoScreen(
         viewModel.closeAddEditTodoScreen.collect { closeScreen ->
             if (closeScreen) {
                 keyBoardController.clearFocus()
-                navController.popBackStack()
+                schetodoAppState.navController.popBackStack()
             }
         }
     }
