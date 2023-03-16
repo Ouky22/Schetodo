@@ -4,6 +4,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import app.cash.turbine.test
+import com.example.schetodo.data.user_preferences.FakeUserPreferencesRepository
+import com.example.schetodo.data.user_preferences.UserPreferencesRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.flow.first
 import org.junit.Test
@@ -13,11 +15,13 @@ internal class TodoRepositoryImplTest {
 
     private lateinit var fakeTodoDao: TodoDao
     private lateinit var todoRepositoryImpl: TodoRepositoryImpl
+    private lateinit var userPreferencesRepository: UserPreferencesRepository
 
     @Before
     fun init() {
         fakeTodoDao = FakeTodoDao()
-        todoRepositoryImpl = TodoRepositoryImpl(fakeTodoDao)
+        userPreferencesRepository = FakeUserPreferencesRepository()
+        todoRepositoryImpl = TodoRepositoryImpl(fakeTodoDao, userPreferencesRepository)
     }
 
     @Test

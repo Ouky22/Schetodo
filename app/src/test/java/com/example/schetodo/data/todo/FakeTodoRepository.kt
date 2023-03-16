@@ -40,6 +40,14 @@ class FakeTodoRepository : TodoRepository {
         }
     }
 
+    override fun getTodosOfTodoCategory(todoCategoryId: Int?): Flow<List<Todo>> =
+        getTodosOfTodoCategory(todoCategoryId, TodoFilterSettings())
+
+    override fun getTodoFilterSettings(): Flow<TodoFilterSettings> =
+        flow {
+            emit(TodoFilterSettings())
+        }
+
     override fun getTodosInProgress(): Flow<List<Todo>> {
         return flow {
             val todos = todos.filter { it.flag == TodoFlag.IN_PROGRESS }
@@ -55,4 +63,6 @@ class FakeTodoRepository : TodoRepository {
             todos.add(updatedTodo)
         }
     }
+
+    override suspend fun setTodoFilterSettings(todoFilterSettings: TodoFilterSettings) {}
 }

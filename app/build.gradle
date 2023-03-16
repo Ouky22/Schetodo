@@ -102,6 +102,8 @@ dependencies {
     // accompanist libraries
     implementation "com.google.accompanist:accompanist-flowlayout:0.29.1-alpha"
     implementation "com.google.accompanist:accompanist-permissions:0.29.2-rc"
+
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 }
 
 kapt {

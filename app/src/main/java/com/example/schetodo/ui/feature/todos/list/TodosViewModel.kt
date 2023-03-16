@@ -51,7 +51,9 @@ class TodosViewModel @Inject constructor(
 
     private fun onChangeTodoFilterSettings(newFilterSettings: TodoFilterSettings) {
         _todosState.value = _todosState.value.copy(todoFilterSettings = newFilterSettings)
-        setCurrentTodoCategory(_todosState.value.currentCategory?.categoryId)
+        viewModelScope.launch {
+            todoRepository.setTodoFilterSettings(newFilterSettings)
+        }
     }
 
     private fun onCloseAddCategoryOrTodoDialog() {
@@ -107,14 +109,14 @@ class TodosViewModel @Inject constructor(
         stateJob = combine(
             todoCategoryRepository.getTodoCategory(currentTodoCategoryId),
             todoCategoryRepository.getChildTodoCategoriesOf(currentTodoCategoryId),
-            todoRepository.getTodosOfTodoCategory(
-                currentTodoCategoryId, _todosState.value.todoFilterSettings
-            )
-        ) { currentCategory, childCategories, todos ->
+            todoRepository.getTodosOfTodoCategory(currentTodoCategoryId),
+            todoRepository.getTodoFilterSettings()
+        ) { currentCategory, childCategories, todos, todoFilterSettings ->
             _todosState.value = _todosState.value.copy(
                 currentCategory = currentCategory,
                 childCategories = childCategories,
-                todos = todos
+                todos = todos,
+                todoFilterSettings = todoFilterSettings
             )
         }.launchIn(viewModelScope)
     }

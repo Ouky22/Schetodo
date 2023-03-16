@@ -1,5 +1,6 @@
 package com.example.schetodo.data.todo
 
+import com.example.schetodo.data.user_preferences.UserPreferencesRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -7,7 +8,8 @@ import javax.inject.Singleton
 
 @Singleton
 class TodoRepositoryImpl @Inject constructor(
-    private val todoDao: TodoDao
+    private val todoDao: TodoDao,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : TodoRepository {
 
     override suspend fun insertTodo(todo: Todo) {
@@ -36,14 +38,33 @@ class TodoRepositoryImpl @Inject constructor(
         else
             todoDao.getAllTodosOfTodoCategory(todoCategoryId)
                 .mapLatest { todos ->
-                    todos.filter {
-                        it.flag == TodoFlag.DONE && todoFilterSettings.showDoneTodos
-                                || it.flag == TodoFlag.UNDONE && todoFilterSettings.showUndoneTodos
-                                || it.flag == TodoFlag.IN_PROGRESS && todoFilterSettings.showInProgressTodos
-                                || it.flag == TodoFlag.RECURRING && todoFilterSettings.showRecurringTodos
+                    todos.filter { todo ->
+                        todoNotFilteredOut(todo, todoFilterSettings)
                     }
                 }
     }
+
+    override fun getTodosOfTodoCategory(todoCategoryId: Int?): Flow<List<Todo>> {
+        // all todos must have a TodoCategory, that's why an empty list is returned if no todoCategoryId is passed
+        return if (todoCategoryId == null)
+            flow { emit(emptyList()) }
+        else
+            combine(
+                todoDao.getAllTodosOfTodoCategory(todoCategoryId),
+                userPreferencesRepository.todoFilterSettingsPreferences
+            ) { todos: List<Todo>, todoFilterSettings: TodoFilterSettings ->
+                todos.filter { todo ->
+                    todoNotFilteredOut(todo, todoFilterSettings)
+                }
+            }
+    }
+
+    override suspend fun setTodoFilterSettings(todoFilterSettings: TodoFilterSettings) {
+        userPreferencesRepository.setTodoFilterSettings(todoFilterSettings)
+    }
+
+    override fun getTodoFilterSettings() =
+        userPreferencesRepository.todoFilterSettingsPreferences
 
     override fun getTodosInProgress(): Flow<List<Todo>> =
         todoDao.getAllTodosWithFlag(TodoFlag.IN_PROGRESS)
@@ -51,11 +72,17 @@ class TodoRepositoryImpl @Inject constructor(
     override suspend fun updateTodo(todo: Todo) {
         todoDao.updateTodo(todo)
     }
+
+    private fun todoNotFilteredOut(todo: Todo, todoFilterSettings: TodoFilterSettings) =
+        todo.flag == TodoFlag.DONE && todoFilterSettings.showDoneTodos
+                || todo.flag == TodoFlag.UNDONE && todoFilterSettings.showUndoneTodos
+                || todo.flag == TodoFlag.IN_PROGRESS && todoFilterSettings.showInProgressTodos
+                || todo.flag == TodoFlag.RECURRING && todoFilterSettings.showRecurringTodos
 }
 
 data class TodoFilterSettings(
     val showRecurringTodos: Boolean = true,
     val showUndoneTodos: Boolean = true,
     val showInProgressTodos: Boolean = true,
-    val showDoneTodos: Boolean = false
+    val showDoneTodos: Boolean = true
 )
