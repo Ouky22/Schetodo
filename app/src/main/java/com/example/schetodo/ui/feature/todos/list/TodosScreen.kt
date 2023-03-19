@@ -7,6 +7,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import com.example.schetodo.ui.feature.todos.list.TodosEvent.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -18,6 +19,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
@@ -92,7 +94,7 @@ fun TodosScreen(
                 actions = {
                     TodosFilterOverflowMenu(
                         todoFilterSettings = state.todoFilterSettings,
-                        filterSettingsChanged = {viewModel.onEvent(ChangeTodoFilterSettings(it))}
+                        filterSettingsChanged = { viewModel.onEvent(ChangeTodoFilterSettings(it)) }
                     )
                 }
             )
@@ -158,7 +160,9 @@ fun TodosFilterOverflowMenu(
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = stringResource(id = R.string.filter_todos),
-                modifier = Modifier.align(CenterHorizontally).padding(bottom = 10.dp)
+                modifier = Modifier
+                    .align(CenterHorizontally)
+                    .padding(bottom = 10.dp)
             )
             Divider()
             FilterDropdownItem(
@@ -220,7 +224,10 @@ fun TodoCategoryTodoList(
     onLongClickOnTodoCategory: (TodoCategory) -> Unit,
     onClickOnTodo: (Todo) -> Unit
 ) {
-    LazyColumn(modifier = modifier) {
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    LazyColumn(modifier = modifier, state = listState) {
         items(categories) { todoCategory ->
             CategoryItem(
                 modifier = Modifier
@@ -228,7 +235,10 @@ fun TodoCategoryTodoList(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp, horizontal = 16.dp)
                     .combinedClickable(
-                        onClick = { onClickOnTodoCategory(todoCategory) },
+                        onClick = {
+                            onClickOnTodoCategory(todoCategory)
+                            coroutineScope.launch { listState.scrollToItem(0) }
+                        },
                         onLongClick = { onLongClickOnTodoCategory(todoCategory) }
                     ),
                 todoCategoryName = todoCategory.name,
