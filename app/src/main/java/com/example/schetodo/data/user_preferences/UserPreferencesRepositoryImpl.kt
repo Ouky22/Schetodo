@@ -21,12 +21,55 @@ class UserPreferencesRepositoryImpl @Inject constructor(
         val SHOW_UNDONE_TODOS = booleanPreferencesKey("show_undone_todos")
         val SHOW_IN_PROGRESS_TODOS = booleanPreferencesKey("show_in_progress_todos")
         val SHOW_DONE_TODOS = booleanPreferencesKey("show_done_todos")
+
+        val SHOW_SCHEDULE_BLOCK_NOTIFICATION_AT_BEGINNING = booleanPreferencesKey(
+            "show_schedule_block_notification_at_beginning"
+        )
+        val SHOW_SCHEDULE_BLOCK_NOTIFICATION_AT_END = booleanPreferencesKey(
+            "show_schedule_block_notification_at_start"
+        )
+    }
+
+    override val showScheduleBlockNotificationAtBeginning = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) Log.e(
+                TAG, "Error while reading show-schedule-block-notification-at-beginning flag",
+                exception
+            )
+            else throw exception
+        }
+        .map { preferences ->
+            preferences[SHOW_SCHEDULE_BLOCK_NOTIFICATION_AT_BEGINNING] ?: false
+        }
+
+    override val showScheduleBlockNotificationAtEnd = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) Log.e(
+                TAG, "Error while reading show-schedule-block-notification-at-end flag",
+                exception
+            )
+            else throw exception
+        }
+        .map { preferences ->
+            preferences[SHOW_SCHEDULE_BLOCK_NOTIFICATION_AT_END] ?: false
+        }
+
+    override suspend fun setShowScheduleBlockNotificationAtBeginning(show: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[SHOW_SCHEDULE_BLOCK_NOTIFICATION_AT_BEGINNING] = show
+        }
+    }
+
+    override suspend fun setShowScheduleBlockNotificationAtEnd(show: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[SHOW_SCHEDULE_BLOCK_NOTIFICATION_AT_END] = show
+        }
     }
 
     override val todoFilterSettingsPreferences = dataStore.data
         .catch { exception ->
             if (exception is IOException) Log.e(
-                TAG, "Error reading todo filter preferences",
+                TAG, "Error while reading todo filter preferences",
                 exception
             )
             else throw exception

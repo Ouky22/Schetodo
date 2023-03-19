@@ -7,4 +7,8 @@ interface UserPreferencesRepository {
     val todoFilterSettingsPreferences: Flow<TodoFilterSettings>
 
     suspend fun setTodoFilterSettings(todoFilterSettings: TodoFilterSettings)
+    val showScheduleBlockNotificationAtBeginning: Flow<Boolean>
+    val showScheduleBlockNotificationAtEnd: Flow<Boolean>
+    suspend fun setShowScheduleBlockNotificationAtBeginning(show: Boolean)
+    suspend fun setShowScheduleBlockNotificationAtEnd(show: Boolean)
 }
