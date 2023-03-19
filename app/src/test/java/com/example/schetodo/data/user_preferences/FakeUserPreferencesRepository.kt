@@ -20,7 +20,7 @@ class FakeUserPreferencesRepository : UserPreferencesRepository {
         get() = flow {
             emit(_showScheduleBlockNotificationAtBeginning)
         }
-    
+
     override val showScheduleBlockNotificationAtEnd: Flow<Boolean>
         get() = flow {
             emit(_showScheduleBlockNotificationAtEnd)

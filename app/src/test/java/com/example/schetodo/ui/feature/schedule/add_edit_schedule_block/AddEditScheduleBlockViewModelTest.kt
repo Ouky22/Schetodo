@@ -84,6 +84,7 @@ internal class AddEditScheduleBlockViewModelTest {
             mapOf(AddScheduleBlock.dateStampArg to date.toEpochDay())
         )
         val viewModel = createAddEditScheduleBlockViewModel(savedStateHandle)
+        advanceUntilIdle()
 
         val startTime = LocalTime.of(12, 0)
         viewModel.onEvent(ChangeStartTime(startTime))
@@ -93,7 +94,6 @@ internal class AddEditScheduleBlockViewModelTest {
         viewModel.onEvent(ChangeShowNotificationAtEnd(showNotification = true))
         viewModel.onEvent(ChangeShowNotificationAtEnd(showNotification = false))
         viewModel.onEvent(SaveScheduleBlock)
-
         advanceUntilIdle()
 
         val addedScheduleBlock =

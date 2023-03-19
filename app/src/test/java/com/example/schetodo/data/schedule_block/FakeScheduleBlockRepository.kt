@@ -33,4 +33,14 @@ class FakeScheduleBlockRepository : ScheduleBlockRepository {
         } else
             scheduleBlocks.add(scheduleBlock)
     }
+
+    override val showScheduleBlockNotificationAtEnd: Flow<Boolean>
+        get() = flow {
+            emit(false)
+        }
+
+    override val showScheduleBlockNotificationAtBeginning: Flow<Boolean>
+        get() = flow {
+            emit(false)
+        }
 }

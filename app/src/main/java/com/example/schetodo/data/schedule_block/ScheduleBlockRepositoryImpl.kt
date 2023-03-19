@@ -9,6 +9,7 @@ import com.example.schetodo.data.todo.TodoDao
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo_block.TodoBlockDao
 import com.example.schetodo.data.todo_category.TodoCategory
+import com.example.schetodo.data.user_preferences.UserPreferencesRepository
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
 import javax.inject.Inject
@@ -20,7 +21,8 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
     private val todoBlockTodoRelationshipDao: TodoBlockTodoRelationshipDao,
     private val todoBlockDao: TodoBlockDao,
     private val todoDao: TodoDao,
-    private val notificationRepository: NotificationRepository
+    private val notificationRepository: NotificationRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : ScheduleBlockRepository {
 
     override fun getScheduleBlocksOnDate(date: LocalDate) =
@@ -41,7 +43,14 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
         setFlagOfTodosToInProgress(scheduleBlock.todos)
         connectTodoBlockAndTodoCategories(todoBlockId, scheduleBlock.todoCategories)
         setNotificationsOfTodoBlock(todoBlockId, scheduleBlock.notifications)
+        setNotificationPreferences(scheduleBlock)
     }
+
+    override val showScheduleBlockNotificationAtBeginning =
+        userPreferencesRepository.showScheduleBlockNotificationAtBeginning
+
+    override val showScheduleBlockNotificationAtEnd =
+        userPreferencesRepository.showScheduleBlockNotificationAtEnd
 
     private suspend fun connectTodoBlockAndTodos(
         todoBlockId: Int,
@@ -80,5 +89,19 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
             todoBlockId = todoBlockId,
             notifications = notifications.map { it.copy(todoBlockId = todoBlockId) }
         )
+    }
+
+    private suspend fun setNotificationPreferences(scheduleBlock: ScheduleBlock) {
+        val showNotificationAtBeginning = scheduleBlock.notifications.any {
+            it.dateTime.toLocalTime() == scheduleBlock.todoBlock.startTime
+        }
+        userPreferencesRepository.setShowScheduleBlockNotificationAtBeginning(
+            showNotificationAtBeginning
+        )
+
+        val showNotificationAtEnd = scheduleBlock.notifications.any {
+            it.dateTime.toLocalTime() == scheduleBlock.todoBlock.endTime
+        }
+        userPreferencesRepository.setShowScheduleBlockNotificationAtEnd(showNotificationAtEnd)
     }
 }

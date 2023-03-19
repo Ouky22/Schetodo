@@ -288,6 +288,15 @@ class AddEditScheduleBlockViewModel @Inject constructor(
         val endTimeReceived = endTimeStamp != null && endTimeStamp >= 0
         if (endTimeReceived) updateEndTime(endTimeStamp!!)
         else updateEndTime(0)
+
+        viewModelScope.launch {
+            onChangeShowNotificationAtBeginning(
+                scheduleBlockRepository.showScheduleBlockNotificationAtBeginning.first()
+            )
+            onChangeShowNotificationAtEnd(
+                scheduleBlockRepository.showScheduleBlockNotificationAtEnd.first()
+            )
+        }
     }
 
     private suspend fun todoBlockOverlapsWithOtherTodoBlock(todoBlock: TodoBlock) =
