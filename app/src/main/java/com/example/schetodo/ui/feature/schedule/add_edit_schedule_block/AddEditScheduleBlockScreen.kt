@@ -49,6 +49,7 @@ import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.navigation.schedule.TodoCategoryPicker
 import com.example.schetodo.ui.navigation.schedule.TodoPicker
 import com.example.schetodo.ui.theme.SchetodoTheme
+import com.example.schetodo.ui.util.popFromCurrentBackStackEntry
 import com.example.schetodo.ui.util.showDatePicker
 import com.example.schetodo.ui.util.showTimePicker
 import com.google.accompanist.permissions.*
@@ -86,22 +87,22 @@ fun AddEditScheduleBlockScreen(
             }
         }
         launch {
-            schetodoAppState.navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Int>>(
-                TODO_PICKER_RESULT, emptyList()
-            )?.collect {
-                viewModel.onEvent(SelectTodos(it))
-                schetodoAppState.navController.currentBackStackEntry?.savedStateHandle
-                    ?.remove<List<Int>>(TODO_PICKER_RESULT)
-            }
+            schetodoAppState.navController.popFromCurrentBackStackEntry<List<Int>>(
+                key = TODO_PICKER_RESULT,
+                coroutineScope = this,
+                onPop = { todoIds ->
+                    viewModel.onEvent((SelectTodos(todoIds)))
+                }
+            )
         }
         launch {
-            schetodoAppState.navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<List<Int>>(
-                TODO_CATEGORY_PICKER_RESULT, emptyList()
-            )?.collect {
-                viewModel.onEvent(SelectTodoCategories(it))
-                schetodoAppState.navController.currentBackStackEntry?.savedStateHandle
-                    ?.remove<List<Int>>(TODO_CATEGORY_PICKER_RESULT)
-            }
+            schetodoAppState.navController.popFromCurrentBackStackEntry<List<Int>>(
+                key = TODO_CATEGORY_PICKER_RESULT,
+                coroutineScope = this,
+                onPop = { todoCategoryIds ->
+                    viewModel.onEvent((SelectTodoCategories(todoCategoryIds)))
+                }
+            )
         }
     }
 

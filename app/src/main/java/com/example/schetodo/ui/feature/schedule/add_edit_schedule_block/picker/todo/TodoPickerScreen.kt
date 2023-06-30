@@ -35,6 +35,7 @@ import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.P
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
+import com.example.schetodo.ui.util.pushOntoPreviousBackStackEntry
 import kotlinx.coroutines.launch
 
 
@@ -59,9 +60,10 @@ fun TodoPickerScreen(
         onTopBarBackButtonClick = { viewModel.navigateToPreviousCategory() },
         selectedItemCount = state.selectedItems.count(),
         onAdd = {
-            navController.previousBackStackEntry?.savedStateHandle?.apply {
-                set(TODO_PICKER_RESULT, state.selectedItems.map { it.todoId })
-            }
+            navController.pushOntoPreviousBackStackEntry(
+                TODO_PICKER_RESULT,
+                state.selectedItems.map { it.todoId }
+            )
             navController.popBackStack()
         },
         onCancel = { navController.popBackStack() }
