@@ -33,6 +33,52 @@ class TodoCategoryDaoTest {
     }
 
     @Test
+    fun test_delete_all_todo_categories_marked_for_deletion() = runTest {
+        val category1 = TodoCategory(1, "c1", 0, null, "")
+        val category2 = TodoCategory(2, "c2", 0, null, "")
+        todoCategoryDao.insertTodoCategory(category1)
+        todoCategoryDao.insertTodoCategory(category2)
+        todoCategoryDao.markTodoCategoryForDeletion(category1.categoryId)
+
+        todoCategoryDao.deleteAllTodoCategoriesMarkedForDeletion()
+
+        assertThat(todoCategoryDao.getTopLevelTodoCategories().first()).containsExactly(category2)
+    }
+
+    @Test
+    fun test_mark_todo_category_for_deletion() = runTest {
+        val category1 = TodoCategory(1, "c1", 0, null, "")
+        val category2 = TodoCategory(2, "c2", 0, null, "")
+        todoCategoryDao.insertTodoCategory(category1)
+        todoCategoryDao.insertTodoCategory(category2)
+        todoCategoryDao.markTodoCategoryForDeletion(category1.categoryId)
+
+        assertThat(
+            todoCategoryDao.getTodoCategoryById(category1.categoryId).first()?.markedForDeletion
+        ).isTrue()
+        assertThat(
+            todoCategoryDao.getTodoCategoryById(category2.categoryId).first()?.markedForDeletion
+        ).isFalse()
+    }
+
+    @Test
+    fun test_unmark_todo_category_for_deletion() = runTest {
+        val category1 = TodoCategory(1, "c1", 0, null, "")
+        val category2 = TodoCategory(2, "c2", 0, null, "", markedForDeletion = true)
+        todoCategoryDao.insertTodoCategory(category1)
+        todoCategoryDao.insertTodoCategory(category2)
+        todoCategoryDao.markTodoCategoryForDeletion(category1.categoryId)
+        todoCategoryDao.unmarkTodoCategoryForDeletion(category1.categoryId)
+
+        assertThat(
+            todoCategoryDao.getTodoCategoryById(category1.categoryId).first()?.markedForDeletion
+        ).isFalse()
+        assertThat(
+            todoCategoryDao.getTodoCategoryById(category2.categoryId).first()?.markedForDeletion
+        ).isTrue()
+    }
+
+    @Test
     fun when_deleting_category_then_also_delete_child_categories() = runTest {
         val parentCategory = TodoCategory(1, "c1", 0, null, "")
         val childCategory = TodoCategory(2, "c2", 0, parentCategory.categoryId, "")
@@ -62,22 +108,22 @@ class TodoCategoryDaoTest {
     fun test_get_top_level_todo_categories() = runTest {
         val topLevelCategory1 = TodoCategory(1, "c1", 0, null, "")
         val topLevelCategory2 = TodoCategory(2, "c2", 0, null, "")
-        val childCategory1 = TodoCategory(3, "c3", 0, 1, "")
-        val childCategory2 = TodoCategory(4, "c4", 0, 3, "")
-        val childCategory3 = TodoCategory(5, "c5", 0, 2, "")
+        val topLevelCategory3 = TodoCategory(3, "c3", 0, null, "", markedForDeletion = true)
+        val childCategory1 = TodoCategory(4, "c4", 0, 1, "")
+        val childCategory2 = TodoCategory(5, "c5", 0, 3, "")
+        val childCategory3 = TodoCategory(6, "c6", 0, 2, "")
 
         todoCategoryDao.insertTodoCategory(topLevelCategory1)
         todoCategoryDao.insertTodoCategory(topLevelCategory2)
+        todoCategoryDao.insertTodoCategory(topLevelCategory3)
         todoCategoryDao.insertTodoCategory(childCategory1)
         todoCategoryDao.insertTodoCategory(childCategory2)
         todoCategoryDao.insertTodoCategory(childCategory3)
 
-        todoCategoryDao.getTopLevelTodoCategories().test {
-            val topLevelCategories = awaitItem()
-            assertThat(topLevelCategories.size).isEqualTo(2)
-            assertThat(topLevelCategories).contains(topLevelCategory1)
-            assertThat(topLevelCategories).contains(topLevelCategory2)
-        }
+        assertThat(todoCategoryDao.getTopLevelTodoCategories().first()).containsExactly(
+            topLevelCategory1,
+            topLevelCategory2
+        )
     }
 
     @Test
@@ -85,19 +131,19 @@ class TodoCategoryDaoTest {
         val topLevelCategory1 = TodoCategory(1, "c1", 0, null, "")
         val topLevelCategory2 = TodoCategory(2, "c2", 0, null, "")
         val childCategory1 = TodoCategory(3, "c3", 0, 1, "")
-        val childCategory2 = TodoCategory(4, "c4", 0, 3, "")
-        val childCategory3 = TodoCategory(5, "c5", 0, 2, "")
+        val childCategory2 = TodoCategory(4, "c4", 0, 1, "", markedForDeletion = true)
+        val childCategory3 = TodoCategory(5, "c5", 0, 3, "")
+        val childCategory4 = TodoCategory(6, "c6", 0, 2, "")
 
         todoCategoryDao.insertTodoCategory(topLevelCategory1)
         todoCategoryDao.insertTodoCategory(topLevelCategory2)
         todoCategoryDao.insertTodoCategory(childCategory1)
         todoCategoryDao.insertTodoCategory(childCategory2)
         todoCategoryDao.insertTodoCategory(childCategory3)
+        todoCategoryDao.insertTodoCategory(childCategory4)
 
-        todoCategoryDao.getDirectChildTodoCategoriesOf(1).test {
-            val childCategories = awaitItem()
-            assertThat(childCategories.size).isEqualTo(1)
-            assertThat(childCategories).contains(childCategory1)
-        }
+        assertThat(todoCategoryDao.getDirectChildTodoCategoriesOf(1).first()).containsExactly(
+            childCategory1
+        )
     }
 }

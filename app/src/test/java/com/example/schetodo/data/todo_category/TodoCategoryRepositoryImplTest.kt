@@ -3,6 +3,8 @@ package com.example.schetodo.data.todo_category
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -17,6 +19,41 @@ internal class TodoCategoryRepositoryImplTest {
     fun init() {
         fakeTodoCategoryDao = FakeTodoCategoryDao()
         todoCategoryRepositoryImpl = TodoCategoryRepositoryImpl(fakeTodoCategoryDao)
+    }
+
+    @Test
+    fun test_mark_todo_category_for_deletion() = runTest {
+        val category1 = TodoCategory(1, "Test", 0L, null, "")
+        val category2 = TodoCategory(2, "Test", 1L, 1, "")
+        fakeTodoCategoryDao.insertTodoCategory(category1)
+        fakeTodoCategoryDao.insertTodoCategory(category2)
+
+        fakeTodoCategoryDao.markTodoCategoryForDeletion(category1.categoryId)
+
+        assertThat(
+            fakeTodoCategoryDao.getTodoCategoryById(category1.categoryId).first()?.markedForDeletion
+        ).isTrue()
+        assertThat(
+            fakeTodoCategoryDao.getTodoCategoryById(category2.categoryId).first()?.markedForDeletion
+        ).isFalse()
+    }
+
+    @Test
+    fun test_unmark_todo_category_for_deletion() = runTest {
+        val category1 = TodoCategory(1, "Test", 0L, null, "")
+        val category2 = TodoCategory(2, "Test", 1L, 1, "", markedForDeletion = true)
+        fakeTodoCategoryDao.insertTodoCategory(category1)
+        fakeTodoCategoryDao.insertTodoCategory(category2)
+
+        fakeTodoCategoryDao.markTodoCategoryForDeletion(category1.categoryId)
+        fakeTodoCategoryDao.unmarkTodoCategoryForDeletion(category1.categoryId)
+
+        assertThat(
+            fakeTodoCategoryDao.getTodoCategoryById(category1.categoryId).first()?.markedForDeletion
+        ).isFalse()
+        assertThat(
+            fakeTodoCategoryDao.getTodoCategoryById(category2.categoryId).first()?.markedForDeletion
+        ).isTrue()
     }
 
     @Test

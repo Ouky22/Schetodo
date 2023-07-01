@@ -53,4 +53,30 @@ class FakeTodoCategoryDao : TodoCategoryDao {
     override suspend fun deleteTodoCategoryById(todoCategoryId: Int) {
         todoCategories.removeIf { it.categoryId == todoCategoryId }
     }
+
+    override suspend fun markTodoCategoryForDeletion(todoCategoryId: Int) {
+        val indexOfCategoryInList = todoCategories.indexOfFirst { it.categoryId == todoCategoryId }
+
+        if (indexOfCategoryInList == -1)
+            return
+
+        val oldCategory = todoCategories.removeAt(indexOfCategoryInList)
+        val newCategory = oldCategory.copy(markedForDeletion = true)
+        todoCategories.add(newCategory)
+    }
+
+    override suspend fun unmarkTodoCategoryForDeletion(todoCategoryId: Int) {
+        val indexOfCategoryInList = todoCategories.indexOfFirst { it.categoryId == todoCategoryId }
+
+        if (indexOfCategoryInList == -1)
+            return
+
+        val oldCategory = todoCategories.removeAt(indexOfCategoryInList)
+        val newCategory = oldCategory.copy(markedForDeletion = false)
+        todoCategories.add(newCategory)
+    }
+
+    override suspend fun deleteAllTodoCategoriesMarkedForDeletion() {
+        todoCategories.removeIf { it.markedForDeletion }
+    }
 }
