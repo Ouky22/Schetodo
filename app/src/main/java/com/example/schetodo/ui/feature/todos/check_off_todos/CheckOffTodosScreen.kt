@@ -75,7 +75,7 @@ fun CheckOffTodosScreen(
                 }
                 CheckOffTodosSnackBarType.UNDO_MARK_TODO_AS_UNDONE -> {
                     snackbarHostState.showSnackbarWithActionHandler(
-                        message = "Marked as undone",
+                        message = context.getString(R.string.marked_as_undone),
                         actionLabel = context.getString(R.string.undo),
                         onActionPerformed = { viewModel.onEvent(CheckOffTodosEvent.UndoMarkTodoAsUndone) }
                     )
