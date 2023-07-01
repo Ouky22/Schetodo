@@ -25,6 +25,21 @@ internal class TodoRepositoryImplTest {
     }
 
     @Test
+    fun when_getting_todos_then_todos_marked_for_deletion_are_not_returned() = runTest {
+        val todo1 = Todo(1, "t1", TodoPriority.HIGH, TodoFlag.UNDONE, 1)
+        val todo2 = Todo(2, "t2", TodoPriority.LOW, TodoFlag.IN_PROGRESS, 1)
+        val todo3 = Todo(3, "t3", TodoPriority.LOW, TodoFlag.RECURRING, 1)
+        fakeTodoDao.insertTodo(todo1)
+        fakeTodoDao.insertTodo(todo2)
+        fakeTodoDao.insertTodo(todo3)
+
+        fakeTodoDao.markTodoForDeletion(todo1.todoId)
+
+        assertThat(todoRepositoryImpl.getTodosOfTodoCategory(1).first())
+            .containsExactly(todo2, todo3)
+    }
+
+    @Test
     fun when_initializing_repository_then_all_todos_marked_for_deletion_are_deleted() = runTest {
         val todo1 = Todo(1, "t1", TodoPriority.HIGH, TodoFlag.UNDONE, 1)
         val todo2 = Todo(2, "t2", TodoPriority.LOW, TodoFlag.IN_PROGRESS, 1)
