@@ -1,9 +1,6 @@
 package com.example.schetodo.data.todo_block
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.example.schetodo.data.todo_template.TodoTemplate
 import java.time.LocalDate
 import java.time.LocalTime
@@ -29,5 +26,7 @@ data class TodoBlock(
     val date: LocalDate?,
     val startTime: LocalTime,
     val endTime: LocalTime,
-    val templateId: Int?
+    val templateId: Int?,
+    @ColumnInfo(name = "markedForDeletion", defaultValue = "0")
+    val markedForDeletion: Boolean = false
 )
