@@ -63,4 +63,30 @@ class FakeTodoBlockDao : TodoBlockDao {
     override suspend fun deleteTodoBlockById(todoBlockId: Int) {
         todoBlocks.removeIf { it.todoBlockId == todoBlockId }
     }
+
+    override suspend fun markTodoBlockForDeletion(todoBlockId: Int) {
+        val indexOfTodoBlockInList = todoBlocks.indexOfFirst { it.todoBlockId == todoBlockId }
+
+        if (indexOfTodoBlockInList == -1)
+            return
+
+        val oldTodoBlock = todoBlocks.removeAt(indexOfTodoBlockInList)
+        val newTodoBlock = oldTodoBlock.copy(markedForDeletion = true)
+        todoBlocks.add(newTodoBlock)
+    }
+
+    override suspend fun unmarkTodoBlockForDeletion(todoBlockId: Int) {
+        val indexOfTodoBlockInList = todoBlocks.indexOfFirst { it.todoBlockId == todoBlockId }
+
+        if (indexOfTodoBlockInList == -1)
+            return
+
+        val oldTodoBlock = todoBlocks.removeAt(indexOfTodoBlockInList)
+        val newTodoBlock = oldTodoBlock.copy(markedForDeletion = false)
+        todoBlocks.add(newTodoBlock)
+    }
+
+    override suspend fun deleteAllTodoBlocksMarkedForDeletion() {
+        todoBlocks.removeIf { it.markedForDeletion }
+    }
 }

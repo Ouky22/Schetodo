@@ -55,7 +55,7 @@ internal class TodoBlockRepositoryTest {
             val newTodoBlock =
                 TodoBlock(2, "", date, LocalTime.of(9, 0), LocalTime.of(10, 1), null)
 
-            assertThat(                todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(                    newTodoBlock                )            ).isTrue()
+            assertThat(todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(newTodoBlock)).isTrue()
         }
 
     @Test
@@ -70,7 +70,7 @@ internal class TodoBlockRepositoryTest {
             val newTodoBlock =
                 TodoBlock(2, "", date, LocalTime.of(10, 59), LocalTime.of(12, 0), null)
 
-            assertThat(                todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(                    newTodoBlock                )            ).isTrue()
+            assertThat(todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(newTodoBlock)).isTrue()
         }
 
     @Test
@@ -84,7 +84,7 @@ internal class TodoBlockRepositoryTest {
         val newTodoBlock =
             TodoBlock(2, "", date, LocalTime.of(10, 0), LocalTime.of(11, 0), null)
 
-        assertThat(            todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(                newTodoBlock            )        ).isTrue()
+        assertThat(todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(newTodoBlock)).isTrue()
     }
 
     @Test
@@ -99,7 +99,7 @@ internal class TodoBlockRepositoryTest {
             val newTodoBlock =
                 TodoBlock(2, "", date, LocalTime.of(10, 1), LocalTime.of(10, 59), null)
 
-            assertThat(                todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(                    newTodoBlock                )            ).isTrue()
+            assertThat(todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(newTodoBlock)).isTrue()
         }
 
     @Test
@@ -114,7 +114,7 @@ internal class TodoBlockRepositoryTest {
             val newTodoBlock =
                 TodoBlock(2, "", date, LocalTime.of(9, 59), LocalTime.of(11, 1), null)
 
-            assertThat(                todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(                    newTodoBlock                )            ).isTrue()
+            assertThat(todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(newTodoBlock)).isTrue()
         }
 
     @Test

@@ -69,4 +69,26 @@ class FakeTodoBlockRepository : TodoBlockRepository {
     ): Boolean {
         return false
     }
+
+    override suspend fun markTodoBlockForDeletion(todoBlockId: Int) {
+        val indexOfTodoBlockInList = todoBlocks.indexOfFirst { it.todoBlockId == todoBlockId }
+
+        if (indexOfTodoBlockInList == -1)
+            return
+
+        val oldTodoBlock = todoBlocks.removeAt(indexOfTodoBlockInList)
+        val newTodoBlock = oldTodoBlock.copy(markedForDeletion = true)
+        todoBlocks.add(newTodoBlock)
+    }
+
+    override suspend fun unmarkTodoBlockForDeletion(todoBlockId: Int) {
+        val indexOfTodoBlockInList = todoBlocks.indexOfFirst { it.todoBlockId == todoBlockId }
+
+        if (indexOfTodoBlockInList == -1)
+            return
+
+        val oldTodoBlock = todoBlocks.removeAt(indexOfTodoBlockInList)
+        val newTodoBlock = oldTodoBlock.copy(markedForDeletion = false)
+        todoBlocks.add(newTodoBlock)
+    }
 }

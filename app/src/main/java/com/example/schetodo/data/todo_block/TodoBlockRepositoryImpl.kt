@@ -1,13 +1,23 @@
 package com.example.schetodo.data.todo_block
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
 class TodoBlockRepositoryImpl @Inject constructor(
     private val todoBlockDao: TodoBlockDao
 ) : TodoBlockRepository {
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            todoBlockDao.deleteAllTodoBlocksMarkedForDeletion()
+        }
+    }
+
     override fun getBlockById(todoBlockId: Int) = todoBlockDao.getTodoBlockById(todoBlockId)
 
     override fun getTodoBlocksOnDate(date: LocalDate): Flow<List<TodoBlock>> {
@@ -25,6 +35,12 @@ class TodoBlockRepositoryImpl @Inject constructor(
 
     override suspend fun updateOrInsertTodoBlock(todoBlock: TodoBlock) =
         todoBlockDao.updateOrInsertTodoBlock(todoBlock)
+
+    override suspend fun markTodoBlockForDeletion(todoBlockId: Int) =
+        todoBlockDao.markTodoBlockForDeletion(todoBlockId)
+
+    override suspend fun unmarkTodoBlockForDeletion(todoBlockId: Int) =
+        todoBlockDao.unmarkTodoBlockForDeletion(todoBlockId)
 
     override suspend fun deleteTodoBlock(todoBlock: TodoBlock) =
         todoBlockDao.deleteTodoBlock(todoBlock)

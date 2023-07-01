@@ -15,4 +15,7 @@ interface TodoBlockRepository {
     suspend fun todoBlockOverlapsWithOtherTodoBlock(
         todoBlock: TodoBlock, exceptOfTodoBlockId: Int? = null
     ): Boolean
+
+    suspend fun markTodoBlockForDeletion(todoBlockId: Int)
+    suspend fun unmarkTodoBlockForDeletion(todoBlockId: Int)
 }

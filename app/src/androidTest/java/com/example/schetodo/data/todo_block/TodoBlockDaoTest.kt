@@ -35,6 +35,67 @@ class TodoBlockDaoTest {
         db.close()
     }
 
+    @Test
+    fun when_getting_todo_blocks_then_todo_blocks_marked_for_deletion_are_not_returned() = runTest {
+        val date = LocalDate.of(2023, 2, 1)
+        val todoBlock1 = TodoBlock(1, null, date, testTime, testTime, null)
+        val todoBlock2 = TodoBlock(2, null, date, testTime, testTime, null)
+        todoBlockDao.insertTodoBlock(todoBlock1)
+        todoBlockDao.insertTodoBlock(todoBlock2)
+        todoBlockDao.markTodoBlockForDeletion(todoBlock1.todoBlockId)
+
+        assertThat(todoBlockDao.getAllTodoBlocks().first()).containsExactly(todoBlock2)
+        assertThat(todoBlockDao.getTodoBlocksOnDate(date.toEpochDay()).first())
+            .containsExactly(todoBlock2)
+    }
+
+    @Test
+    fun test_delete_all_todo_blocks_marked_for_deletion() = runTest {
+        val todoBlock1 = TodoBlock(1, null, null, testTime, testTime, null)
+        val todoBlock2 = TodoBlock(2, "", null, testTime, testTime, null)
+        todoBlockDao.insertTodoBlock(todoBlock1)
+        todoBlockDao.insertTodoBlock(todoBlock2)
+        todoBlockDao.markTodoBlockForDeletion(todoBlock1.todoBlockId)
+
+        todoBlockDao.deleteAllTodoBlocksMarkedForDeletion()
+
+        assertThat(todoBlockDao.getAllTodoBlocks().first()).containsExactly(todoBlock2)
+    }
+
+    @Test
+    fun test_mark_todo_block_for_deletion() = runTest {
+        val todoBlock1 = TodoBlock(1, null, null, testTime, testTime, null)
+        val todoBlock2 = TodoBlock(2, "", null, testTime, testTime, null)
+        todoBlockDao.insertTodoBlock(todoBlock1)
+        todoBlockDao.insertTodoBlock(todoBlock2)
+
+        todoBlockDao.markTodoBlockForDeletion(todoBlock1.todoBlockId)
+
+        assertThat(
+            todoBlockDao.getTodoBlockById(todoBlock1.todoBlockId).first()?.markedForDeletion
+        ).isTrue()
+        assertThat(
+            todoBlockDao.getTodoBlockById(todoBlock2.todoBlockId).first()?.markedForDeletion
+        ).isFalse()
+    }
+
+    @Test
+    fun test_unmark_todo_block_for_deletion() = runTest {
+        val todoBlock1 = TodoBlock(1, null, null, testTime, testTime, null)
+        val todoBlock2 = TodoBlock(2, "", null, testTime, testTime, null, markedForDeletion = true)
+        todoBlockDao.insertTodoBlock(todoBlock1)
+        todoBlockDao.insertTodoBlock(todoBlock2)
+
+        todoBlockDao.markTodoBlockForDeletion(todoBlock1.todoBlockId)
+        todoBlockDao.unmarkTodoBlockForDeletion(todoBlock1.todoBlockId)
+
+        assertThat(
+            todoBlockDao.getTodoBlockById(todoBlock1.todoBlockId).first()?.markedForDeletion
+        ).isFalse()
+        assertThat(
+            todoBlockDao.getTodoBlockById(todoBlock2.todoBlockId).first()?.markedForDeletion
+        ).isTrue()
+    }
 
     @Test
     fun when_deleting_todo_block_by_id_and_todo_block_exists_then_delete_it() = runTest {
