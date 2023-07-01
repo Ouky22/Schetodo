@@ -25,9 +25,10 @@ import com.example.schetodo.data.todo_template.TodoTemplate
         Todo::class, TodoBlock::class, TodoCategory::class, TodoTemplate::class, Notification::class,
         TodoBlockCategoryRelationship::class, TodoBlockTodoRelationship::class
     ],
-    version = 4,
+    version = 5,
     autoMigrations = [
-        AutoMigration(from = 3, to = 4)
+        AutoMigration(from = 3, to = 4),
+        AutoMigration(from = 4, to = 5)
     ]
 )
 @androidx.room.TypeConverters(RoomTypeConverters::class)

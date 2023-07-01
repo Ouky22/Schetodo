@@ -1,5 +1,6 @@
 package com.example.schetodo.data.todo_category
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -20,5 +21,7 @@ data class TodoCategory(
     val name: String,
     val color: Long,
     val parentTodoCategoryId: Int?,
-    val iconName: String
+    val iconName: String,
+    @ColumnInfo(name = "markedForDeletion", defaultValue = "0")
+    val markedForDeletion: Boolean = false
 )
