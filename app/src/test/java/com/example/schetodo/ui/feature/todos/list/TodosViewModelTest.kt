@@ -23,6 +23,26 @@ internal class TodosViewModelTest {
     private val fakeTodoRepository = FakeTodoRepository()
     private val fakeTodoCategoryRepository = FakeTodoCategoryRepository()
 
+
+    @Test
+    fun test_unmark_todo_for_deletion() = runTest {
+        val todo1 = Todo(1, "t1", TodoPriority.HIGH, TodoFlag.UNDONE, 1)
+        val todo2 = Todo(2, "t2", TodoPriority.LOW, TodoFlag.IN_PROGRESS, 1)
+        val todo3 = Todo(3, "t3", TodoPriority.LOW, TodoFlag.RECURRING, 1)
+        fakeTodoRepository.insertTodo(todo1)
+        fakeTodoRepository.insertTodo(todo2)
+        fakeTodoRepository.insertTodo(todo3)
+        fakeTodoRepository.markTodoForDeletion(todo1.todoId)
+        val viewModel = TodosViewModel(fakeTodoRepository, fakeTodoCategoryRepository)
+
+        viewModel.onEvent(TodosEvent.UnmarkTodoForDeletion(todo1.todoId))
+        advanceUntilIdle()
+
+        assertThat(
+            fakeTodoRepository.getTodoById(todo1.todoId).first()?.markedForDeletion
+        ).isFalse()
+    }
+
     @Test
     fun when_current_category_is_null_then_todo_can_not_be_added() = runTest {
         val viewModel = TodosViewModel(fakeTodoRepository, fakeTodoCategoryRepository)

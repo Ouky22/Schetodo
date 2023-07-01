@@ -46,6 +46,13 @@ class TodosViewModel @Inject constructor(
             is NavigateToAddTodoCategoryScreen -> onNavigateToAddTodoCategoryScreen()
             is NavigateToAddTodoScreen -> onNavigateToAddTodoScreen()
             is ChangeTodoFilterSettings -> onChangeTodoFilterSettings(event.newFilterSettings)
+            is UnmarkTodoForDeletion -> onUnmarkTodoForDeletion(event.todoId)
+        }
+    }
+
+    private fun onUnmarkTodoForDeletion(todoId: Int) {
+        viewModelScope.launch {
+            todoRepository.unmarkTodoForDeletion(todoId)
         }
     }
 

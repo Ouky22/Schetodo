@@ -52,7 +52,8 @@ fun NavGraphBuilder.todosNavGraph(
                 },
                 onEditTodo = { todoId ->
                     schetodoAppState.navController.navigateToEditTodoScreen(todoId)
-                }
+                },
+                schetodoAppSate = schetodoAppState
             )
         }
         composable(route = CheckOffTodos.route) {

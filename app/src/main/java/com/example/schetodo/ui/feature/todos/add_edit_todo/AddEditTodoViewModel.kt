@@ -33,7 +33,8 @@ class AddEditTodoViewModel @Inject constructor(
         get() = _closeAddEditTodoScreen.asStateFlow()
 
     private var parentTodoCategoryId = 0
-    private var todoId = 0
+    var todoId = 0
+        private set
 
     init {
         val todoIdForEditing = savedStateHandle.get<Int>(EditTodo.todoId)
@@ -53,16 +54,16 @@ class AddEditTodoViewModel @Inject constructor(
             is AddEditTodoEvent.ChangeTodoFlag -> onChangeTodoFlag(event.todoFlag)
             is AddEditTodoEvent.SaveTodo -> onSaveTodo()
             is AddEditTodoEvent.CloseScreen -> _closeAddEditTodoScreen.value = true
-            is AddEditTodoEvent.DeleteTodo -> onDeleteTodo()
+            is AddEditTodoEvent.MarkTodoForDeletion -> onMarkTodoForDeletion()
         }
     }
 
-    private fun onDeleteTodo() {
+    private fun onMarkTodoForDeletion() {
         if (!_addEditTodoState.value.inEditingMode)
-            throw UnsupportedOperationException("Cannot remove Todo in adding mode")
+            throw UnsupportedOperationException("Cannot delete Todo in adding mode")
 
         viewModelScope.launch {
-            todoRepository.deleteTodoById(todoId)
+            todoRepository.markTodoForDeletion(todoId)
             _closeAddEditTodoScreen.value = true
         }
     }

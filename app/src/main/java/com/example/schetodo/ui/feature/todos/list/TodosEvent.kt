@@ -10,4 +10,5 @@ sealed class TodosEvent {
     object NavigateToAddTodoScreen : TodosEvent()
     object CloseAddCategoryOrTodoDialog : TodosEvent()
     data class ChangeTodoFilterSettings(val newFilterSettings: TodoFilterSettings) : TodosEvent()
+    data class UnmarkTodoForDeletion(val todoId: Int) : TodosEvent()
 }

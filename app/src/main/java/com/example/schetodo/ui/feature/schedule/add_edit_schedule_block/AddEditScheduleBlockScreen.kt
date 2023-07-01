@@ -89,7 +89,6 @@ fun AddEditScheduleBlockScreen(
         launch {
             schetodoAppState.navController.popFromCurrentBackStackEntry<List<Int>>(
                 key = TODO_PICKER_RESULT,
-                coroutineScope = this,
                 onPop = { todoIds ->
                     viewModel.onEvent((SelectTodos(todoIds)))
                 }
@@ -98,7 +97,6 @@ fun AddEditScheduleBlockScreen(
         launch {
             schetodoAppState.navController.popFromCurrentBackStackEntry<List<Int>>(
                 key = TODO_CATEGORY_PICKER_RESULT,
-                coroutineScope = this,
                 onPop = { todoCategoryIds ->
                     viewModel.onEvent((SelectTodoCategories(todoCategoryIds)))
                 }

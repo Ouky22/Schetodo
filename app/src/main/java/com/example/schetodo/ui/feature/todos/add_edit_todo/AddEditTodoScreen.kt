@@ -27,6 +27,10 @@ import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.feature.todos.getIconByName
 import com.example.schetodo.ui.feature.todos.getTodoPriorityColorOf
 import com.example.schetodo.ui.theme.SchetodoTheme
+import com.example.schetodo.ui.util.pushOntoPreviousBackStackEntry
+
+
+const val ID_OF_TODO_MARKED_FOR_DELETION = "deleted_todo_id"
 
 @Composable
 @ExperimentalMaterial3Api
@@ -61,7 +65,12 @@ fun AddEditTodoScreen(
         onTodoFlagChanged = { viewModel.onEvent(AddEditTodoEvent.ChangeTodoFlag(it)) },
         onClose = { viewModel.onEvent(AddEditTodoEvent.CloseScreen) },
         onSave = { viewModel.onEvent(AddEditTodoEvent.SaveTodo) },
-        onDelete = { viewModel.onEvent(AddEditTodoEvent.DeleteTodo) },
+        onDelete = {
+            schetodoAppState.navController.pushOntoPreviousBackStackEntry(
+                ID_OF_TODO_MARKED_FOR_DELETION, viewModel.todoId
+            )
+            viewModel.onEvent(AddEditTodoEvent.MarkTodoForDeletion)
+        },
         modifier = modifier
     )
 }

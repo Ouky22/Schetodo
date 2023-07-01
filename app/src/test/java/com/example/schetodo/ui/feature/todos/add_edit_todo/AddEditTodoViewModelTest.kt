@@ -29,7 +29,7 @@ internal class AddEditTodoViewModelTest {
     private val fakeTodoCategoryRepository = FakeTodoCategoryRepository()
 
     @Test
-    fun when_in_editing_mode_and_delete_todo_event_happens_then_delete_todo() = runTest {
+    fun when_in_editing_mode_and_mark_todo_for_deletion_then_todo_marked_for_deletion() = runTest {
         val category = TodoCategory(1, "test category", 0, null, "icon")
         val todo = Todo(1, "test", TodoPriority.HIGH, TodoFlag.UNDONE, category.categoryId)
         fakeTodoCategoryRepository.insertTodoCategory(category)
@@ -39,9 +39,9 @@ internal class AddEditTodoViewModelTest {
         val viewModel =
             AddEditTodoViewModel(fakeTodoRepository, fakeTodoCategoryRepository, savedStateHandle)
 
-        viewModel.onEvent(AddEditTodoEvent.DeleteTodo)
+        viewModel.onEvent(AddEditTodoEvent.MarkTodoForDeletion)
 
-        assertThat(fakeTodoRepository.getTodoById(todo.todoId).first()).isNull()
+        assertThat(fakeTodoRepository.getTodoById(todo.todoId).first()?.markedForDeletion).isTrue()
         assertThat(viewModel.closeAddEditTodoScreen.value).isTrue()
     }
 
@@ -54,7 +54,7 @@ internal class AddEditTodoViewModelTest {
         val viewModel =
             AddEditTodoViewModel(fakeTodoRepository, fakeTodoCategoryRepository, savedStateHandle)
 
-        assertThrows(Exception::class.java) { viewModel.onEvent(AddEditTodoEvent.DeleteTodo) }
+        assertThrows(Exception::class.java) { viewModel.onEvent(AddEditTodoEvent.MarkTodoForDeletion) }
     }
 
     @Test

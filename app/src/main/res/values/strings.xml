@@ -69,4 +69,5 @@
     <string name="notification_permission">Notification Permission</string>
     <string name="notification_permission_rationale">Allow Schetodo to send notifications to get notified about schedule blocks</string>
     <string name="marked_as_undone">Marked as undone</string>
+    <string name="deleted_todo">Deleted todo</string>
 </resources>
