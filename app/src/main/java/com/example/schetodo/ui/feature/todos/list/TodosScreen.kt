@@ -1,6 +1,5 @@
 package com.example.schetodo.ui.feature.todos.list
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import com.example.schetodo.ui.feature.todos.list.TodosEvent.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Category
@@ -39,8 +37,10 @@ import com.example.schetodo.ui.components.CategoryItem
 import com.example.schetodo.ui.components.OverflowMenu
 import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.components.TodoItem
+import com.example.schetodo.ui.feature.todos.add_edit_category.ID_OF_TODO_CATEGORY_MARKED_FOR_DELETION
 import com.example.schetodo.ui.feature.todos.add_edit_todo.ID_OF_TODO_MARKED_FOR_DELETION
 import com.example.schetodo.ui.feature.todos.getIconByName
+import com.example.schetodo.ui.feature.todos.list.TodosEvent.*
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.popFromCurrentBackStackEntry
 import com.example.schetodo.ui.util.showSnackbarWithActionHandler
@@ -95,6 +95,22 @@ fun TodosScreen(
                         message = context.getString(R.string.deleted_todo),
                         actionLabel = context.getString(R.string.undo),
                         onActionPerformed = { viewModel.onEvent(UnmarkTodoForDeletion(todoId)) }
+                    )
+                }
+            )
+        }
+        launch {
+            schetodoAppSate.navController.popFromCurrentBackStackEntry<Int>(
+                key = ID_OF_TODO_CATEGORY_MARKED_FOR_DELETION,
+                onPop = { categoryId ->
+                    snackbarHostState.showSnackbarWithActionHandler(
+                        message = context.getString(R.string.deleted_todo_category),
+                        actionLabel = context.getString(R.string.undo),
+                        onActionPerformed = {
+                            viewModel.onEvent(
+                                UnmarkTodoCategoryForDeletion(categoryId)
+                            )
+                        }
                     )
                 }
             )

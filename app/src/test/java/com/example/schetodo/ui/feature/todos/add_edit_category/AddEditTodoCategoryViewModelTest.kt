@@ -29,7 +29,7 @@ internal class AddEditTodoCategoryViewModelTest {
     private val fakeTodoCategoryRepository = FakeTodoCategoryRepository()
 
     @Test
-    fun when_deleting_todo_category_then_todo_category_is_deleted_and_screen_closed() = runTest {
+    fun test_marking_todo_category_for_deletion() = runTest {
         val todoCategory = TodoCategory(1, "Test", 0xffeeddaa, null, "Icon")
         fakeTodoCategoryRepository.insertTodoCategory(todoCategory)
         val savedStateHandle = SavedStateHandle(
@@ -37,11 +37,12 @@ internal class AddEditTodoCategoryViewModelTest {
         )
         val viewModel = AddEditTodoCategoryViewModel(fakeTodoCategoryRepository, savedStateHandle)
 
-        viewModel.onEvent(AddEditTodoCategoryEvent.DeleteTodoCategory)
+        viewModel.onEvent(AddEditTodoCategoryEvent.MarkTodoCategoryForDeletion)
 
         assertThat(
-            fakeTodoCategoryRepository.getTodoCategory(todoCategory.categoryId).first()
-        ).isNull()
+            fakeTodoCategoryRepository.getTodoCategory(todoCategory.categoryId)
+                .first()?.markedForDeletion
+        ).isTrue()
         assertThat(viewModel.closeAddEditTodoCategoryScreen.first()).isTrue()
     }
 

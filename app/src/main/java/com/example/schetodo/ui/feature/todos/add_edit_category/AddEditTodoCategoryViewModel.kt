@@ -49,7 +49,8 @@ class AddEditTodoCategoryViewModel @Inject constructor(
     var showIconPicker by mutableStateOf(false)
         private set
 
-    private var todoCategoryId: Int = 0
+    var todoCategoryId: Int = 0
+        private set
 
     private var parentTodoCategoryId: Int? = null
 
@@ -74,7 +75,7 @@ class AddEditTodoCategoryViewModel @Inject constructor(
             is AddEditTodoCategoryEvent.SaveTodoCategory -> saveTodoCategory()
             is AddEditTodoCategoryEvent.ShowColorPicker -> onShowColorPicker()
             is AddEditTodoCategoryEvent.ShowIconPicker -> onShowIconPicker()
-            is AddEditTodoCategoryEvent.DeleteTodoCategory -> onDeleteTodoCategory()
+            is AddEditTodoCategoryEvent.MarkTodoCategoryForDeletion -> onMarkTodoCategoryForDeletion()
         }
     }
 
@@ -124,12 +125,12 @@ class AddEditTodoCategoryViewModel @Inject constructor(
         showInvalidTodoCategoryNameError = false
     }
 
-    private fun onDeleteTodoCategory() {
+    private fun onMarkTodoCategoryForDeletion() {
         if (!inEditingMode)
             return
 
         viewModelScope.launch {
-            todoCategoryRepository.deleteTodoCategory(todoCategoryId)
+            todoCategoryRepository.markTodoCategoryForDeletion(todoCategoryId)
             _closeAddEditTodoCategoryScreen.value = true
         }
     }

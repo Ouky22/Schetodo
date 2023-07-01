@@ -7,5 +7,5 @@ sealed class AddEditTodoCategoryEvent {
     object ShowColorPicker: AddEditTodoCategoryEvent()
     object ShowIconPicker: AddEditTodoCategoryEvent()
     object SaveTodoCategory: AddEditTodoCategoryEvent()
-    object DeleteTodoCategory: AddEditTodoCategoryEvent()
+    object MarkTodoCategoryForDeletion: AddEditTodoCategoryEvent()
 }

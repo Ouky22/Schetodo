@@ -24,7 +24,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.example.schetodo.R
 import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.ElementPickerDialog
@@ -32,6 +31,9 @@ import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.AddEditTopBar
 import com.example.schetodo.ui.feature.todos.*
 import com.example.schetodo.ui.theme.SchetodoTheme
+import com.example.schetodo.ui.util.pushOntoPreviousBackStackEntry
+
+const val ID_OF_TODO_CATEGORY_MARKED_FOR_DELETION = "deleted_todo_category_id"
 
 @ExperimentalMaterial3Api
 @Composable
@@ -75,7 +77,12 @@ fun AddEditTodoCategoryScreen(
             schetodoAppState.navController.popBackStack()
         },
         onSaveClicked = { viewModel.onEvent(AddEditTodoCategoryEvent.SaveTodoCategory) },
-        onDeleteClick = { viewModel.onEvent(AddEditTodoCategoryEvent.DeleteTodoCategory) },
+        onDeleteClick = {
+            schetodoAppState.navController.pushOntoPreviousBackStackEntry(
+                ID_OF_TODO_CATEGORY_MARKED_FOR_DELETION, viewModel.todoCategoryId
+            )
+            viewModel.onEvent(AddEditTodoCategoryEvent.MarkTodoCategoryForDeletion)
+        },
         onIconSelectionClick = { viewModel.onEvent(AddEditTodoCategoryEvent.ShowIconPicker) },
         onColorSelectionClick = { viewModel.onEvent(AddEditTodoCategoryEvent.ShowColorPicker) }
     )
