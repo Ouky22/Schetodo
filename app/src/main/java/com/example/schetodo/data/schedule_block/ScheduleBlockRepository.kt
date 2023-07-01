@@ -9,4 +9,5 @@ interface ScheduleBlockRepository {
     suspend fun insertOrUpdateScheduleBlock(scheduleBlock: ScheduleBlock)
     val showScheduleBlockNotificationAtEnd: Flow<Boolean>
     val showScheduleBlockNotificationAtBeginning: Flow<Boolean>
+    suspend fun unmarkTodoBlockForDeletion(todoBlockId: Int)
 }

@@ -44,7 +44,8 @@ fun NavGraphBuilder.scheduleNavGraph(
                         startTimeStamp,
                         endTimeStamp
                     )
-                }
+                },
+                schetodoAppState = schetodoAppState
             )
         }
         composable(

@@ -16,6 +16,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 import com.example.schetodo.ui.feature.schedule.list.ScheduleEvent.*
+import com.example.schetodo.ui.feature.schedule.notification.TodoBlockNotificationScheduler
 import kotlinx.coroutines.flow.*
 import java.time.LocalTime
 import java.time.format.FormatStyle
@@ -23,7 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
-    private val scheduleBlockRepository: ScheduleBlockRepository
+    private val scheduleBlockRepository: ScheduleBlockRepository,
+    private val todoBlockNotificationScheduler: TodoBlockNotificationScheduler
 ) : ViewModel() {
 
     private var currentDate = LocalDate.now()
@@ -49,6 +51,14 @@ class ScheduleViewModel @Inject constructor(
             is GoToNextDate -> goToNextDate()
             is GoToPreviousDate -> goToPreviousDate()
             is GoToCurrentDate -> goToCurrentDate()
+            is UnmarkTodoBlockForDeletion -> onUnmarkTodoBlockForDeletion(event.todoBlockId)
+        }
+    }
+
+    private fun onUnmarkTodoBlockForDeletion(todoBlockId: Int) {
+        viewModelScope.launch {
+            scheduleBlockRepository.unmarkTodoBlockForDeletion(todoBlockId)
+            todoBlockNotificationScheduler.scheduleNextNotificationIfExists()
         }
     }
 

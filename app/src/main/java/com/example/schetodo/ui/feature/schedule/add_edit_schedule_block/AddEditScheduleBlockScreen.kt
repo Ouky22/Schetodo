@@ -30,7 +30,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
-import androidx.navigation.NavController
 import com.example.schetodo.R
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoFlag
@@ -50,10 +49,13 @@ import com.example.schetodo.ui.navigation.schedule.TodoCategoryPicker
 import com.example.schetodo.ui.navigation.schedule.TodoPicker
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.popFromCurrentBackStackEntry
+import com.example.schetodo.ui.util.pushOntoPreviousBackStackEntry
 import com.example.schetodo.ui.util.showDatePicker
 import com.example.schetodo.ui.util.showTimePicker
 import com.google.accompanist.permissions.*
 import kotlinx.coroutines.launch
+
+const val ID_OF_TODO_BLOCK_MARKED_FOR_DELETION = "deleted_todo_block_id"
 
 @Composable
 fun AddEditScheduleBlockScreen(
@@ -155,7 +157,12 @@ fun AddEditScheduleBlockScreen(
         onRemoveTodo = { viewModel.onEvent(RemoveSelectedTodo(it)) },
         onRemoveCategory = { viewModel.onEvent(RemoveSelectedTodoCategory(it)) },
         onSave = { viewModel.onEvent(SaveScheduleBlock) },
-        onDelete = { viewModel.onEvent(DeleteScheduleBlock) },
+        onDelete = {
+            schetodoAppState.navController.pushOntoPreviousBackStackEntry(
+                ID_OF_TODO_BLOCK_MARKED_FOR_DELETION, viewModel.todoBlockId
+            )
+            viewModel.onEvent(MarkScheduleBlockForDeletion)
+        },
         onClose = { schetodoAppState.navController.popBackStack() }
     )
 

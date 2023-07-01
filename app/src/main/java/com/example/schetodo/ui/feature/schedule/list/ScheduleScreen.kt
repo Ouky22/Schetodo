@@ -8,10 +8,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -21,11 +24,16 @@ import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_category.TodoCategory
+import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.SchetodoTopAppBar
+import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.ID_OF_TODO_BLOCK_MARKED_FOR_DELETION
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.UiText
 import com.example.schetodo.ui.feature.schedule.list.ScheduleEvent.*
+import com.example.schetodo.ui.util.popFromCurrentBackStackEntry
+import com.example.schetodo.ui.util.showSnackbarWithActionHandler
+import kotlinx.coroutines.launch
 import java.time.LocalTime
 
 @Composable
@@ -34,12 +42,33 @@ fun ScheduleScreen(
     viewModel: ScheduleViewModel,
     onAddScheduleBlockNavigation: (dateStamp: Long) -> Unit,
     onEditScheduleBlockNavigation: (todoBlockId: Int) -> Unit,
-    onAddScheduleBlockInGapNavigation: (dateStamp: Long, startTimeStamp: Int, endTimeStamp: Int) -> Unit
+    onAddScheduleBlockInGapNavigation: (dateStamp: Long, startTimeStamp: Int, endTimeStamp: Int) -> Unit,
+    schetodoAppState: SchetodoAppState
 ) {
     val state by viewModel.scheduleState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+
+    LaunchedEffect(true) {
+        launch {
+            schetodoAppState.navController.popFromCurrentBackStackEntry<Int>(
+                key = ID_OF_TODO_BLOCK_MARKED_FOR_DELETION,
+                onPop = { todoBlockId ->
+                    snackbarHostState.showSnackbarWithActionHandler(
+                        message = context.getString(R.string.deleted_schedule_block),
+                        actionLabel = context.getString(R.string.undo),
+                        onActionPerformed = {
+                            viewModel.onEvent(UnmarkTodoBlockForDeletion(todoBlockId))
+                        }
+                    )
+                }
+            )
+        }
+    }
 
     ScheduleScreen(
         modifier = modifier,
+        snackbarHostState = snackbarHostState,
         scheduleListItems = state.scheduleListItems,
         currentDate = state.currentDate,
         onPreviousDateButtonClick = { viewModel.onEvent(GoToPreviousDate) },
@@ -62,6 +91,7 @@ fun ScheduleScreen(
 @Composable
 fun ScheduleScreen(
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
     scheduleListItems: List<ScheduleListItem>,
     currentDate: String,
     onPreviousDateButtonClick: () -> Unit,
@@ -95,7 +125,8 @@ fun ScheduleScreen(
                     contentDescription = stringResource(R.string.add_new_schedule_block)
                 )
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { contentPadding ->
         Column(
             modifier = modifier.padding(contentPadding),
@@ -201,6 +232,7 @@ fun ScheduleScreenPreview() {
     SchetodoTheme {
         ScheduleScreen(
             modifier = Modifier.fillMaxSize(),
+            snackbarHostState = remember { SnackbarHostState() },
             scheduleListItems = createTodoBlocksForPreview(),
             currentDate = "2023-02-01",
             onPreviousDateButtonClick = {},

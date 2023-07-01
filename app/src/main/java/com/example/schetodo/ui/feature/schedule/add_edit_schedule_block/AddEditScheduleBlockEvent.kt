@@ -14,7 +14,7 @@ sealed class AddEditScheduleBlockEvent {
     data class RemoveSelectedTodo(val todo: Todo) : AddEditScheduleBlockEvent()
     data class SelectTodoCategories(val todoCategoryIds: List<Int>) : AddEditScheduleBlockEvent()
     data class RemoveSelectedTodoCategory(val category: TodoCategory) : AddEditScheduleBlockEvent()
-    object DeleteScheduleBlock : AddEditScheduleBlockEvent()
+    object MarkScheduleBlockForDeletion : AddEditScheduleBlockEvent()
     object SaveScheduleBlock : AddEditScheduleBlockEvent()
     data class ChangeShowNotificationAtBeginning(
         val showNotification: Boolean

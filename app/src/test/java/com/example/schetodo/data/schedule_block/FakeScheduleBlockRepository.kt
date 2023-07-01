@@ -43,4 +43,19 @@ class FakeScheduleBlockRepository : ScheduleBlockRepository {
         get() = flow {
             emit(false)
         }
+
+    override suspend fun unmarkTodoBlockForDeletion(todoBlockId: Int) {
+        val indexOfTodoBlockInList = scheduleBlocks.indexOfFirst {
+            it.todoBlock.todoBlockId == todoBlockId
+        }
+
+        if (indexOfTodoBlockInList == -1)
+            return
+
+        val oldScheduleBlock = scheduleBlocks.removeAt(indexOfTodoBlockInList)
+        val newScheduleBlock = oldScheduleBlock.copy(
+            todoBlock = oldScheduleBlock.todoBlock.copy(markedForDeletion = false)
+        )
+        scheduleBlocks.add(newScheduleBlock)
+    }
 }

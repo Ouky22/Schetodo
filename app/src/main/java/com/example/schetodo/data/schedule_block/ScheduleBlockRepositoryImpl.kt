@@ -10,7 +10,10 @@ import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo_block.TodoBlockDao
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.user_preferences.UserPreferencesRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -24,6 +27,16 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
     private val notificationRepository: NotificationRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ScheduleBlockRepository {
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            todoBlockDao.deleteAllTodoBlocksMarkedForDeletion()
+        }
+    }
+
+    override suspend fun unmarkTodoBlockForDeletion(todoBlockId: Int) {
+        todoBlockDao.unmarkTodoBlockForDeletion(todoBlockId)
+    }
 
     override fun getScheduleBlocksOnDate(date: LocalDate) =
         scheduleBlockDao.getScheduleBlocksOnDate(date.toEpochDay())

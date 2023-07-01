@@ -8,11 +8,11 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ScheduleBlockDao {
     @Transaction
-    @Query("SELECT * FROM TodoBlock")
+    @Query("SELECT * FROM TodoBlock WHERE markedForDeletion = 0")
     fun getScheduleBlocks(): Flow<List<ScheduleBlock>>
 
     @Transaction
-    @Query("SELECT * FROM TodoBlock WHERE date = :dateStampInDays")
+    @Query("SELECT * FROM TodoBlock WHERE date = :dateStampInDays AND markedForDeletion = 0")
     fun getScheduleBlocksOnDate(dateStampInDays: Long): Flow<List<ScheduleBlock>>
 
     @Transaction

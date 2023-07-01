@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.schetodo.R
 import com.example.schetodo.data.notification.Notification
-import com.example.schetodo.data.notification.NotificationRepository
 import com.example.schetodo.data.schedule_block.ScheduleBlock
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.data.todo.Todo
@@ -53,7 +52,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
     val closeAddEditScheduleBlockScreen: StateFlow<Boolean>
         get() = _closeAddEditScheduleBlockScreen.asStateFlow()
 
-    private val todoBlockId: Int
+    val todoBlockId: Int
     private var todoBlockTemplateId: Int? = null
 
     private lateinit var scheduleBlockDate: LocalDate
@@ -81,7 +80,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
             is SelectTodoCategories -> addSelectedTodoCategories(event.todoCategoryIds)
             is RemoveSelectedTodoCategory -> removeSelectedTodoCategory(event.category)
             is SaveScheduleBlock -> saveScheduleBlock()
-            is DeleteScheduleBlock -> deleteScheduleBlock()
+            is MarkScheduleBlockForDeletion -> onMarkScheduleBlockForDeletion()
             is ChangeShowNotificationAtBeginning -> onChangeShowNotificationAtBeginning(event.showNotification)
             is ChangeShowNotificationAtEnd -> onChangeShowNotificationAtEnd(event.showNotification)
         }
@@ -99,12 +98,12 @@ class AddEditScheduleBlockViewModel @Inject constructor(
         )
     }
 
-    private fun deleteScheduleBlock() {
+    private fun onMarkScheduleBlockForDeletion() {
         if (!state.inEditingMode)
             return
 
         viewModelScope.launch {
-            todoBlockRepository.deleteTodoBlockById(todoBlockId)
+            todoBlockRepository.markTodoBlockForDeletion(todoBlockId)
             todoBlockNotificationScheduler.scheduleNextNotificationIfExists()
             _closeAddEditScheduleBlockScreen.value = true
         }

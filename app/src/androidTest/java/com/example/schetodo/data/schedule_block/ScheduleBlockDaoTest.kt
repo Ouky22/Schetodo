@@ -68,6 +68,27 @@ class ScheduleBlockDaoTest {
     }
 
     @Test
+    fun when_getting_schedule_blocks_then_blocks_marked_for_deletion_are_not_returned() = runTest {
+        val todoCategory1 = TodoCategory(1, "category 1", 0, null, "")
+        val todo1 = Todo(1, "todo 1", TodoPriority.HIGH, TodoFlag.DONE, todoCategory1.categoryId)
+        val date = LocalDate.of(2023, 2, 1)
+        val todoBlock1 = TodoBlock(1, null, date, testTime, testTime, null)
+        val todoBlock2 = TodoBlock(2, null, date, testTime, testTime, null)
+        todoCategoryDao.insertTodoCategory(todoCategory1)
+        todoDao.insertTodo(todo1)
+        todoBlockDao.insertTodoBlock(todoBlock1)
+        todoBlockDao.insertTodoBlock(todoBlock2)
+        todoBlockDao.markTodoBlockForDeletion(todoBlock1.todoBlockId)
+
+        assertThat(
+            scheduleBlockDao.getScheduleBlocks().first().map { it.todoBlock }
+        ).containsExactly(todoBlock2)
+        assertThat(
+            scheduleBlockDao.getScheduleBlocksOnDate(date.toEpochDay()).first().map { it.todoBlock }
+        ).containsExactly(todoBlock2)
+    }
+
+    @Test
     fun when_getting_schedule_block_by_todo_block_id_and_id_invalid_then_return_null() =
         runTest {
             initDbWithTestData()
