@@ -1,9 +1,6 @@
 package com.example.schetodo.data.todo
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.example.schetodo.data.todo_category.TodoCategory
 
 @Entity(
@@ -25,7 +22,9 @@ data class Todo(
     val description: String,
     val priority: TodoPriority,
     val flag: TodoFlag,
-    val categoryId: Int
+    val categoryId: Int,
+    @ColumnInfo(name = "markedForDeletion", defaultValue = "0")
+    val markedForDeletion: Boolean = false
 )
 
 enum class TodoFlag {

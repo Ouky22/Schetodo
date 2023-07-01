@@ -1,6 +1,7 @@
 package com.example.schetodo.data
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -24,8 +25,10 @@ import com.example.schetodo.data.todo_template.TodoTemplate
         Todo::class, TodoBlock::class, TodoCategory::class, TodoTemplate::class, Notification::class,
         TodoBlockCategoryRelationship::class, TodoBlockTodoRelationship::class
     ],
-    version = 3,
-    exportSchema = false
+    version = 4,
+    autoMigrations = [
+        AutoMigration(from = 3, to = 4)
+    ]
 )
 @androidx.room.TypeConverters(RoomTypeConverters::class)
 abstract class SchetodoDatabase : RoomDatabase() {
