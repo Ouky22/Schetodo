@@ -1,7 +1,7 @@
 package com.example.schetodo.data.todo
 
 import com.example.schetodo.data.user_preferences.UserPreferencesRepository
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -11,6 +11,12 @@ class TodoRepositoryImpl @Inject constructor(
     private val todoDao: TodoDao,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : TodoRepository {
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            todoDao.deleteAllTodosMarkedForDeletion()
+        }
+    }
 
     override suspend fun insertTodo(todo: Todo) {
         todoDao.insertTodo(todo)
@@ -22,6 +28,14 @@ class TodoRepositoryImpl @Inject constructor(
 
     override suspend fun deleteTodoById(todoId: Int) {
         todoDao.deleteTodoById(todoId)
+    }
+
+    override suspend fun markTodoForDeletion(todoId: Int) {
+        todoDao.markTodoForDeletion(todoId)
+    }
+
+    override suspend fun unmarkTodoForDeletion(todoId: Int) {
+        todoDao.unmarkTodoForDeletion(todoId)
     }
 
     override suspend fun getTodoById(todoId: Int): Flow<Todo?> =

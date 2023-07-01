@@ -19,6 +19,15 @@ interface TodoDao {
     @Query("DELETE FROM Todo WHERE todoId = :todoId")
     suspend fun deleteTodoById(todoId: Int)
 
+    @Query("UPDATE Todo SET markedForDeletion = 1 WHERE todoId = :todoId")
+    suspend fun markTodoForDeletion(todoId: Int)
+
+    @Query("UPDATE Todo SET markedForDeletion = 0 WHERE todoId = :todoId")
+    suspend fun unmarkTodoForDeletion(todoId: Int)
+
+    @Query("DELETE FROM Todo WHERE markedForDeletion = 1")
+    suspend fun deleteAllTodosMarkedForDeletion()
+
     @Query("SELECT * FROM Todo WHERE todoId = :todoId")
     fun getTodoById(todoId: Int): Flow<Todo?>
 

@@ -48,6 +48,28 @@ class FakeTodoRepository : TodoRepository {
             emit(TodoFilterSettings())
         }
 
+    override suspend fun markTodoForDeletion(todoId: Int) {
+        val indexOfTodoInList = todos.indexOfFirst { it.todoId == todoId }
+
+        if (indexOfTodoInList == -1)
+            return
+
+        val oldTodo = todos.removeAt(indexOfTodoInList)
+        val newTodo = oldTodo.copy(markedForDeletion = true)
+        todos.add(newTodo)
+    }
+
+    override suspend fun unmarkTodoForDeletion(todoId: Int) {
+        val indexOfTodoInList = todos.indexOfFirst { it.todoId == todoId }
+
+        if (indexOfTodoInList == -1)
+            return
+
+        val oldTodo = todos.removeAt(indexOfTodoInList)
+        val newTodo = oldTodo.copy(markedForDeletion = false)
+        todos.add(newTodo)
+    }
+
     override fun getTodosInProgress(): Flow<List<Todo>> {
         return flow {
             val todos = todos.filter { it.flag == TodoFlag.IN_PROGRESS }

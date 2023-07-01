@@ -20,4 +20,6 @@ interface TodoRepository {
      */
     fun getTodosOfTodoCategory(todoCategoryId: Int?): Flow<List<Todo>>
     fun getTodoFilterSettings(): Flow<TodoFilterSettings>
+    suspend fun markTodoForDeletion(todoId: Int)
+    suspend fun unmarkTodoForDeletion(todoId: Int)
 }

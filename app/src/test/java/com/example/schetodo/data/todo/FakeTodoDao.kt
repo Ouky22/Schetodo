@@ -40,6 +40,32 @@ class FakeTodoDao : TodoDao {
         todos.removeIf { it.todoId == todoId }
     }
 
+    override suspend fun markTodoForDeletion(todoId: Int) {
+        val indexOfTodoInList = todos.indexOfFirst { it.todoId == todoId }
+
+        if (indexOfTodoInList == -1)
+            return
+
+        val oldTodo = todos.removeAt(indexOfTodoInList)
+        val newTodo = oldTodo.copy(markedForDeletion = true)
+        todos.add(newTodo)
+    }
+
+    override suspend fun unmarkTodoForDeletion(todoId: Int) {
+        val indexOfTodoInList = todos.indexOfFirst { it.todoId == todoId }
+
+        if (indexOfTodoInList == -1)
+            return
+
+        val oldTodo = todos.removeAt(indexOfTodoInList)
+        val newTodo = oldTodo.copy(markedForDeletion = false)
+        todos.add(newTodo)
+    }
+
+    override suspend fun deleteAllTodosMarkedForDeletion() {
+        todos.removeIf { it.markedForDeletion }
+    }
+
     override fun getTodoById(todoId: Int): Flow<Todo?> =
         flow {
             emit(todos.find {
