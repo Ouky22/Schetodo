@@ -1,12 +1,13 @@
 package com.example.schetodo.data.notification
 
+import com.example.schetodo.data.todo_block.TodoBlockDao
 import kotlinx.coroutines.flow.first
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 import javax.inject.Inject
 
 class NotificationRepositoryImpl @Inject constructor(
-    private val notificationDao: NotificationDao
+    private val notificationDao: NotificationDao,
+    private val todoBlockDao: TodoBlockDao
 ) : NotificationRepository {
 
     override suspend fun getNextNotification(): Notification? {
@@ -15,6 +16,11 @@ class NotificationRepositoryImpl @Inject constructor(
             return null
 
         return allNotifications
+            .filter { notification ->
+                val todoBlock = todoBlockDao.getTodoBlockById(notification.todoBlockId).first()
+                    ?: return@filter false
+                !todoBlock.markedForDeletion
+            }
             .filter { notification ->
                 val currentDateTime = LocalDateTime.now().withSecond(0).withNano(0)
                 !notification.dateTime.isBefore(currentDateTime)
