@@ -5,7 +5,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.House
+import androidx.compose.material.icons.filled.RemoveDone
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -147,14 +149,12 @@ fun AddEditTodoScreen(
                 }
                 Spacer(modifier = Modifier.size(8.dp))
 
-                if (inEditingMode && todoFlag != TodoFlag.RECURRING) {
-                    val status = when (todoFlag) {
-                        TodoFlag.UNDONE -> stringResource(R.string.undone)
-                        TodoFlag.IN_PROGRESS -> stringResource(R.string.todo_in_progress)
-                        else -> stringResource(R.string.done)
-                    }
-                    Text(text = stringResource(R.string.status, status))
-                }
+                if (inEditingMode && todoFlag != TodoFlag.RECURRING)
+                    TodoStatusRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        todoFlag = todoFlag,
+                        onChangeTodoFlag = onTodoFlagChanged
+                    )
                 Spacer(modifier = Modifier.size(32.dp))
 
                 OutlinedTextField(
@@ -181,6 +181,54 @@ fun AddEditTodoScreen(
                     .fillMaxWidth()
                     .padding(top = 16.dp)
             )
+        }
+    }
+}
+
+@Composable
+fun TodoStatusRow(
+    modifier: Modifier = Modifier,
+    todoFlag: TodoFlag,
+    onChangeTodoFlag: (TodoFlag) -> Unit
+) {
+    val statusText = when (todoFlag) {
+        TodoFlag.UNDONE -> stringResource(R.string.undone)
+        TodoFlag.IN_PROGRESS -> stringResource(R.string.todo_in_progress)
+        else -> stringResource(R.string.done)
+    }
+
+    val buttonText = when (todoFlag) {
+        TodoFlag.UNDONE, TodoFlag.IN_PROGRESS -> stringResource(R.string.mark_as_done)
+        else -> stringResource(R.string.mark_as_undone)
+    }
+
+    val buttonIcon = when (todoFlag) {
+        TodoFlag.UNDONE, TodoFlag.IN_PROGRESS -> Icons.Filled.Done
+        else -> Icons.Filled.RemoveDone
+    }
+
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        Text(text = stringResource(R.string.status, statusText))
+        OutlinedButton(
+            modifier = Modifier.wrapContentSize(),
+            onClick = {
+                val newFlag = when (todoFlag) {
+                    TodoFlag.IN_PROGRESS, TodoFlag.UNDONE -> TodoFlag.DONE
+                    else -> TodoFlag.UNDONE
+                }
+                onChangeTodoFlag(newFlag)
+            }
+        ) {
+            Icon(
+                imageVector = buttonIcon,
+                contentDescription = null,
+                modifier = Modifier.padding(end = 16.dp)
+            )
+            Text(buttonText)
         }
     }
 }

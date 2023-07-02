@@ -72,4 +72,6 @@
     <string name="deleted_todo">Deleted todo</string>
     <string name="deleted_todo_category">Deleted todo category</string>
     <string name="deleted_schedule_block">Deleted schedule block</string>
+    <string name="mark_as_undone">Mark as undone</string>
+    <string name="mark_as_done">Mark as done</string>
 </resources>
