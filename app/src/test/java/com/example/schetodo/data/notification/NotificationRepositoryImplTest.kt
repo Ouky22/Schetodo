@@ -1,18 +1,25 @@
 package com.example.schetodo.data.notification
 
+import com.example.schetodo.data.todo_block.FakeTodoBlockDao
+import com.example.schetodo.data.todo_block.TodoBlock
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class NotificationRepositoryImplTest {
 
     private val fakeNotificationDao = FakeNotificationDao()
-    private val notificationRepository = NotificationRepositoryImpl(fakeNotificationDao)
+    private val fakeTodoBlockDao = FakeTodoBlockDao()
+    private val notificationRepository =
+        NotificationRepositoryImpl(fakeNotificationDao, fakeTodoBlockDao)
+
+    private val todoBlock = TodoBlock(1, null, null, LocalTime.now(), LocalTime.now(), null, false)
 
     @Test
     fun test_updating_notifications_of_todo_block() = runTest {
@@ -44,6 +51,7 @@ internal class NotificationRepositoryImplTest {
         fakeNotificationDao.insertNotification(expiredNotification)
         fakeNotificationDao.insertNotification(nextNotification)
         fakeNotificationDao.insertNotification(notification)
+        fakeTodoBlockDao.insertTodoBlock(todoBlock)
 
         assertThat(notificationRepository.getNextNotification()).isEqualTo(nextNotification)
     }
