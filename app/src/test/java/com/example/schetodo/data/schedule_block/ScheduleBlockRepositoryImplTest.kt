@@ -10,10 +10,12 @@ import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_block.FakeTodoBlockDao
 import com.example.schetodo.data.todo_block.TodoBlock
+import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.user_preferences.FakeUserPreferencesRepository
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -53,6 +55,37 @@ internal class ScheduleBlockRepositoryImplTest {
     private val todoBlock = TodoBlock(
         1, "n1", date, startTime, endTime, null
     )
+
+    @Test
+    fun `when getting schedule blocks then todos marked for deletion are not returned`() = runTest {
+        val todo1 = Todo(1, "t1", TodoPriority.LOW, TodoFlag.DONE, 1)
+        val todo2 = Todo(2, "t2", TodoPriority.LOW, TodoFlag.DONE, 1, true)
+        fakeTodoDao.insertTodo(todo1)
+        fakeTodoDao.insertTodo(todo2)
+        val scheduleBlock = ScheduleBlock(todoBlock, listOf(todo1, todo2), emptyList())
+        scheduleBlockRepository.insertOrUpdateScheduleBlock(scheduleBlock)
+        fakeScheduleBlockDao.insertScheduleBlock(scheduleBlock)
+
+        val allScheduleBlocks =
+            scheduleBlockRepository.getScheduleBlocksOnDate(date).first()
+        assertThat(allScheduleBlocks.size).isEqualTo(1)
+        assertThat(allScheduleBlocks[0].todos).containsExactly(todo1)
+    }
+
+    @Test
+    fun `when getting schedule blocks then todo categories marked for deletion are not returned`() =
+        runTest {
+            val category1 = TodoCategory(1, "c1", 0, 1, "")
+            val category2 = TodoCategory(2, "c2", 0, 1, "", true)
+            val scheduleBlock = ScheduleBlock(todoBlock, emptyList(), listOf(category1, category2))
+            scheduleBlockRepository.insertOrUpdateScheduleBlock(scheduleBlock)
+            fakeScheduleBlockDao.insertScheduleBlock(scheduleBlock)
+
+            val allScheduleBlocks =
+                scheduleBlockRepository.getScheduleBlocksOnDate(date).first()
+            assertThat(allScheduleBlocks.size).isEqualTo(1)
+            assertThat(allScheduleBlocks[0].todoCategories).containsExactly(category1)
+        }
 
     @Test
     fun `when inserting schedule block then all containing non recurring todos get IN_PROGRESS flag`() =

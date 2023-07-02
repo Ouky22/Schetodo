@@ -13,6 +13,8 @@ import com.example.schetodo.data.user_preferences.UserPreferencesRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -38,11 +40,15 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
         todoBlockDao.unmarkTodoBlockForDeletion(todoBlockId)
     }
 
-    override fun getScheduleBlocksOnDate(date: LocalDate) =
+    override fun getScheduleBlocksOnDate(date: LocalDate): Flow<List<ScheduleBlock>> =
         scheduleBlockDao.getScheduleBlocksOnDate(date.toEpochDay())
+            .map { scheduleBlocks -> removeTodosMarkedForDeletion(scheduleBlocks) }
+            .map { scheduleBlocks -> removeTodoCategoriesMarkedForDeletion(scheduleBlocks) }
 
     override fun getScheduleBlockByTodoBlockId(todoBlockId: Int): Flow<ScheduleBlock?> =
         scheduleBlockDao.getScheduleBlockByTodoBlockId(todoBlockId)
+            .map { scheduleBlock -> scheduleBlock?.let { removeTodosMarkedForDeletion(it) } }
+            .map { scheduleBlock -> scheduleBlock?.let { removeTodoCategoriesMarkedForDeletion(it) } }
 
     override suspend fun insertOrUpdateScheduleBlock(scheduleBlock: ScheduleBlock) {
         var todoBlockId = todoBlockDao.updateOrInsertTodoBlock(scheduleBlock.todoBlock).toInt()
@@ -64,6 +70,26 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
 
     override val showScheduleBlockNotificationAtEnd =
         userPreferencesRepository.showScheduleBlockNotificationAtEnd
+
+    private fun removeTodosMarkedForDeletion(scheduleBlocks: List<ScheduleBlock>): List<ScheduleBlock> =
+        scheduleBlocks.map { scheduleBlock ->
+            removeTodosMarkedForDeletion(scheduleBlock)
+        }
+
+    private fun removeTodoCategoriesMarkedForDeletion(scheduleBlocks: List<ScheduleBlock>): List<ScheduleBlock> =
+        scheduleBlocks.map { scheduleBlock ->
+            removeTodoCategoriesMarkedForDeletion(scheduleBlock)
+        }
+
+    private fun removeTodosMarkedForDeletion(scheduleBlock: ScheduleBlock): ScheduleBlock =
+        scheduleBlock.copy(
+            todos = scheduleBlock.todos.filter { !it.markedForDeletion }
+        )
+
+    private fun removeTodoCategoriesMarkedForDeletion(scheduleBlock: ScheduleBlock): ScheduleBlock =
+        scheduleBlock.copy(
+            todoCategories = scheduleBlock.todoCategories.filter { !it.markedForDeletion }
+        )
 
     private suspend fun connectTodoBlockAndTodos(
         todoBlockId: Int,
