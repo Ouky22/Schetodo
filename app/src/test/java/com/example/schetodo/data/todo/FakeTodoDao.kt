@@ -1,6 +1,7 @@
 package com.example.schetodo.data.todo
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
 
@@ -60,6 +61,18 @@ class FakeTodoDao : TodoDao {
         val oldTodo = todos.removeAt(indexOfTodoInList)
         val newTodo = oldTodo.copy(markedForDeletion = false)
         todos.add(newTodo)
+    }
+
+    override suspend fun markAllTodosOfCategoryForDeletion(todoCategoryId: Int) {
+        getAllTodosOfTodoCategory(todoCategoryId).first().forEach { todo ->
+            updateTodo(todo.copy(markedForDeletion = true))
+        }
+    }
+
+    override suspend fun unmarkAllTodosOfCategoryForDeletion(todoCategoryId: Int) {
+        getAllTodosOfTodoCategory(todoCategoryId).first().forEach { todo ->
+            updateTodo(todo.copy(markedForDeletion = false))
+        }
     }
 
     override suspend fun deleteAllTodosMarkedForDeletion() {

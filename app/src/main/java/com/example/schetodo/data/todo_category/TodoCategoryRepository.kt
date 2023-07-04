@@ -6,7 +6,7 @@ interface TodoCategoryRepository {
     suspend fun insertTodoCategory(todoCategory: TodoCategory): Long
     suspend fun insertOrUpdateTodoCategory(todoCategory: TodoCategory)
     suspend fun deleteTodoCategory(todoCategory: Int)
-    fun getChildTodoCategoriesOf(todoCategoryId: Int?): Flow<List<TodoCategory>>
+    fun getChildTodoCategoriesOf(todoCategoryId: Int?, withMarkedForDeletion: Boolean = false): Flow<List<TodoCategory>>
     fun getTodoCategory(todoCategoryId: Int?): Flow<TodoCategory?>
     suspend fun markTodoCategoryForDeletion(todoCategoryId: Int)
     suspend fun unmarkTodoCategoryForDeletion(todoCategoryId: Int)

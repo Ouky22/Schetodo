@@ -33,6 +33,22 @@ class TodoCategoryDaoTest {
     }
 
     @Test
+    fun test_getting_child_todo_categories_with_categories_marked_for_deletion() = runTest {
+        val category1 = TodoCategory(1, "c1", 0, null, "", true)
+        val category2 = TodoCategory(2, "c2", 0, category1.categoryId, "", true)
+        val category3 = TodoCategory(3, "c3", 0, category1.categoryId, "")
+        todoCategoryDao.insertTodoCategory(category1)
+        todoCategoryDao.insertTodoCategory(category2)
+        todoCategoryDao.insertTodoCategory(category3)
+
+        assertThat(
+            todoCategoryDao.getDirectChildTodoCategoriesOf(
+                category1.categoryId, withMarkedForDeletion = true
+            ).first()
+        ).containsExactly(category2, category3)
+    }
+
+    @Test
     fun test_delete_all_todo_categories_marked_for_deletion() = runTest {
         val category1 = TodoCategory(1, "c1", 0, null, "")
         val category2 = TodoCategory(2, "c2", 0, null, "")

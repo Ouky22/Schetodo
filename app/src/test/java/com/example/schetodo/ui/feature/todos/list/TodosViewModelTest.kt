@@ -1,16 +1,17 @@
 package com.example.schetodo.ui.feature.todos.list
 
+import com.example.schetodo.data.todo.FakeTodoRepository
 import com.example.schetodo.data.todo.Todo
-import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_category.FakeTodoCategoryRepository
-import com.example.schetodo.data.todo.FakeTodoRepository
+import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.util.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.*
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
 
@@ -23,6 +24,65 @@ internal class TodosViewModelTest {
     private val fakeTodoRepository = FakeTodoRepository()
     private val fakeTodoCategoryRepository = FakeTodoCategoryRepository()
 
+    @Test
+    fun when_unmarking_todo_category_for_deletion_then_all_sub_categories_are_unmarked_for_deletion() =
+        runTest {
+            val category1 = TodoCategory(1, "", 0, null, "", true)
+            val category2 = TodoCategory(2, "", 0, category1.categoryId, "", true)
+            val category3 = TodoCategory(3, "", 0, category2.categoryId, "", true)
+            val category4 = TodoCategory(4, "", 0, category2.categoryId, "", true)
+            fakeTodoCategoryRepository.insertTodoCategory(category1)
+            fakeTodoCategoryRepository.insertTodoCategory(category2)
+            fakeTodoCategoryRepository.insertTodoCategory(category3)
+            fakeTodoCategoryRepository.insertTodoCategory(category4)
+            val viewModel = TodosViewModel(fakeTodoRepository, fakeTodoCategoryRepository)
+
+            viewModel.onEvent(TodosEvent.UnmarkTodoCategoryForDeletion(category1.categoryId))
+            advanceUntilIdle()
+
+            assertThat(
+                fakeTodoCategoryRepository.getTodoCategory(category1.categoryId)
+                    .first()?.markedForDeletion
+            ).isFalse()
+            assertThat(
+                fakeTodoCategoryRepository.getTodoCategory(category2.categoryId)
+                    .first()?.markedForDeletion
+            ).isFalse()
+            assertThat(
+                fakeTodoCategoryRepository.getTodoCategory(category3.categoryId)
+                    .first()?.markedForDeletion
+            ).isFalse()
+            assertThat(
+                fakeTodoCategoryRepository.getTodoCategory(category4.categoryId)
+                    .first()?.markedForDeletion
+            ).isFalse()
+        }
+
+    @Test
+    fun when_unmarking_todo_category_for_deletion_then_all_child_todos_are_unmarked_for_deletion() =
+        runTest {
+            val category = TodoCategory(1, "Test", 0xffeeddaa, null, "Icon", true)
+            val todo1 = Todo(1, "t1", TodoPriority.LOW, TodoFlag.DONE, category.categoryId, true)
+            val todo2 = Todo(2, "t2", TodoPriority.LOW, TodoFlag.DONE, category.categoryId, true)
+            fakeTodoCategoryRepository.insertTodoCategory(category)
+            fakeTodoRepository.insertTodo(todo1)
+            fakeTodoRepository.insertTodo(todo2)
+            val viewModel = TodosViewModel(fakeTodoRepository, fakeTodoCategoryRepository)
+
+            viewModel.onEvent(TodosEvent.UnmarkTodoCategoryForDeletion(category.categoryId))
+            advanceUntilIdle()
+
+            assertThat(
+                fakeTodoCategoryRepository.getTodoCategory(category.categoryId)
+                    .first()?.markedForDeletion
+            ).isFalse()
+            assertThat(
+                fakeTodoRepository.getTodoById(todo1.todoId).first()?.markedForDeletion
+            ).isFalse()
+            assertThat(
+                fakeTodoRepository.getTodoById(todo2.todoId).first()?.markedForDeletion
+            ).isFalse()
+        }
 
     @Test
     fun test_unmark_todo_for_deletion() = runTest {

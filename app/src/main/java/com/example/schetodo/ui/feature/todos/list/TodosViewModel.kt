@@ -53,8 +53,23 @@ class TodosViewModel @Inject constructor(
 
     private fun onUnmarkTodoCategoryForDeletion(categoryId: Int) {
         viewModelScope.launch {
-            todoCategoryRepository.unmarkTodoCategoryForDeletion(categoryId)
+            unmarkAllSubCategoriesAndTodosForDeletion(mutableListOf(categoryId))
         }
+    }
+
+    private suspend fun unmarkAllSubCategoriesAndTodosForDeletion(todoCategoryIds: MutableList<Int>) {
+        if (todoCategoryIds.isEmpty())
+            return
+
+        val todoCategoryId = todoCategoryIds.removeLast()
+        todoCategoryRepository.unmarkTodoCategoryForDeletion(todoCategoryId)
+        todoRepository.unmarkAllTodosOfCategoryForDeletion(todoCategoryId)
+
+        val subCategoryIds = todoCategoryRepository.getChildTodoCategoriesOf(
+            todoCategoryId, withMarkedForDeletion = true
+        ).first().map { it.categoryId }
+
+        unmarkAllSubCategoriesAndTodosForDeletion((todoCategoryIds + subCategoryIds).toMutableList())
     }
 
     private fun onUnmarkTodoForDeletion(todoId: Int) {

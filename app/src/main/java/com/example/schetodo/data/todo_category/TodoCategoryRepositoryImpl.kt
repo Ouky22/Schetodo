@@ -38,11 +38,11 @@ class TodoCategoryRepositoryImpl @Inject constructor(
         todoCategoryDao.unmarkTodoCategoryForDeletion(todoCategoryId)
     }
 
-    override fun getChildTodoCategoriesOf(todoCategoryId: Int?): Flow<List<TodoCategory>> {
+    override fun getChildTodoCategoriesOf(todoCategoryId: Int?, withMarkedForDeletion: Boolean): Flow<List<TodoCategory>> {
         return if (todoCategoryId == null)
             todoCategoryDao.getTopLevelTodoCategories()
         else
-            todoCategoryDao.getDirectChildTodoCategoriesOf(todoCategoryId)
+            todoCategoryDao.getDirectChildTodoCategoriesOf(todoCategoryId, withMarkedForDeletion)
     }
 
     override fun getTodoCategory(todoCategoryId: Int?): Flow<TodoCategory?> {

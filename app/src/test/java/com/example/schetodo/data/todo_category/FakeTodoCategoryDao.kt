@@ -38,7 +38,7 @@ class FakeTodoCategoryDao : TodoCategoryDao {
         }
     }
 
-    override fun getDirectChildTodoCategoriesOf(todoCategoryId: Int): Flow<List<TodoCategory>> {
+    override fun getDirectChildTodoCategoriesOf(todoCategoryId: Int, withMarkedForDeletion: Boolean): Flow<List<TodoCategory>> {
         return flow {
             emit(todoCategories.filter {
                 it.parentTodoCategoryId == todoCategoryId

@@ -1,6 +1,7 @@
 package com.example.schetodo.data.todo
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
 class FakeTodoRepository : TodoRepository {
@@ -68,6 +69,18 @@ class FakeTodoRepository : TodoRepository {
         val oldTodo = todos.removeAt(indexOfTodoInList)
         val newTodo = oldTodo.copy(markedForDeletion = false)
         todos.add(newTodo)
+    }
+
+    override suspend fun markAllTodosOfCategoryForDeletion(todoCategoryId: Int) {
+        getTodosOfTodoCategory(todoCategoryId).first().forEach { todo ->
+            updateTodo(todo.copy(markedForDeletion = true))
+        }
+    }
+
+    override suspend fun unmarkAllTodosOfCategoryForDeletion(todoCategoryId: Int) {
+        getTodosOfTodoCategory(todoCategoryId).first().forEach { todo ->
+            updateTodo(todo.copy(markedForDeletion = false))
+        }
     }
 
     override fun getTodosInProgress(): Flow<List<Todo>> {

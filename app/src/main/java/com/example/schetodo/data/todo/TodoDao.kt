@@ -25,6 +25,12 @@ interface TodoDao {
     @Query("UPDATE Todo SET markedForDeletion = 0 WHERE todoId = :todoId")
     suspend fun unmarkTodoForDeletion(todoId: Int)
 
+    @Query("UPDATE Todo SET markedForDeletion = 1 WHERE categoryId = :todoCategoryId")
+    suspend fun markAllTodosOfCategoryForDeletion(todoCategoryId: Int)
+
+    @Query("UPDATE Todo SET markedForDeletion = 0 WHERE categoryId = :todoCategoryId")
+    suspend fun unmarkAllTodosOfCategoryForDeletion(todoCategoryId: Int)
+
     @Query("DELETE FROM Todo WHERE markedForDeletion = 1")
     suspend fun deleteAllTodosMarkedForDeletion()
 

@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.schetodo.data.todo.TodoRepository
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.todo_category.TodoCategoryRepository
 import com.example.schetodo.ui.navigation.todos.AddTodoCategory
@@ -21,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditTodoCategoryViewModel @Inject constructor(
     private val todoCategoryRepository: TodoCategoryRepository,
+    private val todoRepository: TodoRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -130,9 +132,23 @@ class AddEditTodoCategoryViewModel @Inject constructor(
             return
 
         viewModelScope.launch {
-            todoCategoryRepository.markTodoCategoryForDeletion(todoCategoryId)
+            markAllSubCategoriesAndTodosForDeletion(mutableListOf(todoCategoryId))
             _closeAddEditTodoCategoryScreen.value = true
         }
+    }
+
+    private suspend fun markAllSubCategoriesAndTodosForDeletion(todoCategoryIds: MutableList<Int>) {
+        if (todoCategoryIds.isEmpty())
+            return
+
+        val todoCategoryId = todoCategoryIds.removeLast()
+        todoCategoryRepository.markTodoCategoryForDeletion(todoCategoryId)
+        todoRepository.markAllTodosOfCategoryForDeletion(todoCategoryId)
+
+        val subCategoryIds = todoCategoryRepository.getChildTodoCategoriesOf(todoCategoryId).first()
+            .map { it.categoryId }
+
+        markAllSubCategoriesAndTodosForDeletion((todoCategoryIds + subCategoryIds).toMutableList())
     }
 
     private fun saveTodoCategory() {

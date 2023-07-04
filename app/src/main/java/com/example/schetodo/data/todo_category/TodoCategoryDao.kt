@@ -18,8 +18,11 @@ interface TodoCategoryDao {
     @Query("SELECT * FROM TodoCategory WHERE parentTodoCategoryId IS NULL AND markedForDeletion = 0 ORDER BY name ASC")
     fun getTopLevelTodoCategories(): Flow<List<TodoCategory>>
 
-    @Query("SELECT * FROM TodoCategory WHERE parentTodoCategoryId = :todoCategoryId AND markedForDeletion = 0 ORDER BY name ASC")
-    fun getDirectChildTodoCategoriesOf(todoCategoryId: Int): Flow<List<TodoCategory>>
+    @Query("SELECT * FROM TodoCategory WHERE parentTodoCategoryId = :todoCategoryId AND (markedForDeletion = 0 OR :withMarkedForDeletion = 1) ORDER BY name ASC")
+    fun getDirectChildTodoCategoriesOf(
+        todoCategoryId: Int,
+        withMarkedForDeletion: Boolean = false
+    ): Flow<List<TodoCategory>>
 
     @Delete
     suspend fun deleteTodoCategory(todoCategory: TodoCategory)

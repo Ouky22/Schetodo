@@ -38,6 +38,14 @@ class TodoRepositoryImpl @Inject constructor(
         todoDao.unmarkTodoForDeletion(todoId)
     }
 
+    override suspend fun markAllTodosOfCategoryForDeletion(todoCategoryId: Int) {
+        todoDao.markAllTodosOfCategoryForDeletion(todoCategoryId)
+    }
+
+    override suspend fun unmarkAllTodosOfCategoryForDeletion(todoCategoryId: Int) {
+        todoDao.unmarkAllTodosOfCategoryForDeletion(todoCategoryId)
+    }
+
     override suspend fun getTodoById(todoId: Int): Flow<Todo?> =
         todoDao.getTodoById(todoId)
 
