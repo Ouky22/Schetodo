@@ -31,6 +31,7 @@ class TodoCategoryRepositoryImpl @Inject constructor(
     }
 
     override suspend fun markTodoCategoryForDeletion(todoCategoryId: Int) {
+        todoCategoryDao.deleteAllTodoCategoriesMarkedForDeletion()
         todoCategoryDao.markTodoCategoryForDeletion(todoCategoryId)
     }
 
