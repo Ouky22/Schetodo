@@ -37,10 +37,36 @@ class TodoDaoTest {
     }
 
     @Test
+    fun when_getting_todos_then_todos_marked_for_deletion_are_not_returned() = runTest {
+        val category = TodoCategory(1, "c1", 0, null, "")
+        val todo1 = Todo(1, "t1", TodoPriority.HIGH, TodoFlag.DONE, category.categoryId)
+        val todo2 = Todo(2, "t2", TodoPriority.LOW, TodoFlag.DONE, category.categoryId)
+        val todo3 = Todo(3, "t3", TodoPriority.LOW, TodoFlag.DONE, category.categoryId)
+        todoCategoryDao.insertTodoCategory(category)
+        todoDao.insertTodo(todo1)
+        todoDao.insertTodo(todo2)
+        todoDao.insertTodo(todo3)
+
+        todoDao.markTodoForDeletion(todo1.todoId)
+
+        assertThat(todoDao.getAllTodosOfTodoCategory(1).first())
+            .containsExactly(todo2, todo3)
+        assertThat(todoDao.getAllTodosWithFlag(TodoFlag.DONE).first())
+            .containsExactly(todo2, todo3)
+    }
+
+    @Test
     fun test_mark_all_todos_of_todo_category_for_deletion() = runTest {
         val category = TodoCategory(1, "c1", 0, null, "")
         val todo1 = Todo(1, "test 1", TodoPriority.LOW, TodoFlag.IN_PROGRESS, category.categoryId)
-        val todo2 = Todo(2, "test 2", TodoPriority.HIGH, TodoFlag.IN_PROGRESS, category.categoryId, markedForDeletion = true)
+        val todo2 = Todo(
+            2,
+            "test 2",
+            TodoPriority.HIGH,
+            TodoFlag.IN_PROGRESS,
+            category.categoryId,
+            markedForDeletion = true
+        )
         todoCategoryDao.insertTodoCategory(category)
         todoDao.insertTodo(todo1)
         todoDao.insertTodo(todo2)
@@ -56,7 +82,14 @@ class TodoDaoTest {
     fun test_unmark_all_todos_of_todo_category_for_deletion() = runTest {
         val category = TodoCategory(1, "c1", 0, null, "")
         val todo1 = Todo(1, "test 1", TodoPriority.LOW, TodoFlag.IN_PROGRESS, category.categoryId)
-        val todo2 = Todo(2, "test 2", TodoPriority.HIGH, TodoFlag.IN_PROGRESS, category.categoryId, markedForDeletion = true)
+        val todo2 = Todo(
+            2,
+            "test 2",
+            TodoPriority.HIGH,
+            TodoFlag.IN_PROGRESS,
+            category.categoryId,
+            markedForDeletion = true
+        )
         todoCategoryDao.insertTodoCategory(category)
         todoDao.insertTodo(todo1)
         todoDao.insertTodo(todo2)
@@ -86,8 +119,22 @@ class TodoDaoTest {
     @Test
     fun test_unmark_todo_for_deletion() = runTest {
         val category = TodoCategory(1, "c1", 0, null, "")
-        val todo1 = Todo(1, "test 1", TodoPriority.LOW, TodoFlag.IN_PROGRESS, category.categoryId, markedForDeletion = true)
-        val todo2 = Todo(2, "test 2", TodoPriority.HIGH, TodoFlag.IN_PROGRESS, category.categoryId, markedForDeletion = true)
+        val todo1 = Todo(
+            1,
+            "test 1",
+            TodoPriority.LOW,
+            TodoFlag.IN_PROGRESS,
+            category.categoryId,
+            markedForDeletion = true
+        )
+        val todo2 = Todo(
+            2,
+            "test 2",
+            TodoPriority.HIGH,
+            TodoFlag.IN_PROGRESS,
+            category.categoryId,
+            markedForDeletion = true
+        )
         todoCategoryDao.insertTodoCategory(category)
         todoDao.insertTodo(todo1)
         todoDao.insertTodo(todo2)

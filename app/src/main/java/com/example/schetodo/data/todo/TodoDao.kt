@@ -40,9 +40,9 @@ interface TodoDao {
     @Query("SELECT * FROM Todo")
     fun getAllTodos(): Flow<List<Todo>>
 
-    @Query("SELECT * FROM Todo WHERE categoryId = :todoCategoryId ORDER BY priority DESC")
+    @Query("SELECT * FROM Todo WHERE categoryId = :todoCategoryId AND markedForDeletion = 0 ORDER BY priority DESC")
     fun getAllTodosOfTodoCategory(todoCategoryId: Int): Flow<List<Todo>>
 
-    @Query("SELECT * FROM Todo WHERE flag = :todoFlag ORDER by priority DESC")
+    @Query("SELECT * FROM Todo WHERE flag = :todoFlag AND markedForDeletion = 0 ORDER by priority DESC")
     fun getAllTodosWithFlag(todoFlag: TodoFlag): Flow<List<Todo>>
 }

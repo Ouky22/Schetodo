@@ -96,12 +96,10 @@ class TodoRepositoryImpl @Inject constructor(
     }
 
     private fun todoNotFilteredOut(todo: Todo, todoFilterSettings: TodoFilterSettings) =
-        !todo.markedForDeletion
-                && (todo.flag == TodoFlag.DONE && todoFilterSettings.showDoneTodos
+        todo.flag == TodoFlag.DONE && todoFilterSettings.showDoneTodos
                 || todo.flag == TodoFlag.UNDONE && todoFilterSettings.showUndoneTodos
                 || todo.flag == TodoFlag.IN_PROGRESS && todoFilterSettings.showInProgressTodos
                 || todo.flag == TodoFlag.RECURRING && todoFilterSettings.showRecurringTodos
-                )
 }
 
 data class TodoFilterSettings(
