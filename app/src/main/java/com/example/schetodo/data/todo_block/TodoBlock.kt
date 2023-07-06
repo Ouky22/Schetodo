@@ -1,7 +1,7 @@
 package com.example.schetodo.data.todo_block
 
 import androidx.room.*
-import com.example.schetodo.data.todo_template.TodoTemplate
+import com.example.schetodo.data.schedule_template.ScheduleTemplate
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -12,7 +12,7 @@ import java.time.LocalTime
     ],
     foreignKeys = [
         ForeignKey(
-            entity = TodoTemplate::class,
+            entity = ScheduleTemplate::class,
             parentColumns = ["templateId"],
             childColumns = ["templateId"],
             onDelete = ForeignKey.CASCADE,

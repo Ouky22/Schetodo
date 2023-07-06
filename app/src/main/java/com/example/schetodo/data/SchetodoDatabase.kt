@@ -1,10 +1,8 @@
 package com.example.schetodo.data
 
 import android.content.Context
-import androidx.room.AutoMigration
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room.*
+import androidx.room.migration.AutoMigrationSpec
 import com.example.schetodo.data.todo_block.TodoBlockDao
 import com.example.schetodo.data.todo_category.TodoCategoryDao
 import com.example.schetodo.data.todo.TodoDao
@@ -18,21 +16,26 @@ import com.example.schetodo.data.schedule_block.ScheduleBlockDao
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo_block.TodoBlock
 import com.example.schetodo.data.todo_category.TodoCategory
-import com.example.schetodo.data.todo_template.TodoTemplate
+import com.example.schetodo.data.schedule_template.ScheduleTemplate
 
 @Database(
     entities = [
-        Todo::class, TodoBlock::class, TodoCategory::class, TodoTemplate::class, Notification::class,
+        Todo::class, TodoBlock::class, TodoCategory::class, ScheduleTemplate::class, Notification::class,
         TodoBlockCategoryRelationship::class, TodoBlockTodoRelationship::class
     ],
-    version = 6,
+    version = 7,
     autoMigrations = [
         AutoMigration(from = 3, to = 4),
         AutoMigration(from = 4, to = 5),
-        AutoMigration(from = 5, to = 6)
+        AutoMigration(from = 5, to = 6),
+        AutoMigration(
+            from = 6,
+            to = 7,
+            spec = SchetodoDatabase.RenameTodoTemplateToScheduleTemplate::class
+        )
     ]
 )
-@androidx.room.TypeConverters(RoomTypeConverters::class)
+@TypeConverters(RoomTypeConverters::class)
 abstract class SchetodoDatabase : RoomDatabase() {
 
     abstract val todoCategoryDao: TodoCategoryDao
@@ -60,4 +63,10 @@ abstract class SchetodoDatabase : RoomDatabase() {
             instance
         }
     }
+
+    @RenameTable(
+        fromTableName = "TodoTemplate",
+        toTableName = "ScheduleTemplate"
+    )
+    class RenameTodoTemplateToScheduleTemplate : AutoMigrationSpec
 }

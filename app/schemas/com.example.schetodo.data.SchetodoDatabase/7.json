@@ -1,0 +1,447 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 7,
+    "identityHash": "ade7ef62ff686e999742984ed040b13d",
+    "entities": [
+      {
+        "tableName": "Todo",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`todoId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `description` TEXT NOT NULL, `priority` INTEGER NOT NULL, `flag` TEXT NOT NULL, `categoryId` INTEGER NOT NULL, `markedForDeletion` INTEGER NOT NULL DEFAULT 0, FOREIGN KEY(`categoryId`) REFERENCES `TodoCategory`(`categoryId`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "todoId",
+            "columnName": "todoId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "priority",
+            "columnName": "priority",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "flag",
+            "columnName": "flag",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "categoryId",
+            "columnName": "categoryId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "markedForDeletion",
+            "columnName": "markedForDeletion",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "todoId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_Todo_categoryId",
+            "unique": false,
+            "columnNames": [
+              "categoryId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Todo_categoryId` ON `${TABLE_NAME}` (`categoryId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "TodoCategory",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "categoryId"
+            ],
+            "referencedColumns": [
+              "categoryId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "TodoBlock",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`todoBlockId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `notes` TEXT, `date` INTEGER, `startTime` INTEGER NOT NULL, `endTime` INTEGER NOT NULL, `templateId` INTEGER, `markedForDeletion` INTEGER NOT NULL DEFAULT 0, FOREIGN KEY(`templateId`) REFERENCES `ScheduleTemplate`(`templateId`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "todoBlockId",
+            "columnName": "todoBlockId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "startTime",
+            "columnName": "startTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endTime",
+            "columnName": "endTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "templateId",
+            "columnName": "templateId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "markedForDeletion",
+            "columnName": "markedForDeletion",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "todoBlockId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_TodoBlock_date",
+            "unique": false,
+            "columnNames": [
+              "date"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_TodoBlock_date` ON `${TABLE_NAME}` (`date`)"
+          },
+          {
+            "name": "index_TodoBlock_templateId",
+            "unique": false,
+            "columnNames": [
+              "templateId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_TodoBlock_templateId` ON `${TABLE_NAME}` (`templateId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "ScheduleTemplate",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "templateId"
+            ],
+            "referencedColumns": [
+              "templateId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "TodoCategory",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`categoryId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `color` INTEGER NOT NULL, `parentTodoCategoryId` INTEGER, `iconName` TEXT NOT NULL, `markedForDeletion` INTEGER NOT NULL DEFAULT 0, FOREIGN KEY(`parentTodoCategoryId`) REFERENCES `TodoCategory`(`categoryId`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "categoryId",
+            "columnName": "categoryId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "color",
+            "columnName": "color",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "parentTodoCategoryId",
+            "columnName": "parentTodoCategoryId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "iconName",
+            "columnName": "iconName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "markedForDeletion",
+            "columnName": "markedForDeletion",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "categoryId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "TodoCategory",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "parentTodoCategoryId"
+            ],
+            "referencedColumns": [
+              "categoryId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "ScheduleTemplate",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`templateId` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY(`templateId`))",
+        "fields": [
+          {
+            "fieldPath": "templateId",
+            "columnName": "templateId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "templateId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Notification",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`notificationId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `dateTime` INTEGER NOT NULL, `todoBlockId` INTEGER NOT NULL, FOREIGN KEY(`todoBlockId`) REFERENCES `TodoBlock`(`todoBlockId`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "notificationId",
+            "columnName": "notificationId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateTime",
+            "columnName": "dateTime",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "todoBlockId",
+            "columnName": "todoBlockId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "notificationId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_Notification_todoBlockId",
+            "unique": false,
+            "columnNames": [
+              "todoBlockId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Notification_todoBlockId` ON `${TABLE_NAME}` (`todoBlockId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "TodoBlock",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "todoBlockId"
+            ],
+            "referencedColumns": [
+              "todoBlockId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "TodoBlockCategoryRelationship",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`todoBlockId` INTEGER NOT NULL, `categoryId` INTEGER NOT NULL, PRIMARY KEY(`todoBlockId`, `categoryId`), FOREIGN KEY(`todoBlockId`) REFERENCES `TodoBlock`(`todoBlockId`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`categoryId`) REFERENCES `TodoCategory`(`categoryId`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "todoBlockId",
+            "columnName": "todoBlockId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "categoryId",
+            "columnName": "categoryId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "todoBlockId",
+            "categoryId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_TodoBlockCategoryRelationship_categoryId",
+            "unique": false,
+            "columnNames": [
+              "categoryId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_TodoBlockCategoryRelationship_categoryId` ON `${TABLE_NAME}` (`categoryId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "TodoBlock",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "todoBlockId"
+            ],
+            "referencedColumns": [
+              "todoBlockId"
+            ]
+          },
+          {
+            "table": "TodoCategory",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "categoryId"
+            ],
+            "referencedColumns": [
+              "categoryId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "TodoBlockTodoRelationship",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`todoBlockId` INTEGER NOT NULL, `todoId` INTEGER NOT NULL, PRIMARY KEY(`todoBlockId`, `todoId`), FOREIGN KEY(`todoBlockId`) REFERENCES `TodoBlock`(`todoBlockId`) ON UPDATE CASCADE ON DELETE CASCADE , FOREIGN KEY(`todoId`) REFERENCES `Todo`(`todoId`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "todoBlockId",
+            "columnName": "todoBlockId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "todoId",
+            "columnName": "todoId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "todoBlockId",
+            "todoId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_TodoBlockTodoRelationship_todoId",
+            "unique": false,
+            "columnNames": [
+              "todoId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_TodoBlockTodoRelationship_todoId` ON `${TABLE_NAME}` (`todoId`)"
+          },
+          {
+            "name": "index_TodoBlockTodoRelationship_todoBlockId",
+            "unique": false,
+            "columnNames": [
+              "todoBlockId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_TodoBlockTodoRelationship_todoBlockId` ON `${TABLE_NAME}` (`todoBlockId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "TodoBlock",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "todoBlockId"
+            ],
+            "referencedColumns": [
+              "todoBlockId"
+            ]
+          },
+          {
+            "table": "Todo",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "todoId"
+            ],
+            "referencedColumns": [
+              "todoId"
+            ]
+          }
+        ]
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ade7ef62ff686e999742984ed040b13d')"
+    ]
+  }
+}
