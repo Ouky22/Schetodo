@@ -3,9 +3,6 @@ package com.example.schetodo.data
 import android.content.Context
 import androidx.room.*
 import androidx.room.migration.AutoMigrationSpec
-import com.example.schetodo.data.todo_block.TodoBlockDao
-import com.example.schetodo.data.todo_category.TodoCategoryDao
-import com.example.schetodo.data.todo.TodoDao
 import com.example.schetodo.data.notification.Notification
 import com.example.schetodo.data.notification.NotificationDao
 import com.example.schetodo.data.relationship.TodoBlockCategoryRelationship
@@ -13,10 +10,14 @@ import com.example.schetodo.data.relationship.TodoBlockCategoryRelationshipDao
 import com.example.schetodo.data.relationship.TodoBlockTodoRelationship
 import com.example.schetodo.data.relationship.TodoBlockTodoRelationshipDao
 import com.example.schetodo.data.schedule_block.ScheduleBlockDao
-import com.example.schetodo.data.todo.Todo
-import com.example.schetodo.data.todo_block.TodoBlock
-import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.schedule_template.ScheduleTemplate
+import com.example.schetodo.data.schedule_template.ScheduleTemplateDao
+import com.example.schetodo.data.todo.Todo
+import com.example.schetodo.data.todo.TodoDao
+import com.example.schetodo.data.todo_block.TodoBlock
+import com.example.schetodo.data.todo_block.TodoBlockDao
+import com.example.schetodo.data.todo_category.TodoCategory
+import com.example.schetodo.data.todo_category.TodoCategoryDao
 
 @Database(
     entities = [
@@ -45,6 +46,7 @@ abstract class SchetodoDatabase : RoomDatabase() {
     abstract val todoBlockTodoRelationshipDao: TodoBlockTodoRelationshipDao
     abstract val scheduleBlockDao: ScheduleBlockDao
     abstract val notificationDao: NotificationDao
+    abstract val scheduleTemplateDao: ScheduleTemplateDao
 
     companion object {
         @Volatile

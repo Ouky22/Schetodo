@@ -6,6 +6,7 @@ import com.example.schetodo.data.notification.NotificationDao
 import com.example.schetodo.data.relationship.TodoBlockCategoryRelationshipDao
 import com.example.schetodo.data.relationship.TodoBlockTodoRelationshipDao
 import com.example.schetodo.data.schedule_block.ScheduleBlockDao
+import com.example.schetodo.data.schedule_template.ScheduleTemplateDao
 import com.example.schetodo.data.todo_category.TodoCategoryDao
 import com.example.schetodo.data.todo.TodoDao
 import com.example.schetodo.data.todo_block.TodoBlockDao
@@ -58,4 +59,9 @@ object DatabaseModule {
     @Provides
     fun provideNotificationDao(schetodoDatabase: SchetodoDatabase): NotificationDao =
         schetodoDatabase.notificationDao
+
+    @Singleton
+    @Provides
+    fun provideScheduleTemplateDao(schetodoDatabase: SchetodoDatabase): ScheduleTemplateDao =
+        schetodoDatabase.scheduleTemplateDao
 }
