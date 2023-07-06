@@ -4,6 +4,8 @@ import com.example.schetodo.data.notification.NotificationRepository
 import com.example.schetodo.data.notification.NotificationRepositoryImpl
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepositoryImpl
+import com.example.schetodo.data.schedule_template.ScheduleTemplateRepository
+import com.example.schetodo.data.schedule_template.ScheduleTemplateRepositoryImpl
 import com.example.schetodo.data.todo_category.TodoCategoryRepository
 import com.example.schetodo.data.todo_category.TodoCategoryRepositoryImpl
 import com.example.schetodo.data.todo.TodoRepository
@@ -45,4 +47,8 @@ interface RepositoryModule {
     @Singleton
     @Binds
     fun bindUserPreferencesRepository(userPreferencesRepositoryImpl: UserPreferencesRepositoryImpl): UserPreferencesRepository
+
+    @Singleton
+    @Binds
+    fun bindScheduleTemplateRepository(scheduleTemplateRepositoryImpl: ScheduleTemplateRepositoryImpl): ScheduleTemplateRepository
 }
