@@ -45,6 +45,7 @@ fun ScheduleScreen(
     onAddScheduleBlockNavigation: (dateStamp: Long) -> Unit,
     onEditScheduleBlockNavigation: (todoBlockId: Int) -> Unit,
     onAddScheduleBlockInGapNavigation: (dateStamp: Long, startTimeStamp: Int, endTimeStamp: Int) -> Unit,
+    onScheduleTemplatesScreenNavigation: () -> Unit,
     schetodoAppState: SchetodoAppState
 ) {
     val state by viewModel.scheduleState.collectAsStateWithLifecycle()
@@ -77,6 +78,7 @@ fun ScheduleScreen(
         onNavigateToNextDate = { viewModel.onEvent(GoToNextDate) },
         onNavigateToAnyDate = { date -> viewModel.onEvent(GoToAnyDate(date)) },
         onGoToCurrentDateButtonClick = { viewModel.onEvent(GoToCurrentDate) },
+        onScheduleTemplatesButtonClick = onScheduleTemplatesScreenNavigation,
         onFabClick = { onAddScheduleBlockNavigation(viewModel.currentDateStamp) },
         onEditScheduleBlock = { todoBlockId -> onEditScheduleBlockNavigation(todoBlockId) },
         onAddScheduleGapButtonClick = { startTime, endTime ->
@@ -100,6 +102,7 @@ fun ScheduleScreen(
     onNavigateToNextDate: () -> Unit,
     onNavigateToAnyDate: (LocalDate) -> Unit,
     onGoToCurrentDateButtonClick: () -> Unit,
+    onScheduleTemplatesButtonClick: () -> Unit,
     onFabClick: () -> Unit,
     onEditScheduleBlock: (todoBlockId: Int) -> Unit,
     onAddScheduleGapButtonClick: (startTime: LocalTime, endTime: LocalTime) -> Unit,
@@ -111,6 +114,12 @@ fun ScheduleScreen(
                 showBackButton = false,
                 onBackButtonClick = { },
                 actions = {
+                    IconButton(onClick = onScheduleTemplatesButtonClick) {
+                        Icon(
+                            imageVector = Icons.Filled.Update,
+                            contentDescription = stringResource(R.string.go_to_screen_with_schedule_templates)
+                        )
+                    }
                     IconButton(onClick = onGoToCurrentDateButtonClick) {
                         Icon(
                             imageVector = Icons.Filled.Today,
@@ -273,6 +282,7 @@ fun ScheduleScreenPreview() {
             onNavigateToNextDate = {},
             onNavigateToAnyDate = {},
             onGoToCurrentDateButtonClick = {},
+            onScheduleTemplatesButtonClick = {},
             onFabClick = {},
             onEditScheduleBlock = {},
             onAddScheduleGapButtonClick = { _, _ -> }

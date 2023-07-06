@@ -60,3 +60,7 @@ object TodoPicker: SchetodoDestination {
 object TodoCategoryPicker: SchetodoDestination {
     override val route = "todo_category_picker"
 }
+
+object ScheduleTemplates: SchetodoDestination {
+    override val route = "schedule_templates"
+}

@@ -15,6 +15,8 @@ import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.t
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.todo.TodoPickerViewModel
 import com.example.schetodo.ui.feature.schedule.list.ScheduleScreen
 import com.example.schetodo.ui.feature.schedule.list.ScheduleViewModel
+import com.example.schetodo.ui.feature.schedule.schedule_template.ScheduleTemplatesScreen
+import com.example.schetodo.ui.feature.schedule.schedule_template.ScheduleTemplateViewModel
 import com.example.schetodo.ui.navigation.Graph
 
 fun NavGraphBuilder.scheduleNavGraph(
@@ -44,6 +46,9 @@ fun NavGraphBuilder.scheduleNavGraph(
                         startTimeStamp,
                         endTimeStamp
                     )
+                },
+                onScheduleTemplatesScreenNavigation = {
+                    schetodoAppState.navController.navigate(ScheduleTemplates.route)
                 },
                 schetodoAppState = schetodoAppState
             )
@@ -77,6 +82,13 @@ fun NavGraphBuilder.scheduleNavGraph(
             TodoCategoryPickerScreen(
                 viewModel = viewModel,
                 navController = schetodoAppState.navController
+            )
+        }
+        composable(route = ScheduleTemplates.route) {
+            val viewModel = hiltViewModel<ScheduleTemplateViewModel>()
+            ScheduleTemplatesScreen(
+                viewModel = viewModel,
+                schetodoAppState = schetodoAppState
             )
         }
     }

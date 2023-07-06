@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -20,13 +21,16 @@ import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.theme.SchetodoTheme
 
 @Composable
-fun ScheduleTemplateScreen(
+fun ScheduleTemplatesScreen(
     modifier: Modifier = Modifier,
+    viewModel: ScheduleTemplateViewModel,
     schetodoAppState: SchetodoAppState
 ) {
-    ScheduleTemplateScreen(
+    val scheduleTemplates = viewModel.scheduleTemplates.collectAsState()
+
+    ScheduleTemplatesScreen(
         modifier = modifier,
-        scheduleTemplates = emptyList(),
+        scheduleTemplates = scheduleTemplates.value,
         onClickOnScheduleTemplate = {/*TODO*/ },
         onBackButtonClick = { schetodoAppState.navController.popBackStack() }
     )
@@ -34,7 +38,7 @@ fun ScheduleTemplateScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScheduleTemplateScreen(
+fun ScheduleTemplatesScreen(
     modifier: Modifier = Modifier,
     scheduleTemplates: List<ScheduleTemplate>,
     onClickOnScheduleTemplate: (ScheduleTemplate) -> Unit,
@@ -94,9 +98,9 @@ fun ScheduleTemplateListItem(
 
 @Preview
 @Composable
-fun ScheduleTemplateScreenPreview() {
+fun ScheduleTemplatesScreenPreview() {
     SchetodoTheme {
-        ScheduleTemplateScreen(
+        ScheduleTemplatesScreen(
             modifier = Modifier.fillMaxSize(),
             scheduleTemplates = listOf(
                 ScheduleTemplate(1, "This is the first schedule template"),
@@ -113,9 +117,9 @@ fun ScheduleTemplateScreenPreview() {
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun ScheduleTemplateScreenDarkPreview() {
+fun ScheduleTemplatesScreenDarkPreview() {
     SchetodoTheme {
-        ScheduleTemplateScreen(
+        ScheduleTemplatesScreen(
             modifier = Modifier.fillMaxSize(),
             scheduleTemplates = listOf(
                 ScheduleTemplate(1, "This is the first schedule template"),

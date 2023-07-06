@@ -75,4 +75,5 @@
     <string name="mark_as_undone">Mark as undone</string>
     <string name="mark_as_done">Mark as done</string>
     <string name="schedule_templates">Schedule templates</string>
+    <string name="go_to_screen_with_schedule_templates">Go to screen with schedule templates</string>
 </resources>
