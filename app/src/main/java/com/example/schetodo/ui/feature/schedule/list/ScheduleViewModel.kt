@@ -37,13 +37,12 @@ class ScheduleViewModel @Inject constructor(
     val scheduleState: StateFlow<ScheduleState>
         get() = _scheduleState.asStateFlow()
 
-    private var collectScheduleBlocksJob: Job? = null
+    private val collectScheduleJobs: Array<Job?> = Array(3) { null }
 
+    private var currentScheduleIndex = collectScheduleJobs.size / 2
 
     init {
-        loadScheduleBlocksOnCurrentDate()
-
-        updateCurrentDate(LocalDate.now())
+        goToCurrentDate()
     }
 
     fun onEvent(event: ScheduleEvent) {
@@ -64,38 +63,62 @@ class ScheduleViewModel @Inject constructor(
 
     private fun goToCurrentDate() {
         updateCurrentDate(LocalDate.now())
-        loadScheduleBlocksOnCurrentDate()
+        loadSchedulesForCurrentDate()
     }
 
     private fun goToPreviousDate() {
         updateCurrentDate(currentDate.minusDays(1))
-        loadScheduleBlocksOnCurrentDate()
+
+        currentScheduleIndex--
+        loadScheduleBeforeCurrentSchedule()
     }
 
     private fun goToNextDate() {
         updateCurrentDate(currentDate.plusDays(1))
-        loadScheduleBlocksOnCurrentDate()
+
+        currentScheduleIndex++
+        loadScheduleAfterCurrentSchedule()
     }
 
-    private fun loadScheduleBlocksOnCurrentDate() {
-        collectScheduleBlocksJob?.cancel()
-
-        collectScheduleBlocksJob = viewModelScope.launch {
-            scheduleBlockRepository.getScheduleBlocksOnDate(currentDate).collect { scheduleBlocks ->
-                updateScheduleListItems(scheduleBlocks)
-            }
+    private fun loadSchedulesForCurrentDate() {
+        var dayOffset = -1L
+        for (i in collectScheduleJobs.indices) {
+            loadScheduleAt(scheduleIndex = i, scheduleDate = currentDate.plusDays(dayOffset))
+            dayOffset++
         }
     }
 
-    private fun updateScheduleListItems(scheduleBlocks: List<ScheduleBlock>) {
-        val scheduleListItems = convertToScheduleListItems(scheduleBlocks)
-
-        _scheduleState.value = _scheduleState.value.copy(
-            scheduleListItems = scheduleListItems
+    private fun loadScheduleAfterCurrentSchedule() {
+        loadScheduleAt(
+            scheduleIndex = Math.floorMod(currentScheduleIndex + 1, collectScheduleJobs.size),
+            scheduleDate = currentDate.plusDays(1)
         )
     }
 
-    private fun convertToScheduleListItems(scheduleBlocks: List<ScheduleBlock>): List<ScheduleListItem> {
+    private fun loadScheduleBeforeCurrentSchedule() {
+        loadScheduleAt(
+            scheduleIndex = Math.floorMod(currentScheduleIndex - 1, collectScheduleJobs.size),
+            scheduleDate = currentDate.minusDays(1)
+        )
+    }
+
+    private fun loadScheduleAt(scheduleIndex: Int, scheduleDate: LocalDate) {
+        collectScheduleJobs[scheduleIndex]?.cancel()
+
+        collectScheduleJobs[scheduleIndex] = viewModelScope.launch {
+            scheduleBlockRepository.getScheduleBlocksOnDate(scheduleDate)
+                .collect { scheduleBlocks ->
+                    val schedules = _scheduleState.value.schedules.copyOf()
+                    schedules[scheduleIndex] = convertToSchedule(scheduleBlocks)
+
+                    _scheduleState.value = _scheduleState.value.copy(
+                        schedules = schedules
+                    )
+                }
+        }
+    }
+
+    private fun convertToSchedule(scheduleBlocks: List<ScheduleBlock>): List<ScheduleListItem> {
         var previousEndTime = LocalTime.of(0, 0)
         val scheduleListItems = mutableListOf<ScheduleListItem>()
 

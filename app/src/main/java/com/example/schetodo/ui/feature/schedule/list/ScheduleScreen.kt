@@ -1,16 +1,16 @@
 package com.example.schetodo.ui.feature.schedule.list
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -69,10 +69,10 @@ fun ScheduleScreen(
     ScheduleScreen(
         modifier = modifier,
         snackbarHostState = snackbarHostState,
-        scheduleListItems = state.scheduleListItems,
+        schedules = state.schedules,
         currentDate = state.currentDate,
-        onPreviousDateButtonClick = { viewModel.onEvent(GoToPreviousDate) },
-        onNextDateButtonClick = { viewModel.onEvent(GoToNextDate) },
+        onNavigateToPreviousDate = { viewModel.onEvent(GoToPreviousDate) },
+        onNavigateToNextDate = { viewModel.onEvent(GoToNextDate) },
         onCurrentDateButtonClick = {},
         onGoToCurrentDateButtonClick = { viewModel.onEvent(GoToCurrentDate) },
         onFabClick = { onAddScheduleBlockNavigation(viewModel.currentDateStamp) },
@@ -87,15 +87,15 @@ fun ScheduleScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ScheduleScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
-    scheduleListItems: List<ScheduleListItem>,
+    schedules: Array<List<ScheduleListItem>>,
     currentDate: String,
-    onPreviousDateButtonClick: () -> Unit,
-    onNextDateButtonClick: () -> Unit,
+    onNavigateToPreviousDate: () -> Unit,
+    onNavigateToNextDate: () -> Unit,
     onCurrentDateButtonClick: () -> Unit,
     onGoToCurrentDateButtonClick: () -> Unit,
     onFabClick: () -> Unit,
@@ -132,10 +132,19 @@ fun ScheduleScreen(
             modifier = modifier.padding(contentPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // initial page must be a number that gives the remainder 1 when divided by 3
+            // so that the first page gets the second element from the schedules array
+            val pagerState = rememberPagerState(initialPage = Int.MAX_VALUE / 2 + 1)
+            val coroutineScope = rememberCoroutineScope()
+
             DateNavigator(
                 currentDate = currentDate,
-                onPreviousDateButtonClick = onPreviousDateButtonClick,
-                onNextDateButtonClick = onNextDateButtonClick,
+                onPreviousDateButtonClick = {
+                    coroutineScope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
+                },
+                onNextDateButtonClick = {
+                    coroutineScope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
+                },
                 onCurrentDateButtonClick = onCurrentDateButtonClick,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -143,11 +152,29 @@ fun ScheduleScreen(
                     .padding(bottom = 8.dp)
             )
 
-            ScheduleList(
-                scheduleListItems = scheduleListItems,
-                onListItemClick = onEditScheduleBlock,
-                onAddScheduleGapButtonClick = onAddScheduleGapButtonClick
-            )
+            var previousPage by remember { mutableStateOf(pagerState.currentPage) }
+            LaunchedEffect(pagerState) {
+                snapshotFlow { pagerState.currentPage }.collect { currentPage ->
+                    when {
+                        currentPage > previousPage -> onNavigateToNextDate()
+                        currentPage < previousPage -> onNavigateToPreviousDate()
+                    }
+                    previousPage = currentPage
+                }
+            }
+
+            HorizontalPager(
+                modifier = Modifier.fillMaxSize(),
+                state = pagerState,
+                pageCount = Int.MAX_VALUE
+            ) { page ->
+                ScheduleList(
+                    modifier = Modifier.fillMaxSize(),
+                    scheduleListItems = schedules[page % schedules.size],
+                    onListItemClick = onEditScheduleBlock,
+                    onAddScheduleGapButtonClick = onAddScheduleGapButtonClick
+                )
+            }
         }
     }
 }
@@ -233,10 +260,10 @@ fun ScheduleScreenPreview() {
         ScheduleScreen(
             modifier = Modifier.fillMaxSize(),
             snackbarHostState = remember { SnackbarHostState() },
-            scheduleListItems = createTodoBlocksForPreview(),
+            schedules = arrayOf(createTodoBlocksForPreview()),
             currentDate = "2023-02-01",
-            onPreviousDateButtonClick = {},
-            onNextDateButtonClick = {},
+            onNavigateToPreviousDate = {},
+            onNavigateToNextDate = {},
             onCurrentDateButtonClick = {},
             onGoToCurrentDateButtonClick = {},
             onFabClick = {},

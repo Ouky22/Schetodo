@@ -35,14 +35,60 @@ internal class ScheduleViewModelTest {
 
 
     @Test
-    fun test_go_to_current_date_event() = runTest {
+    fun test_navigating_to_next_and_previous_date() = runTest {
         val viewModel =
             ScheduleViewModel(fakeScheduleBlockRepository, fakeTodoBlockNotificationScheduler)
 
         viewModel.onEvent(GoToNextDate)
         viewModel.onEvent(GoToNextDate)
+        viewModel.onEvent(GoToNextDate)
         viewModel.onEvent(GoToPreviousDate)
+        viewModel.onEvent(GoToPreviousDate)
+        viewModel.onEvent(GoToPreviousDate)
+        advanceUntilIdle()
+
+        assertThat(viewModel.currentDateStamp).isEqualTo(LocalDate.now().toEpochDay())
+    }
+
+    @Test
+    fun test_navigating_to_next_date() = runTest {
+        val viewModel =
+            ScheduleViewModel(fakeScheduleBlockRepository, fakeTodoBlockNotificationScheduler)
+
+        for (currentDayOffset in 1 until 10) {
+            viewModel.onEvent(GoToNextDate)
+            advanceUntilIdle()
+
+            val stamp = LocalDate.now().plusDays(currentDayOffset.toLong()).toEpochDay()
+
+            assertThat(viewModel.currentDateStamp).isEqualTo(
+                stamp
+            )
+        }
+    }
+
+    @Test
+    fun test_navigating_to_previous_date() = runTest {
+        val viewModel =
+            ScheduleViewModel(fakeScheduleBlockRepository, fakeTodoBlockNotificationScheduler)
+
+        for (currentDayOffset in 1 until 10) {
+            viewModel.onEvent(GoToPreviousDate)
+            advanceUntilIdle()
+
+            assertThat(viewModel.currentDateStamp).isEqualTo(
+                LocalDate.now().minusDays(currentDayOffset.toLong()).toEpochDay()
+            )
+        }
+    }
+
+    @Test
+    fun test_navigating_to_current_date() = runTest {
+        val viewModel =
+            ScheduleViewModel(fakeScheduleBlockRepository, fakeTodoBlockNotificationScheduler)
+
         viewModel.onEvent(GoToCurrentDate)
+        advanceUntilIdle()
 
         assertThat(viewModel.currentDateStamp).isEqualTo(LocalDate.now().toEpochDay())
     }
@@ -56,14 +102,7 @@ internal class ScheduleViewModelTest {
         val categories = listOf(category1, category2)
         val todos = listOf(todo1, todo2)
         val todoBlock =
-            TodoBlock(
-                1,
-                "",
-                LocalDate.now(),
-                LocalTime.of(10, 0),
-                LocalTime.now().plusHours(1),
-                null
-            )
+            TodoBlock(1, "", LocalDate.now(), LocalTime.of(10, 0), LocalTime.of(11, 0), null)
         val scheduleBlock = ScheduleBlock(todoBlock, todos, categories)
         fakeScheduleBlockRepository.insertOrUpdateScheduleBlock(scheduleBlock)
 
@@ -71,19 +110,19 @@ internal class ScheduleViewModelTest {
             ScheduleViewModel(fakeScheduleBlockRepository, fakeTodoBlockNotificationScheduler)
         advanceUntilIdle()
 
-        val scheduleListItems = viewModel.scheduleState.value.scheduleListItems
+        val schedule = viewModel.scheduleState.value.schedules[1]
 
-        val scheduleGap1 = scheduleListItems[0]
+        val scheduleGap1 = schedule[0]
         assertThat(scheduleGap1.startTime).isEqualTo(LocalTime.of(0, 0))
         assertThat(scheduleGap1.endTime).isEqualTo(todoBlock.startTime)
 
-        val uiScheduleBlock = scheduleListItems[1] as UiScheduleBlock
+        val uiScheduleBlock = schedule[1] as UiScheduleBlock
         assertThat(uiScheduleBlock.todoBlockId).isEqualTo(todoBlock.todoBlockId)
         assertThat(uiScheduleBlock.categories).containsExactlyElementsIn(categories)
         assertThat(uiScheduleBlock.todoDescriptions).containsExactlyElementsIn(todos.map { it.description })
         assertThat(uiScheduleBlock.notes).isEqualTo(todoBlock.notes)
 
-        val scheduleGap2 = scheduleListItems[2]
+        val scheduleGap2 = schedule[2]
         assertThat(scheduleGap2.startTime).isEqualTo(todoBlock.endTime)
         assertThat(scheduleGap2.endTime).isEqualTo(LocalTime.of(23, 59))
     }

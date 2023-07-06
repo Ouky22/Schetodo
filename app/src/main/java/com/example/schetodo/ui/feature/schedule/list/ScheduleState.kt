@@ -1,6 +1,6 @@
 package com.example.schetodo.ui.feature.schedule.list
 
 data class ScheduleState(
-    val scheduleListItems: List<ScheduleListItem> = emptyList(),
+    val schedules: Array<List<ScheduleListItem>> =  Array(3) { emptyList() },
     val currentDate: String = ""
 )
