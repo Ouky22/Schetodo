@@ -32,8 +32,10 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.UiText
 import com.example.schetodo.ui.feature.schedule.list.ScheduleEvent.*
 import com.example.schetodo.ui.util.popFromCurrentBackStackEntry
+import com.example.schetodo.ui.util.showDatePicker
 import com.example.schetodo.ui.util.showSnackbarWithActionHandler
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalTime
 
 @Composable
@@ -73,7 +75,7 @@ fun ScheduleScreen(
         currentDate = state.currentDate,
         onNavigateToPreviousDate = { viewModel.onEvent(GoToPreviousDate) },
         onNavigateToNextDate = { viewModel.onEvent(GoToNextDate) },
-        onCurrentDateButtonClick = {},
+        onNavigateToAnyDate = { date -> viewModel.onEvent(GoToAnyDate(date)) },
         onGoToCurrentDateButtonClick = { viewModel.onEvent(GoToCurrentDate) },
         onFabClick = { onAddScheduleBlockNavigation(viewModel.currentDateStamp) },
         onEditScheduleBlock = { todoBlockId -> onEditScheduleBlockNavigation(todoBlockId) },
@@ -96,7 +98,7 @@ fun ScheduleScreen(
     currentDate: String,
     onNavigateToPreviousDate: () -> Unit,
     onNavigateToNextDate: () -> Unit,
-    onCurrentDateButtonClick: () -> Unit,
+    onNavigateToAnyDate: (LocalDate) -> Unit,
     onGoToCurrentDateButtonClick: () -> Unit,
     onFabClick: () -> Unit,
     onEditScheduleBlock: (todoBlockId: Int) -> Unit,
@@ -136,6 +138,7 @@ fun ScheduleScreen(
             // so that the first page gets the second element from the schedules array
             val pagerState = rememberPagerState(initialPage = Int.MAX_VALUE / 2 + 1)
             val coroutineScope = rememberCoroutineScope()
+            val context = LocalContext.current
 
             DateNavigator(
                 currentDate = currentDate,
@@ -145,7 +148,11 @@ fun ScheduleScreen(
                 onNextDateButtonClick = {
                     coroutineScope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
                 },
-                onCurrentDateButtonClick = onCurrentDateButtonClick,
+                onCurrentDateButtonClick = {
+                    showDatePicker(context) { selectedDate ->
+                        onNavigateToAnyDate(selectedDate)
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp)
@@ -264,7 +271,7 @@ fun ScheduleScreenPreview() {
             currentDate = "2023-02-01",
             onNavigateToPreviousDate = {},
             onNavigateToNextDate = {},
-            onCurrentDateButtonClick = {},
+            onNavigateToAnyDate = {},
             onGoToCurrentDateButtonClick = {},
             onFabClick = {},
             onEditScheduleBlock = {},

@@ -33,6 +33,19 @@ internal class ScheduleViewModelTest {
     private val fakeTodoBlockNotificationScheduler =
         FakeTodoBlockNotificationScheduler(fakeNotificationRepository)
 
+    @Test
+    fun test_navigating_to_any_date() = runTest {
+        val viewModel =
+            ScheduleViewModel(fakeScheduleBlockRepository, fakeTodoBlockNotificationScheduler)
+
+        var date = LocalDate.of(1996, 12, 31)
+        viewModel.onEvent(GoToAnyDate(date))
+        assertThat(viewModel.currentDateStamp).isEqualTo(date.toEpochDay())
+
+        date = LocalDate.of(2030, 1, 1)
+        viewModel.onEvent(GoToAnyDate(date))
+        assertThat(viewModel.currentDateStamp).isEqualTo(date.toEpochDay())
+    }
 
     @Test
     fun test_navigating_to_next_and_previous_date() = runTest {

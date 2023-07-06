@@ -50,6 +50,7 @@ class ScheduleViewModel @Inject constructor(
             is GoToNextDate -> goToNextDate()
             is GoToPreviousDate -> goToPreviousDate()
             is GoToCurrentDate -> goToCurrentDate()
+            is GoToAnyDate -> goToDate(event.date)
             is UnmarkTodoBlockForDeletion -> onUnmarkTodoBlockForDeletion(event.todoBlockId)
         }
     }
@@ -62,7 +63,11 @@ class ScheduleViewModel @Inject constructor(
     }
 
     private fun goToCurrentDate() {
-        updateCurrentDate(LocalDate.now())
+        goToDate(LocalDate.now())
+    }
+
+    private fun goToDate(date: LocalDate) {
+        updateCurrentDate(date)
         loadSchedulesForCurrentDate()
     }
 
