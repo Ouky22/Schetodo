@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.schetodo.R
 import com.example.schetodo.data.schedule_block.ScheduleBlock
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
+import com.example.schetodo.data.schedule_template.ScheduleTemplate
+import com.example.schetodo.data.schedule_template.ScheduleTemplateRepository
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo_block.TodoBlock
 import com.example.schetodo.ui.util.UiText
@@ -27,6 +29,7 @@ import kotlin.math.abs
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
     private val scheduleBlockRepository: ScheduleBlockRepository,
+    private val scheduleTemplateRepository: ScheduleTemplateRepository,
     private val todoBlockNotificationScheduler: TodoBlockNotificationScheduler
 ) : ViewModel() {
     private val _scheduleState = MutableStateFlow(ScheduleState())
@@ -48,6 +51,30 @@ class ScheduleViewModel @Inject constructor(
             is GoToCurrentDate -> goToCurrentDate()
             is GoToAnyDate -> goToDate(event.date)
             is UnmarkTodoBlockForDeletion -> onUnmarkTodoBlockForDeletion(event.todoBlockId)
+            is SaveCurrentScheduleAsTemplate -> onSaveCurrentScheduleAsTemplate(event.templateName)
+        }
+    }
+
+    private fun onSaveCurrentScheduleAsTemplate(templateName: String) {
+        viewModelScope.launch {
+            val templateId =
+                scheduleTemplateRepository.insert(ScheduleTemplate(name = templateName))
+
+            scheduleBlockRepository.getScheduleBlocksOnDate(_scheduleState.value.currentDate)
+                .first()
+                .map { scheduleBlock ->
+                    val todoBlock = scheduleBlock.todoBlock.copy(
+                        todoBlockId = 0,
+                        templateId = templateId.toInt(),
+                        date = null
+                    )
+                    scheduleBlock.copy(
+                        todoBlock = todoBlock
+                    )
+                }
+                .forEach { scheduleBlock ->
+                    scheduleBlockRepository.insertOrUpdateScheduleBlock(scheduleBlock)
+                }
         }
     }
 

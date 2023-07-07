@@ -1,9 +1,6 @@
 package com.example.schetodo.ui.feature.schedule.list
 
-import android.graphics.drawable.Icon
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,7 +10,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Save
-import androidx.compose.material.icons.outlined.Schedule
 import androidx.compose.material.icons.outlined.TableRows
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -35,18 +31,16 @@ import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.OverflowMenu
 import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.ID_OF_TODO_BLOCK_MARKED_FOR_DELETION
+import com.example.schetodo.ui.feature.schedule.list.ScheduleEvent.*
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.UiText
-import com.example.schetodo.ui.feature.schedule.list.ScheduleEvent.*
-import com.example.schetodo.ui.feature.todos.list.FilterDropdownItem
 import com.example.schetodo.ui.util.popFromCurrentBackStackEntry
 import com.example.schetodo.ui.util.showDatePicker
 import com.example.schetodo.ui.util.showSnackbarWithActionHandler
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
-import kotlin.math.abs
 
 @Composable
 fun ScheduleScreen(
@@ -90,6 +84,7 @@ fun ScheduleScreen(
         onNavigateToAnyDate = { date -> viewModel.onEvent(GoToAnyDate(date)) },
         onGoToCurrentDateButtonClick = { viewModel.onEvent(GoToCurrentDate) },
         onScheduleTemplatesButtonClick = onScheduleTemplatesScreenNavigation,
+        onSaveScheduleAsTemplateButtonClick = { viewModel.onEvent(SaveCurrentScheduleAsTemplate(it)) },
         onFabClick = { onAddScheduleBlockNavigation(state.currentDate.toEpochDay()) },
         onEditScheduleBlock = { todoBlockId -> onEditScheduleBlockNavigation(todoBlockId) },
         onAddScheduleGapButtonClick = { startTime, endTime ->
@@ -115,6 +110,7 @@ fun ScheduleScreen(
     onNavigateToAnyDate: (LocalDate) -> Unit,
     onGoToCurrentDateButtonClick: () -> Unit,
     onScheduleTemplatesButtonClick: () -> Unit,
+    onSaveScheduleAsTemplateButtonClick: (templateName: String) -> Unit,
     onFabClick: () -> Unit,
     onEditScheduleBlock: (todoBlockId: Int) -> Unit,
     onAddScheduleGapButtonClick: (startTime: LocalTime, endTime: LocalTime) -> Unit,
@@ -135,7 +131,10 @@ fun ScheduleScreen(
 
                     ScheduleOverflowMenu(
                         onScheduleTemplatesOptionClick = onScheduleTemplatesButtonClick,
-                        onSaveAsTemplateOptionClick = {}
+                        onSaveAsTemplateOptionClick = {
+                            // TODO open dialog to enter name for template before saving
+                            onSaveScheduleAsTemplateButtonClick("test")
+                        }
                     )
                 }
             )
@@ -372,6 +371,7 @@ fun ScheduleScreenPreview() {
             onNavigateToAnyDate = {},
             onGoToCurrentDateButtonClick = {},
             onScheduleTemplatesButtonClick = {},
+            onSaveScheduleAsTemplateButtonClick = {},
             onFabClick = {},
             onEditScheduleBlock = {},
             onAddScheduleGapButtonClick = { _, _ -> }

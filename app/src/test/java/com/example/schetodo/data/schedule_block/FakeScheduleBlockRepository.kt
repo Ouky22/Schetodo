@@ -6,7 +6,7 @@ import java.time.LocalDate
 
 class FakeScheduleBlockRepository : ScheduleBlockRepository {
 
-    private val scheduleBlocks = mutableListOf<ScheduleBlock>()
+    public val scheduleBlocks = mutableListOf<ScheduleBlock>()
 
     override fun getScheduleBlocksOnDate(date: LocalDate): Flow<List<ScheduleBlock>> {
         return flow {

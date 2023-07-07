@@ -8,4 +8,5 @@ sealed class ScheduleEvent {
     object GoToCurrentDate : ScheduleEvent()
     data class GoToAnyDate(val date: LocalDate): ScheduleEvent()
     data class UnmarkTodoBlockForDeletion(val todoBlockId: Int) : ScheduleEvent()
+    data class SaveCurrentScheduleAsTemplate(val templateName: String): ScheduleEvent()
 }
