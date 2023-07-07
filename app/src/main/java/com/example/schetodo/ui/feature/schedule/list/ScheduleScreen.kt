@@ -1,5 +1,6 @@
 package com.example.schetodo.ui.feature.schedule.list
 
+import android.graphics.drawable.Icon
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.MutatePriority
@@ -11,11 +12,15 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Save
+import androidx.compose.material.icons.outlined.Schedule
+import androidx.compose.material.icons.outlined.TableRows
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,12 +32,14 @@ import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.ui.SchetodoAppState
+import com.example.schetodo.ui.components.OverflowMenu
 import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.ID_OF_TODO_BLOCK_MARKED_FOR_DELETION
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.UiText
 import com.example.schetodo.ui.feature.schedule.list.ScheduleEvent.*
+import com.example.schetodo.ui.feature.todos.list.FilterDropdownItem
 import com.example.schetodo.ui.util.popFromCurrentBackStackEntry
 import com.example.schetodo.ui.util.showDatePicker
 import com.example.schetodo.ui.util.showSnackbarWithActionHandler
@@ -119,18 +126,17 @@ fun ScheduleScreen(
                 showBackButton = false,
                 onBackButtonClick = { },
                 actions = {
-                    IconButton(onClick = onScheduleTemplatesButtonClick) {
-                        Icon(
-                            imageVector = Icons.Filled.Update,
-                            contentDescription = stringResource(R.string.go_to_screen_with_schedule_templates)
-                        )
-                    }
                     IconButton(onClick = onGoToCurrentDateButtonClick) {
                         Icon(
                             imageVector = Icons.Filled.Today,
                             contentDescription = stringResource(R.string.go_to_current_date)
                         )
                     }
+
+                    ScheduleOverflowMenu(
+                        onScheduleTemplatesOptionClick = onScheduleTemplatesButtonClick,
+                        onSaveAsTemplateOptionClick = {}
+                    )
                 }
             )
         },
@@ -299,6 +305,55 @@ fun ScheduleList(
                     }
             }
         }
+    }
+}
+
+@Composable
+fun ScheduleOverflowMenu(
+    modifier: Modifier = Modifier,
+    onScheduleTemplatesOptionClick: () -> Unit,
+    onSaveAsTemplateOptionClick: () -> Unit
+) {
+    OverflowMenu(
+        modifier = modifier,
+        icon = Icons.Filled.MoreVert,
+        contentDescription = "More features for schedule"
+    ) {
+        Column {
+            ScheduleOverFlowMenuOption(
+                text = stringResource(id = R.string.schedule_templates),
+                icon = Icons.Outlined.TableRows,
+                onClick = onScheduleTemplatesOptionClick
+            )
+
+            ScheduleOverFlowMenuOption(
+                text = stringResource(R.string.save_as_template),
+                icon = Icons.Outlined.Save,
+                onClick = onSaveAsTemplateOptionClick
+            )
+        }
+    }
+}
+
+@Composable
+fun ScheduleOverFlowMenuOption(
+    text: String,
+    icon: ImageVector,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .clickable { onClick() }
+            .padding(horizontal = 12.dp, vertical = 12.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null
+        )
+        Spacer(modifier = Modifier.size(10.dp))
+        Text(text = text)
     }
 }
 

@@ -76,4 +76,5 @@
     <string name="mark_as_done">Mark as done</string>
     <string name="schedule_templates">Schedule templates</string>
     <string name="go_to_screen_with_schedule_templates">Go to screen with schedule templates</string>
+    <string name="save_as_template">Save as template</string>
 </resources>
