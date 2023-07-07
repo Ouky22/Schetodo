@@ -1,6 +1,8 @@
 package com.example.schetodo.ui.feature.schedule.list
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -37,6 +39,7 @@ import com.example.schetodo.ui.util.showSnackbarWithActionHandler
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
+import kotlin.math.abs
 
 @Composable
 fun ScheduleScreen(
@@ -73,17 +76,18 @@ fun ScheduleScreen(
         modifier = modifier,
         snackbarHostState = snackbarHostState,
         schedules = state.schedules,
+        currentDateString = state.currentDateString,
         currentDate = state.currentDate,
         onNavigateToPreviousDate = { viewModel.onEvent(GoToPreviousDate) },
         onNavigateToNextDate = { viewModel.onEvent(GoToNextDate) },
         onNavigateToAnyDate = { date -> viewModel.onEvent(GoToAnyDate(date)) },
         onGoToCurrentDateButtonClick = { viewModel.onEvent(GoToCurrentDate) },
         onScheduleTemplatesButtonClick = onScheduleTemplatesScreenNavigation,
-        onFabClick = { onAddScheduleBlockNavigation(viewModel.currentDateStamp) },
+        onFabClick = { onAddScheduleBlockNavigation(state.currentDate.toEpochDay()) },
         onEditScheduleBlock = { todoBlockId -> onEditScheduleBlockNavigation(todoBlockId) },
         onAddScheduleGapButtonClick = { startTime, endTime ->
             onAddScheduleBlockInGapNavigation(
-                viewModel.currentDateStamp,
+                state.currentDate.toEpochDay(),
                 startTime.toSecondOfDay(),
                 endTime.toSecondOfDay()
             )
@@ -91,13 +95,14 @@ fun ScheduleScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
-    schedules: Array<List<ScheduleListItem>>,
-    currentDate: String,
+    schedules: Map<Long, List<ScheduleListItem>>,
+    currentDateString: String,
+    currentDate: LocalDate,
     onNavigateToPreviousDate: () -> Unit,
     onNavigateToNextDate: () -> Unit,
     onNavigateToAnyDate: (LocalDate) -> Unit,
@@ -143,24 +148,14 @@ fun ScheduleScreen(
             modifier = modifier.padding(contentPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // initial page must be a number that gives the remainder 1 when divided by 3
-            // so that the first page gets the second element from the schedules array
-            val pagerState = rememberPagerState(initialPage = Int.MAX_VALUE / 2 + 1)
-            val coroutineScope = rememberCoroutineScope()
             val context = LocalContext.current
 
             DateNavigator(
-                currentDate = currentDate,
-                onPreviousDateButtonClick = {
-                    coroutineScope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
-                },
-                onNextDateButtonClick = {
-                    coroutineScope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
-                },
+                currentDate = currentDateString,
+                onPreviousDateButtonClick = onNavigateToPreviousDate,
+                onNextDateButtonClick = onNavigateToNextDate,
                 onCurrentDateButtonClick = {
-                    showDatePicker(context) { selectedDate ->
-                        onNavigateToAnyDate(selectedDate)
-                    }
+                    showDatePicker(context) { selectedDate -> onNavigateToAnyDate(selectedDate) }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -168,30 +163,68 @@ fun ScheduleScreen(
                     .padding(bottom = 8.dp)
             )
 
-            var previousPage by remember { mutableStateOf(pagerState.currentPage) }
-            LaunchedEffect(pagerState) {
-                snapshotFlow { pagerState.currentPage }.collect { currentPage ->
-                    when {
-                        currentPage > previousPage -> onNavigateToNextDate()
-                        currentPage < previousPage -> onNavigateToPreviousDate()
-                    }
-                    previousPage = currentPage
-                }
-            }
-
-            HorizontalPager(
-                modifier = Modifier.fillMaxSize(),
-                state = pagerState,
-                pageCount = Int.MAX_VALUE
+            SchedulePager(
+                currentDate = currentDate,
+                onNavigateToNextDate = onNavigateToNextDate,
+                onNavigateToPreviousDate = onNavigateToPreviousDate,
+                key = { page -> page } // use page as key because it's the date stamp of the schedule
             ) { page ->
                 ScheduleList(
                     modifier = Modifier.fillMaxSize(),
-                    scheduleListItems = schedules[page % schedules.size],
+                    scheduleListItems = schedules[page.toLong()] ?: emptyList(),
                     onListItemClick = onEditScheduleBlock,
                     onAddScheduleGapButtonClick = onAddScheduleGapButtonClick
                 )
             }
         }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun SchedulePager(
+    currentDate: LocalDate,
+    onNavigateToNextDate: () -> Unit,
+    onNavigateToPreviousDate: () -> Unit,
+    key: ((index: Int) -> Any)? = null,
+    pageContent: @Composable (Int) -> Unit
+) {
+    val pagerState = rememberPagerState(initialPage = currentDate.toEpochDay().toInt())
+
+    var previousPage by remember { mutableStateOf(pagerState.currentPage) }
+    var scrollingAnimatedBySystem by remember { mutableStateOf(false) }
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }.collect { currentPage ->
+            if (scrollingAnimatedBySystem) return@collect
+            when {
+                currentPage > previousPage -> onNavigateToNextDate()
+                currentPage < previousPage -> onNavigateToPreviousDate()
+            }
+            previousPage = currentPage
+        }
+    }
+
+    LaunchedEffect(currentDate) {
+        if (scrollingAnimatedBySystem) return@LaunchedEffect
+
+        try {
+            scrollingAnimatedBySystem = true
+            val targetPage = currentDate.toEpochDay().toInt()
+            pagerState.animateScrollToPage(targetPage)
+        } finally {
+            scrollingAnimatedBySystem = false
+            previousPage = pagerState.currentPage
+        }
+    }
+
+    HorizontalPager(
+        modifier = Modifier.fillMaxSize(),
+        state = pagerState,
+        pageCount = Int.MAX_VALUE,
+        key = key
+    ) { page ->
+        pageContent(page)
     }
 }
 
@@ -276,8 +309,9 @@ fun ScheduleScreenPreview() {
         ScheduleScreen(
             modifier = Modifier.fillMaxSize(),
             snackbarHostState = remember { SnackbarHostState() },
-            schedules = arrayOf(createTodoBlocksForPreview()),
-            currentDate = "2023-02-01",
+            schedules = createTodoBlocksForPreview(),
+            currentDateString = "2023-02-01",
+            currentDate = LocalDate.now(),
             onNavigateToPreviousDate = {},
             onNavigateToNextDate = {},
             onNavigateToAnyDate = {},
@@ -290,7 +324,7 @@ fun ScheduleScreenPreview() {
     }
 }
 
-private fun createTodoBlocksForPreview(): List<ScheduleListItem> {
+private fun createTodoBlocksForPreview(): Map<Long, List<ScheduleListItem>> {
     val todoCategories = listOf(
         TodoCategory(
             1, "Household", todoCategoryColors[0].toArgb().toLong(), null,
@@ -311,7 +345,7 @@ private fun createTodoBlocksForPreview(): List<ScheduleListItem> {
         Todo(2, "Clean the floor", TodoPriority.LOW, TodoFlag.UNDONE, 1),
         Todo(3, "Bake a cake", TodoPriority.LOW, TodoFlag.UNDONE, 1)
     )
-    return listOf(
+    val scheduleListItems = listOf(
         ScheduleGap(
             startTime = LocalTime.of(0, 0),
             endTime = LocalTime.of(12, 0),
@@ -364,4 +398,6 @@ private fun createTodoBlocksForPreview(): List<ScheduleListItem> {
             durationMinutes = UiText.DynamicString("59min")
         )
     )
+
+    return mapOf(LocalDate.now().toEpochDay() to scheduleListItems)
 }

@@ -9,7 +9,6 @@ import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo_block.TodoBlock
 import com.example.schetodo.ui.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.LocalDate
@@ -20,29 +19,26 @@ import com.example.schetodo.ui.feature.schedule.notification.TodoBlockNotificati
 import kotlinx.coroutines.flow.*
 import java.time.LocalTime
 import java.time.format.FormatStyle
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
+import kotlin.collections.HashMap
+import kotlin.math.abs
 
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
     private val scheduleBlockRepository: ScheduleBlockRepository,
     private val todoBlockNotificationScheduler: TodoBlockNotificationScheduler
 ) : ViewModel() {
-
-    private var currentDate = LocalDate.now()
-
-    val currentDateStamp: Long
-        get() = currentDate.toEpochDay()
-
     private val _scheduleState = MutableStateFlow(ScheduleState())
     val scheduleState: StateFlow<ScheduleState>
         get() = _scheduleState.asStateFlow()
 
-    private val collectScheduleJobs: Array<Job?> = Array(3) { null }
-
-    private var currentScheduleIndex = collectScheduleJobs.size / 2
+    private val numberOfSchedulesAroundDate = 4L
+    private lateinit var lastDateSchedulesWereLoaded: LocalDate
 
     init {
-        goToCurrentDate()
+        updateCurrentDate(LocalDate.now())
+        loadSchedulesForDate(_scheduleState.value.currentDate)
     }
 
     fun onEvent(event: ScheduleEvent) {
@@ -66,61 +62,53 @@ class ScheduleViewModel @Inject constructor(
         goToDate(LocalDate.now())
     }
 
-    private fun goToDate(date: LocalDate) {
-        updateCurrentDate(date)
-        loadSchedulesForCurrentDate()
-    }
-
     private fun goToPreviousDate() {
-        updateCurrentDate(currentDate.minusDays(1))
-
-        currentScheduleIndex--
-        loadScheduleBeforeCurrentSchedule()
+        goToDate(_scheduleState.value.currentDate.minusDays(1))
     }
 
     private fun goToNextDate() {
-        updateCurrentDate(currentDate.plusDays(1))
-
-        currentScheduleIndex++
-        loadScheduleAfterCurrentSchedule()
+        goToDate(_scheduleState.value.currentDate.plusDays(1))
     }
 
-    private fun loadSchedulesForCurrentDate() {
-        var dayOffset = -1L
-        for (i in collectScheduleJobs.indices) {
-            loadScheduleAt(scheduleIndex = i, scheduleDate = currentDate.plusDays(dayOffset))
-            dayOffset++
-        }
-    }
+    private fun goToDate(date: LocalDate) {
+        updateCurrentDate(date)
 
-    private fun loadScheduleAfterCurrentSchedule() {
-        loadScheduleAt(
-            scheduleIndex = Math.floorMod(currentScheduleIndex + 1, collectScheduleJobs.size),
-            scheduleDate = currentDate.plusDays(1)
+        val differenceToLastDateSchedulesWereLoaded = abs(
+            ChronoUnit.DAYS.between(
+                _scheduleState.value.currentDate,
+                lastDateSchedulesWereLoaded
+            )
         )
+        if (differenceToLastDateSchedulesWereLoaded >= numberOfSchedulesAroundDate / 2)
+            loadSchedulesForDate(date)
     }
 
-    private fun loadScheduleBeforeCurrentSchedule() {
-        loadScheduleAt(
-            scheduleIndex = Math.floorMod(currentScheduleIndex - 1, collectScheduleJobs.size),
-            scheduleDate = currentDate.minusDays(1)
-        )
-    }
+    private fun loadSchedulesForDate(anchorDate: LocalDate) {
+        val maxDayOffset = numberOfSchedulesAroundDate / 2
 
-    private fun loadScheduleAt(scheduleIndex: Int, scheduleDate: LocalDate) {
-        collectScheduleJobs[scheduleIndex]?.cancel()
+        viewModelScope.launch {
+            for (dayOffset in -maxDayOffset..maxDayOffset) {
+                val date = anchorDate.plusDays(dayOffset)
+                val dateStamp = date.toEpochDay()
 
-        collectScheduleJobs[scheduleIndex] = viewModelScope.launch {
-            scheduleBlockRepository.getScheduleBlocksOnDate(scheduleDate)
-                .collect { scheduleBlocks ->
-                    val schedules = _scheduleState.value.schedules.copyOf()
-                    schedules[scheduleIndex] = convertToSchedule(scheduleBlocks)
-
-                    _scheduleState.value = _scheduleState.value.copy(
-                        schedules = schedules
-                    )
+                val scheduleNotAlreadyLoaded = _scheduleState.value.schedules[dateStamp] == null
+                if (scheduleNotAlreadyLoaded) {
+                    launch {
+                        scheduleBlockRepository.getScheduleBlocksOnDate(date)
+                            .map { convertToSchedule(it) }
+                            .collect { scheduleBlocks ->
+                                val schedules = HashMap(
+                                    _scheduleState.value.schedules + (dateStamp to scheduleBlocks)
+                                )
+                                _scheduleState.value =
+                                    _scheduleState.value.copy(schedules = schedules)
+                            }
+                    }
                 }
+            }
         }
+
+        lastDateSchedulesWereLoaded = _scheduleState.value.currentDate
     }
 
     private fun convertToSchedule(scheduleBlocks: List<ScheduleBlock>): List<ScheduleListItem> {
@@ -209,11 +197,11 @@ class ScheduleViewModel @Inject constructor(
     }
 
     private fun updateCurrentDate(date: LocalDate) {
-        currentDate = date
         _scheduleState.value = scheduleState.value.copy(
-            currentDate = currentDate.format(
+            currentDateString = date.format(
                 DateTimeFormatter.ofPattern("EEE dd LLL, yyyy", Locale.getDefault())
-            )
+            ),
+            currentDate = date
         )
     }
 }

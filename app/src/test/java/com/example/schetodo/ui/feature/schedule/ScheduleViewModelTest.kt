@@ -40,11 +40,11 @@ internal class ScheduleViewModelTest {
 
         var date = LocalDate.of(1996, 12, 31)
         viewModel.onEvent(GoToAnyDate(date))
-        assertThat(viewModel.currentDateStamp).isEqualTo(date.toEpochDay())
+        assertThat(viewModel.scheduleState.value.currentDate).isEqualTo(date)
 
         date = LocalDate.of(2030, 1, 1)
         viewModel.onEvent(GoToAnyDate(date))
-        assertThat(viewModel.currentDateStamp).isEqualTo(date.toEpochDay())
+        assertThat(viewModel.scheduleState.value.currentDate).isEqualTo(date)
     }
 
     @Test
@@ -60,7 +60,7 @@ internal class ScheduleViewModelTest {
         viewModel.onEvent(GoToPreviousDate)
         advanceUntilIdle()
 
-        assertThat(viewModel.currentDateStamp).isEqualTo(LocalDate.now().toEpochDay())
+        assertThat(viewModel.scheduleState.value.currentDate).isEqualTo(LocalDate.now())
     }
 
     @Test
@@ -72,11 +72,9 @@ internal class ScheduleViewModelTest {
             viewModel.onEvent(GoToNextDate)
             advanceUntilIdle()
 
-            val stamp = LocalDate.now().plusDays(currentDayOffset.toLong()).toEpochDay()
+            val stamp = LocalDate.now().plusDays(currentDayOffset.toLong())
 
-            assertThat(viewModel.currentDateStamp).isEqualTo(
-                stamp
-            )
+            assertThat(viewModel.scheduleState.value.currentDate).isEqualTo(stamp)
         }
     }
 
@@ -89,8 +87,8 @@ internal class ScheduleViewModelTest {
             viewModel.onEvent(GoToPreviousDate)
             advanceUntilIdle()
 
-            assertThat(viewModel.currentDateStamp).isEqualTo(
-                LocalDate.now().minusDays(currentDayOffset.toLong()).toEpochDay()
+            assertThat(viewModel.scheduleState.value.currentDate).isEqualTo(
+                LocalDate.now().minusDays(currentDayOffset.toLong())
             )
         }
     }
@@ -103,7 +101,7 @@ internal class ScheduleViewModelTest {
         viewModel.onEvent(GoToCurrentDate)
         advanceUntilIdle()
 
-        assertThat(viewModel.currentDateStamp).isEqualTo(LocalDate.now().toEpochDay())
+        assertThat(viewModel.scheduleState.value.currentDate).isEqualTo(LocalDate.now())
     }
 
     @Test
@@ -114,8 +112,9 @@ internal class ScheduleViewModelTest {
         val todo2 = Todo(2, "t2", TodoPriority.LOW, TodoFlag.DONE, category1.categoryId)
         val categories = listOf(category1, category2)
         val todos = listOf(todo1, todo2)
+        val date = LocalDate.now()
         val todoBlock =
-            TodoBlock(1, "", LocalDate.now(), LocalTime.of(10, 0), LocalTime.of(11, 0), null)
+            TodoBlock(1, "", date, LocalTime.of(10, 0), LocalTime.of(11, 0), null)
         val scheduleBlock = ScheduleBlock(todoBlock, todos, categories)
         fakeScheduleBlockRepository.insertOrUpdateScheduleBlock(scheduleBlock)
 
@@ -123,7 +122,7 @@ internal class ScheduleViewModelTest {
             ScheduleViewModel(fakeScheduleBlockRepository, fakeTodoBlockNotificationScheduler)
         advanceUntilIdle()
 
-        val schedule = viewModel.scheduleState.value.schedules[1]
+        val schedule = viewModel.scheduleState.value.schedules[date.toEpochDay()]!!
 
         val scheduleGap1 = schedule[0]
         assertThat(scheduleGap1.startTime).isEqualTo(LocalTime.of(0, 0))
