@@ -24,7 +24,7 @@ import com.example.schetodo.data.todo_category.TodoCategoryDao
         Todo::class, TodoBlock::class, TodoCategory::class, ScheduleTemplate::class, Notification::class,
         TodoBlockCategoryRelationship::class, TodoBlockTodoRelationship::class
     ],
-    version = 7,
+    version = 8,
     autoMigrations = [
         AutoMigration(from = 3, to = 4),
         AutoMigration(from = 4, to = 5),
@@ -33,7 +33,8 @@ import com.example.schetodo.data.todo_category.TodoCategoryDao
             from = 6,
             to = 7,
             spec = SchetodoDatabase.RenameTodoTemplateToScheduleTemplate::class
-        )
+        ),
+        AutoMigration(from = 7, to = 8)
     ]
 )
 @TypeConverters(RoomTypeConverters::class)
