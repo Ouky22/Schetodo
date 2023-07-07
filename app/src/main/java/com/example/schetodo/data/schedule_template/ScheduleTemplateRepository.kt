@@ -6,6 +6,6 @@ interface ScheduleTemplateRepository {
     suspend fun insert(scheduleTemplate: ScheduleTemplate): Long
     suspend fun insertOrUpdate(scheduleTemplate: ScheduleTemplate): Long
     fun getAll(): Flow<List<ScheduleTemplate>>
-    fun getById(templateId: Int): Flow<ScheduleTemplate>
+    fun getById(templateId: Int): Flow<ScheduleTemplate?>
     suspend fun deleteById(templateId: Int)
 }

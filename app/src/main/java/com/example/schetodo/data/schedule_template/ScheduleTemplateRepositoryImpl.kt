@@ -17,7 +17,8 @@ class ScheduleTemplateRepositoryImpl @Inject constructor(
 
     override fun getAll(): Flow<List<ScheduleTemplate>> = scheduleTemplateDao.getAll()
 
-    override fun getById(templateId: Int): Flow<ScheduleTemplate> = scheduleTemplateDao.getById(templateId)
+    override fun getById(templateId: Int): Flow<ScheduleTemplate?> =
+        scheduleTemplateDao.getById(templateId)
 
     override suspend fun deleteById(templateId: Int) = scheduleTemplateDao.deleteById(templateId)
 }

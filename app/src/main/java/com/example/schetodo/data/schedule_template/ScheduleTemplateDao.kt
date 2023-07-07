@@ -16,7 +16,7 @@ interface ScheduleTemplateDao {
     fun getAll(): Flow<List<ScheduleTemplate>>
 
     @Query("SELECT * FROM ScheduleTemplate WHERE templateId = :templateId")
-    fun getById(templateId: Int): Flow<ScheduleTemplate>
+    fun getById(templateId: Int): Flow<ScheduleTemplate?>
 
     @Query("DELETE FROM ScheduleTemplate WHERE templateId = :templateId")
     suspend fun deleteById(templateId: Int)
