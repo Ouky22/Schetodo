@@ -19,7 +19,10 @@ class NotificationRepositoryImpl @Inject constructor(
             .filter { notification ->
                 val todoBlock = todoBlockDao.getTodoBlockById(notification.todoBlockId).first()
                     ?: return@filter false
-                !todoBlock.markedForDeletion
+
+                val todoBlockNotMarkedForDeletion = !todoBlock.markedForDeletion
+                val todoBlockNotFromTemplate = todoBlock.templateId == null
+                todoBlockNotMarkedForDeletion && todoBlockNotFromTemplate
             }
             .filter { notification ->
                 val currentDateTime = LocalDateTime.now().withSecond(0).withNano(0)
