@@ -62,14 +62,19 @@ class ScheduleViewModel @Inject constructor(
 
             scheduleBlockRepository.getScheduleBlocksOnDate(_scheduleState.value.currentDate)
                 .first()
+                .filter { !it.todoBlock.markedForDeletion }
                 .map { scheduleBlock ->
                     val todoBlock = scheduleBlock.todoBlock.copy(
                         todoBlockId = 0,
                         templateId = templateId.toInt(),
                         date = null
                     )
+                    val notifications = scheduleBlock.notifications.map {
+                        it.copy(notificationId = 0)
+                    }
                     scheduleBlock.copy(
-                        todoBlock = todoBlock
+                        todoBlock = todoBlock,
+                        notifications = notifications
                     )
                 }
                 .forEach { scheduleBlock ->

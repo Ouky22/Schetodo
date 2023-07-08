@@ -2,6 +2,7 @@ package com.example.schetodo.ui.feature.schedule
 
 import com.example.schetodo.data.FakeScheduleTemplateRepository
 import com.example.schetodo.data.notification.FakeNotificationRepository
+import com.example.schetodo.data.notification.Notification
 import com.example.schetodo.data.schedule_block.FakeScheduleBlockRepository
 import com.example.schetodo.data.schedule_block.ScheduleBlock
 import com.example.schetodo.data.schedule_template.ScheduleTemplate
@@ -24,6 +25,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -78,7 +80,8 @@ internal class ScheduleViewModelTest {
                     todoBlockId = 0,
                     templateId = 0,
                     date = null
-                )
+                ),
+                notifications = testScheduleBlock2.notifications.map { it.copy(notificationId = 0) }
             )
         )
     }
@@ -180,10 +183,14 @@ internal class ScheduleViewModelTest {
         val todo2 = Todo(2, "t2", TodoPriority.LOW, TodoFlag.DONE, category1.categoryId)
         val todoBlock1 =
             TodoBlock(1, "", testScheduleBlocksDate, LocalTime.of(10, 0), LocalTime.of(11, 0), null)
+        val todoBlock2StartTime = LocalTime.of(12, 0)
         val todoBlock2 =
-            TodoBlock(2, "", testScheduleBlocksDate, LocalTime.of(12, 0), LocalTime.of(15, 0), null)
+            TodoBlock(2, "", testScheduleBlocksDate, todoBlock2StartTime, LocalTime.of(15, 0), null)
         testScheduleBlock1 =
             ScheduleBlock(todoBlock1, listOf(todo1, todo2), listOf(category1, category2))
-        testScheduleBlock2 = ScheduleBlock(todoBlock2, listOf(todo1), emptyList())
+
+        val notificationDateTime = LocalDateTime.of(testScheduleBlocksDate, todoBlock2StartTime)
+        val notifications = listOf(Notification(1, notificationDateTime, todoBlock1.todoBlockId))
+        testScheduleBlock2 = ScheduleBlock(todoBlock2, listOf(todo1), emptyList(), notifications)
     }
 }
