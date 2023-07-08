@@ -77,4 +77,7 @@
     <string name="schedule_templates">Schedule templates</string>
     <string name="go_to_screen_with_schedule_templates">Go to screen with schedule templates</string>
     <string name="save_as_template">Save as template</string>
+    <string name="name">Name</string>
+    <string name="please_enter_name">Please enter a name</string>
+    <string name="save_schedule_as_template">Save schedule as template</string>
 </resources>

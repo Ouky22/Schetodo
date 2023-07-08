@@ -1,6 +1,7 @@
 package com.example.schetodo.ui.feature.schedule.list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,14 +14,17 @@ import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.TableRows
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
 import com.example.schetodo.data.todo.Todo
@@ -29,6 +33,7 @@ import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.OverflowMenu
+import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.ID_OF_TODO_BLOCK_MARKED_FOR_DELETION
 import com.example.schetodo.ui.feature.schedule.list.ScheduleEvent.*
@@ -115,6 +120,8 @@ fun ScheduleScreen(
     onEditScheduleBlock: (todoBlockId: Int) -> Unit,
     onAddScheduleGapButtonClick: (startTime: LocalTime, endTime: LocalTime) -> Unit,
 ) {
+    var showEnterScheduleTemplateNameDialog by rememberSaveable { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             SchetodoTopAppBar(
@@ -131,10 +138,7 @@ fun ScheduleScreen(
 
                     ScheduleOverflowMenu(
                         onScheduleTemplatesOptionClick = onScheduleTemplatesButtonClick,
-                        onSaveAsTemplateOptionClick = {
-                            // TODO open dialog to enter name for template before saving
-                            onSaveScheduleAsTemplateButtonClick("test")
-                        }
+                        onSaveAsTemplateOptionClick = { showEnterScheduleTemplateNameDialog = true }
                     )
                 }
             )
@@ -181,6 +185,83 @@ fun ScheduleScreen(
                     onAddScheduleGapButtonClick = onAddScheduleGapButtonClick
                 )
             }
+        }
+    }
+
+    if (showEnterScheduleTemplateNameDialog)
+        EnterScheduleTemplateNameDialog(
+            onDismiss = { showEnterScheduleTemplateNameDialog = false },
+            onSaveName = { templateName ->
+                showEnterScheduleTemplateNameDialog = false
+                onSaveScheduleAsTemplateButtonClick(templateName)
+            }
+        )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EnterScheduleTemplateNameDialog(
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit,
+    onSaveName: (name: String) -> Unit
+) {
+    var showInvalidScheduleTemplateNameError by rememberSaveable { mutableStateOf(false) }
+    var nameInput by rememberSaveable { mutableStateOf("") }
+
+    Dialog(
+        onDismissRequest = onDismiss
+    ) {
+        Card(
+            modifier = modifier
+        ) {
+            Text(
+                text = stringResource(R.string.save_schedule_as_template),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+            )
+
+            OutlinedTextField(
+                modifier = Modifier
+                    .padding(12.dp)
+                    .fillMaxWidth(),
+                value = nameInput,
+                onValueChange = {
+                    nameInput = it
+                    showInvalidScheduleTemplateNameError = false
+                },
+                label = { Text(stringResource(R.string.name)) },
+                singleLine = true,
+                isError = showInvalidScheduleTemplateNameError,
+                trailingIcon = {
+                    if (showInvalidScheduleTemplateNameError)
+                        Icon(
+                            Icons.Filled.Error,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                },
+                supportingText = {
+                    if (showInvalidScheduleTemplateNameError)
+                        Text(
+                            stringResource(R.string.please_enter_name),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                }
+            )
+
+            PositiveNegativeButtonRow(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                positiveButtonText = stringResource(id = R.string.save),
+                negativeButtonText = stringResource(id = R.string.cancel),
+                onPositiveClick = {
+                    val trimmedNameInput = nameInput.trim()
+                    if (trimmedNameInput == "")
+                        showInvalidScheduleTemplateNameError = true
+                    else
+                        onSaveName(trimmedNameInput)
+                },
+                onNegativeClick = onDismiss
+            )
         }
     }
 }
@@ -353,6 +434,17 @@ fun ScheduleOverFlowMenuOption(
         )
         Spacer(modifier = Modifier.size(10.dp))
         Text(text = text)
+    }
+}
+
+@Preview
+@Composable
+fun EnterScheduleTemplateNameDialogPreview() {
+    SchetodoTheme {
+        EnterScheduleTemplateNameDialog(
+            onDismiss = {},
+            onSaveName = {}
+        )
     }
 }
 

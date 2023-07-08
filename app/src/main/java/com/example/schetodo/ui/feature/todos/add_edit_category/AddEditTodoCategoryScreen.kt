@@ -139,7 +139,7 @@ fun AddEditTodoCategoryScreen(
                 supportingText = {
                     if (showInvalidTodoCategoryNameError)
                         Text(
-                            "Please enter a name",
+                            stringResource(R.string.please_enter_name),
                             color = Color.Red
                         )
                 }
