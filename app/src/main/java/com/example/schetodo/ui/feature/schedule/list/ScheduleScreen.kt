@@ -1,7 +1,6 @@
 package com.example.schetodo.ui.feature.schedule.list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,9 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -394,46 +391,40 @@ fun ScheduleOverflowMenu(
     onScheduleTemplatesOptionClick: () -> Unit,
     onSaveAsTemplateOptionClick: () -> Unit
 ) {
-    OverflowMenu(
-        modifier = modifier,
-        icon = Icons.Filled.MoreVert,
-        contentDescription = "More features for schedule"
-    ) {
-        Column {
-            ScheduleOverFlowMenuOption(
-                text = stringResource(id = R.string.schedule_templates),
-                icon = Icons.Outlined.TableRows,
-                onClick = onScheduleTemplatesOptionClick
-            )
+    Box(modifier = modifier) {
+        var expandOverflowMenu by remember { mutableStateOf(false) }
 
-            ScheduleOverFlowMenuOption(
-                text = stringResource(R.string.save_as_template),
-                icon = Icons.Outlined.Save,
-                onClick = onSaveAsTemplateOptionClick
+        IconButton(onClick = { expandOverflowMenu = !expandOverflowMenu }) {
+            Icon(
+                imageVector = Icons.Filled.MoreVert,
+                contentDescription = stringResource(R.string.more)
             )
         }
-    }
-}
-
-@Composable
-fun ScheduleOverFlowMenuOption(
-    text: String,
-    icon: ImageVector,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .clickable { onClick() }
-            .padding(horizontal = 12.dp, vertical = 12.dp)
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null
-        )
-        Spacer(modifier = Modifier.size(10.dp))
-        Text(text = text)
+        DropdownMenu(
+            expanded = expandOverflowMenu,
+            onDismissRequest = { expandOverflowMenu = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text(stringResource(id = R.string.schedule_templates)) },
+                onClick = {
+                    expandOverflowMenu = false
+                    onScheduleTemplatesOptionClick()
+                },
+                leadingIcon = {
+                    Icon(imageVector = Icons.Outlined.TableRows, contentDescription = null)
+                }
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.save_as_template)) },
+                onClick = {
+                    expandOverflowMenu = false
+                    onSaveAsTemplateOptionClick()
+                },
+                leadingIcon = {
+                    Icon(imageVector = Icons.Outlined.Save, contentDescription = null)
+                }
+            )
+        }
     }
 }
 

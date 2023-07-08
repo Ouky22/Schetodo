@@ -80,4 +80,5 @@
     <string name="name">Name</string>
     <string name="please_enter_name">Please enter a name</string>
     <string name="save_schedule_as_template">Save schedule as template</string>
+    <string name="more">More</string>
 </resources>
