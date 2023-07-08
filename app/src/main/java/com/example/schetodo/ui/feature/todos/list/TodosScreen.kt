@@ -244,7 +244,12 @@ fun FilterDropdownItem(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = text)
+        Text(
+            text = text,
+            modifier = Modifier
+                .clickable { onCheckChange(!checked) }
+                .weight(1f)
+        )
         Checkbox(checked = checked, onCheckedChange = onCheckChange)
     }
 }
