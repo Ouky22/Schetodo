@@ -416,14 +416,20 @@ fun NotificationSection(
                 checked = showNotificationAtBeginning,
                 onCheckedChange = onChangeShowNotificationAtBeginning
             )
-            Text(text = stringResource(R.string.show_notification_at_beginning))
+            Text(
+                text = stringResource(R.string.show_notification_at_beginning),
+                modifier = Modifier.clickable { onChangeShowNotificationAtBeginning(!showNotificationAtBeginning) }
+            )
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
                 checked = showNotificationAtEnd,
                 onCheckedChange = onChangeShowNotificationAtEnd
             )
-            Text(text = stringResource(R.string.show_notification_at_end))
+            Text(
+                text = stringResource(R.string.show_notification_at_end),
+                modifier = Modifier.clickable { onChangeShowNotificationAtEnd(!showNotificationAtEnd) }
+            )
         }
     }
 }
