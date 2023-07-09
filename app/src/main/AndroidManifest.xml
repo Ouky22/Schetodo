@@ -34,10 +34,10 @@
         </activity>
 
         <receiver
-            android:name=".ui.feature.schedule.notification.NotificationBroadcastReceiver"
+            android:name=".feature.schedule.notification.NotificationBroadcastReceiver"
             android:exported="false" />
         <receiver
-            android:name=".ui.feature.schedule.notification.RebootReceiver"
+            android:name=".feature.schedule.notification.RebootReceiver"
             android:enabled="false"
             android:exported="false">
             <intent-filter>
