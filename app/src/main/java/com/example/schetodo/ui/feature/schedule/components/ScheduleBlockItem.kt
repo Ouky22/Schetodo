@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.feature.schedule.list
+package com.example.schetodo.ui.feature.schedule.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons

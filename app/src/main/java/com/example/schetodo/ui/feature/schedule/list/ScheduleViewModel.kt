@@ -11,6 +11,9 @@ import com.example.schetodo.data.schedule_template.ScheduleTemplate
 import com.example.schetodo.data.schedule_template.ScheduleTemplateRepository
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo_block.TodoBlock
+import com.example.schetodo.ui.feature.schedule.components.ScheduleGap
+import com.example.schetodo.ui.feature.schedule.components.ScheduleListItem
+import com.example.schetodo.ui.feature.schedule.components.UiScheduleBlock
 import com.example.schetodo.ui.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

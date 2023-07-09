@@ -1,6 +1,7 @@
 package com.example.schetodo.ui.feature.schedule.list
 
 import com.example.schetodo.data.MAX_DATE
+import com.example.schetodo.ui.feature.schedule.components.ScheduleListItem
 import java.time.LocalDate
 
 data class ScheduleState(

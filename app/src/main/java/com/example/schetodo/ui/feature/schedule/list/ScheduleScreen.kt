@@ -1,10 +1,7 @@
 package com.example.schetodo.ui.feature.schedule.list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -32,6 +29,10 @@ import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.ID_OF_TODO_BLOCK_MARKED_FOR_DELETION
+import com.example.schetodo.ui.feature.schedule.components.ScheduleGap
+import com.example.schetodo.ui.feature.schedule.components.ScheduleList
+import com.example.schetodo.ui.feature.schedule.components.ScheduleListItem
+import com.example.schetodo.ui.feature.schedule.components.UiScheduleBlock
 import com.example.schetodo.ui.feature.schedule.list.ScheduleEvent.*
 import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
@@ -354,50 +355,6 @@ fun DateNavigator(
                 imageVector = Icons.Filled.ArrowForwardIos,
                 contentDescription = stringResource(R.string.go_to_next_date)
             )
-        }
-    }
-}
-
-@Composable
-fun ScheduleList(
-    modifier: Modifier = Modifier,
-    scheduleListItems: List<ScheduleListItem>,
-    onListItemClick: (todoBlockId: Int) -> Unit,
-    onAddScheduleGapButtonClick: (startTime: LocalTime, endTime: LocalTime) -> Unit
-) {
-    LazyColumn(
-        modifier = modifier,
-        contentPadding = PaddingValues(top = 16.dp, bottom = 100.dp, start = 12.dp, end = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        items(
-            items = scheduleListItems, key = { it.startTime.toSecondOfDay() }
-        ) { scheduleListItem ->
-            when (scheduleListItem) {
-                is UiScheduleBlock ->
-                    ScheduleBlockItem(
-                        todoCategories = scheduleListItem.categories,
-                        todoDescriptions = scheduleListItem.todoDescriptions,
-                        todoBlocKNotes = scheduleListItem.notes,
-                        startTimeString = scheduleListItem.startTimeText,
-                        endTimeString = scheduleListItem.endTimeText,
-                        durationString = "${scheduleListItem.durationHours.asString()} ${scheduleListItem.durationMinutes.asString()}",
-                        modifier = Modifier.clickable { onListItemClick(scheduleListItem.todoBlockId) },
-                        elevate = scheduleListItem.isCurrentScheduleBlock
-                    )
-                is ScheduleGap ->
-                    OutlinedButton(
-                        onClick = {
-                            onAddScheduleGapButtonClick(
-                                scheduleListItem.startTime,
-                                scheduleListItem.endTime
-                            )
-                        }, modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = "${scheduleListItem.durationHours.asString()} ${scheduleListItem.durationMinutes.asString()}")
-                    }
-            }
         }
     }
 }
