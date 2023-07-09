@@ -18,6 +18,7 @@ import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.todo_category.TodoCategoryRepository
 import com.example.schetodo.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockEvent.*
 import com.example.schetodo.feature.schedule.notification.TodoBlockNotificationScheduler
+import com.example.schetodo.feature.use_case.GeneralUseCases
 import com.example.schetodo.ui.navigation.schedule.AddScheduleBlock
 import com.example.schetodo.ui.navigation.schedule.EditScheduleBlock
 import com.example.schetodo.ui.util.UiText
@@ -27,9 +28,6 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,6 +37,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
     private val todoCategoryRepository: TodoCategoryRepository,
     private val todoBlockRepository: TodoBlockRepository,
     private val todoBlockNotificationScheduler: TodoBlockNotificationScheduler,
+    private val generalUseCases: GeneralUseCases,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     var state by mutableStateOf(AddEditScheduleBlockScreenState())
@@ -69,7 +68,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
             loadDataForAddingScheduleBlock(savedStateHandle)
     }
 
-    fun onEvent(event: com.example.schetodo.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockEvent) {
+    fun onEvent(event: AddEditScheduleBlockEvent) {
         when (event) {
             is ChangeTodoBlockNotes -> updateTodoBlockNotes(event.notes)
             is ChangeDate -> updateCurrentDate(event.date)
@@ -200,23 +199,21 @@ class AddEditScheduleBlockViewModel @Inject constructor(
     private fun updateStartTime(startTime: LocalTime) {
         this.startTime = startTime
         state = state.copy(
-            startTime = startTime.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+            startTime = generalUseCases.formatTime(startTime)
         )
     }
 
     private fun updateEndTime(endTime: LocalTime) {
         this.endTime = endTime
         state = state.copy(
-            endTime = endTime.format(DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT))
+            endTime = generalUseCases.formatTime(endTime)
         )
     }
 
     private fun updateCurrentDate(date: LocalDate) {
         scheduleBlockDate = date
         state = state.copy(
-            date = scheduleBlockDate.format(
-                DateTimeFormatter.ofPattern("EEE dd LLL, yyyy", Locale.getDefault())
-            )
+            date = generalUseCases.formatDate(date)
         )
     }
 

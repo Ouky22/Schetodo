@@ -19,6 +19,7 @@ import com.example.schetodo.feature.schedule.notification.FakeTodoBlockNotificat
 import com.example.schetodo.ui.navigation.schedule.AddScheduleBlock
 import com.example.schetodo.ui.navigation.schedule.EditScheduleBlock
 import com.example.schetodo.util.MainDispatcherRule
+import com.example.schetodo.util.generalUseCases
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -430,6 +431,7 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeTodoCategoryRepository,
             fakeTodoBlockRepository,
             fakeTodoBlockNotificationScheduler,
+            generalUseCases,
             savedStateHandle
         )
 

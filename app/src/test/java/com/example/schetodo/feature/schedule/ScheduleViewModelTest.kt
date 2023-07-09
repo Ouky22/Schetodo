@@ -27,6 +27,11 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import com.example.schetodo.feature.schedule.list.ScheduleEvent.*
 import com.example.schetodo.feature.schedule.list.ScheduleViewModel
+import com.example.schetodo.feature.use_case.ConvertScheduleBlocksToScheduleListItemsUseCase
+import com.example.schetodo.feature.use_case.FormatDateUseCase
+import com.example.schetodo.feature.use_case.FormatTimeUseCase
+import com.example.schetodo.feature.use_case.GeneralUseCases
+import com.example.schetodo.util.generalUseCases
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class ScheduleViewModelTest {
@@ -50,7 +55,8 @@ internal class ScheduleViewModelTest {
         viewModel = ScheduleViewModel(
             fakeScheduleBlockRepository,
             fakeScheduleTemplateRepository,
-            fakeTodoBlockNotificationScheduler
+            fakeTodoBlockNotificationScheduler,
+            generalUseCases
         )
         createTestScheduleBlock()
     }
@@ -150,7 +156,8 @@ internal class ScheduleViewModelTest {
             ScheduleViewModel(
                 fakeScheduleBlockRepository,
                 fakeScheduleTemplateRepository,
-                fakeTodoBlockNotificationScheduler
+                fakeTodoBlockNotificationScheduler,
+                generalUseCases
             )
         advanceUntilIdle()
 
