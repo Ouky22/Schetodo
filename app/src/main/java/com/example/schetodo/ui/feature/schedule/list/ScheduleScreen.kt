@@ -29,7 +29,6 @@ import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.ui.SchetodoAppState
-import com.example.schetodo.ui.components.OverflowMenu
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.ID_OF_TODO_BLOCK_MARKED_FOR_DELETION
@@ -81,6 +80,9 @@ fun ScheduleScreen(
         schedules = state.schedules,
         currentDateString = state.currentDateString,
         currentDate = state.currentDate,
+        maxDate = state.maxDate,
+        canNavigateToPreviousDate = state.canNavigateToPreviousDate,
+        canNavigateToNextDate = state.canNavigateToNextDate,
         onNavigateToPreviousDate = { viewModel.onEvent(GoToPreviousDate) },
         onNavigateToNextDate = { viewModel.onEvent(GoToNextDate) },
         onNavigateToAnyDate = { date -> viewModel.onEvent(GoToAnyDate(date)) },
@@ -107,6 +109,9 @@ fun ScheduleScreen(
     schedules: Map<Long, List<ScheduleListItem>>,
     currentDateString: String,
     currentDate: LocalDate,
+    maxDate: LocalDate,
+    canNavigateToNextDate: Boolean,
+    canNavigateToPreviousDate: Boolean,
     onNavigateToPreviousDate: () -> Unit,
     onNavigateToNextDate: () -> Unit,
     onNavigateToAnyDate: (LocalDate) -> Unit,
@@ -158,6 +163,8 @@ fun ScheduleScreen(
 
             DateNavigator(
                 currentDate = currentDateString,
+                onPreviousDateButtonEnabled = canNavigateToPreviousDate,
+                onNextDateButtonEnabled = canNavigateToNextDate,
                 onPreviousDateButtonClick = onNavigateToPreviousDate,
                 onNextDateButtonClick = onNavigateToNextDate,
                 onCurrentDateButtonClick = {
@@ -171,6 +178,7 @@ fun ScheduleScreen(
 
             SchedulePager(
                 currentDate = currentDate,
+                maxDate = maxDate,
                 onNavigateToNextDate = onNavigateToNextDate,
                 onNavigateToPreviousDate = onNavigateToPreviousDate,
                 key = { page -> page } // use page as key because it's the date stamp of the schedule
@@ -267,6 +275,7 @@ fun EnterScheduleTemplateNameDialog(
 @Composable
 fun SchedulePager(
     currentDate: LocalDate,
+    maxDate: LocalDate,
     onNavigateToNextDate: () -> Unit,
     onNavigateToPreviousDate: () -> Unit,
     key: ((index: Int) -> Any)? = null,
@@ -304,7 +313,7 @@ fun SchedulePager(
     HorizontalPager(
         modifier = Modifier.fillMaxSize(),
         state = pagerState,
-        pageCount = Int.MAX_VALUE,
+        pageCount = maxDate.toEpochDay().toInt() + 1,
         key = key
     ) { page ->
         pageContent(page)
@@ -317,13 +326,18 @@ fun DateNavigator(
     currentDate: String,
     onPreviousDateButtonClick: () -> Unit,
     onNextDateButtonClick: () -> Unit,
-    onCurrentDateButtonClick: () -> Unit
+    onCurrentDateButtonClick: () -> Unit,
+    onNextDateButtonEnabled: Boolean,
+    onPreviousDateButtonEnabled: Boolean
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        IconButton(onClick = onPreviousDateButtonClick) {
+        IconButton(
+            onClick = onPreviousDateButtonClick,
+            enabled = onPreviousDateButtonEnabled
+        ) {
             Icon(
                 imageVector = Icons.Filled.ArrowBackIos,
                 contentDescription = stringResource(R.string.go_to_previous_date)
@@ -332,7 +346,10 @@ fun DateNavigator(
         OutlinedButton(onClick = onCurrentDateButtonClick) {
             Text(text = currentDate)
         }
-        IconButton(onClick = onNextDateButtonClick) {
+        IconButton(
+            onClick = onNextDateButtonClick,
+            enabled = onNextDateButtonEnabled
+        ) {
             Icon(
                 imageVector = Icons.Filled.ArrowForwardIos,
                 contentDescription = stringResource(R.string.go_to_next_date)
@@ -449,6 +466,9 @@ fun ScheduleScreenPreview() {
             schedules = createTodoBlocksForPreview(),
             currentDateString = "2023-02-01",
             currentDate = LocalDate.now(),
+            maxDate = LocalDate.now(),
+            canNavigateToPreviousDate = true,
+            canNavigateToNextDate = true,
             onNavigateToPreviousDate = {},
             onNavigateToNextDate = {},
             onNavigateToAnyDate = {},

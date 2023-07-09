@@ -3,6 +3,8 @@ package com.example.schetodo.ui.feature.schedule.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.schetodo.R
+import com.example.schetodo.data.MAX_DATE
+import com.example.schetodo.data.MIN_DATE
 import com.example.schetodo.data.schedule_block.ScheduleBlock
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.data.schedule_template.ScheduleTemplate
@@ -233,7 +235,9 @@ class ScheduleViewModel @Inject constructor(
             currentDateString = date.format(
                 DateTimeFormatter.ofPattern("EEE dd LLL, yyyy", Locale.getDefault())
             ),
-            currentDate = date
+            currentDate = date,
+            canNavigateToNextDate = date.isBefore(MAX_DATE),
+            canNavigateToPreviousDate = date.isAfter(MIN_DATE)
         )
     }
 }
