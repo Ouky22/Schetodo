@@ -4,6 +4,9 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.text.format.DateFormat
+import android.util.Log
+import com.example.schetodo.data.MAX_DATE
+import com.example.schetodo.data.MIN_DATE
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -31,6 +34,8 @@ fun showDatePicker(
     startYear: Int = LocalDate.now().year,
     startMonth: Int = LocalDate.now().month.value - 1,
     startDayOfMonth: Int = LocalDate.now().dayOfMonth,
+    minDate: LocalDate = MIN_DATE,
+    maxDate: LocalDate = MAX_DATE,
     onDateSetListener: (LocalDate) -> Unit
 ) {
     DatePickerDialog(
@@ -42,5 +47,9 @@ fun showDatePicker(
         startYear,
         startMonth,
         startDayOfMonth
-    ).show()
+    ).apply {
+        datePicker.minDate = minDate.toEpochDay() * 86400000
+        datePicker.maxDate = maxDate.toEpochDay() * 86400000
+        show()
+    }
 }
