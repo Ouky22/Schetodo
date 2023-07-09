@@ -46,15 +46,48 @@ class ScheduleViewModel @Inject constructor(
             is GoToPreviousDate -> goToPreviousDate()
             is GoToCurrentDate -> goToCurrentDate()
             is GoToAnyDate -> goToDate(event.date)
-            is UnmarkTodoBlockForDeletion -> onUnmarkTodoBlockForDeletion(event.todoBlockId)
-            is SaveCurrentScheduleAsTemplate -> onSaveCurrentScheduleAsTemplate(event.templateName)
+            is UnmarkTodoBlockForDeletion -> unmarkTodoBlockForDeletion(event.todoBlockId)
+            is ChangeScheduleTemplateName -> changeScheduleTemplateName(event.templateName)
+            is SaveCurrentScheduleAsTemplate -> saveCurrentScheduleAsTemplate()
+            is OpenEnterScheduleTemplateNameDialog -> openEnterScheduleTemplateNameDialog()
+            is CloseEnterScheduleTemplateNameDialog -> closeEnterScheduleTemplateNameDialog()
         }
     }
 
-    private fun onSaveCurrentScheduleAsTemplate(templateName: String) {
+    private fun openEnterScheduleTemplateNameDialog() {
+        _scheduleState.value = _scheduleState.value.copy(
+            showEnterScheduleTemplateNameDialog = true,
+            showInvalidScheduleTemplateNameError = false,
+            scheduleTemplateName = ""
+        )
+    }
+
+    private fun closeEnterScheduleTemplateNameDialog() {
+        _scheduleState.value = _scheduleState.value.copy(
+            showEnterScheduleTemplateNameDialog = false
+        )
+    }
+
+    private fun changeScheduleTemplateName(templateName: String) {
+        _scheduleState.value = _scheduleState.value.copy(
+            scheduleTemplateName = templateName,
+            showInvalidScheduleTemplateNameError = false
+        )
+    }
+
+    private fun saveCurrentScheduleAsTemplate() {
+        if (scheduleTemplateNameIsInvalid()) {
+            _scheduleState.value =
+                _scheduleState.value.copy(showInvalidScheduleTemplateNameError = true)
+            return
+        }
+
+        closeEnterScheduleTemplateNameDialog()
+
         viewModelScope.launch {
-            val templateId =
-                scheduleTemplateRepository.insert(ScheduleTemplate(name = templateName))
+            val templateId = scheduleTemplateRepository.insert(
+                ScheduleTemplate(name = scheduleState.value.scheduleTemplateName)
+            )
 
             scheduleBlockRepository.getScheduleBlocksOnDate(_scheduleState.value.currentDate)
                 .first()
@@ -79,7 +112,10 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
-    private fun onUnmarkTodoBlockForDeletion(todoBlockId: Int) {
+    private fun scheduleTemplateNameIsInvalid() =
+        _scheduleState.value.scheduleTemplateName.trim() == ""
+
+    private fun unmarkTodoBlockForDeletion(todoBlockId: Int) {
         viewModelScope.launch {
             scheduleBlockRepository.unmarkTodoBlockForDeletion(todoBlockId)
             todoBlockNotificationScheduler.scheduleNextNotificationIfExists()

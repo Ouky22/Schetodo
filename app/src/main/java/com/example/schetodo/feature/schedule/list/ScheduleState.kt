@@ -10,5 +10,8 @@ data class ScheduleState(
     val currentDate: LocalDate = LocalDate.now(),
     val maxDate: LocalDate = MAX_DATE,
     val canNavigateToNextDate: Boolean = false,
-    val canNavigateToPreviousDate: Boolean = false
+    val canNavigateToPreviousDate: Boolean = false,
+    val scheduleTemplateName: String = "",
+    val showInvalidScheduleTemplateNameError: Boolean = false,
+    val showEnterScheduleTemplateNameDialog: Boolean = false
 )

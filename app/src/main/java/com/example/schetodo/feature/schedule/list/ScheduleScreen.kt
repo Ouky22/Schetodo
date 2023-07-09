@@ -10,7 +10,6 @@ import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.TableRows
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -21,20 +20,17 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
 import com.example.schetodo.feature.schedule.add_edit_schedule_block.ID_OF_TODO_BLOCK_MARKED_FOR_DELETION
-import com.example.schetodo.feature.schedule.components.ScheduleList
-import com.example.schetodo.feature.schedule.components.ScheduleListItem
-import com.example.schetodo.feature.schedule.components.createTodoBlocksForPreview
+import com.example.schetodo.feature.schedule.components.*
+import com.example.schetodo.feature.schedule.list.ScheduleEvent.*
 import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.SchetodoTopAppBar
-import com.example.schetodo.feature.schedule.components.*
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.popFromCurrentBackStackEntry
 import com.example.schetodo.ui.util.showDatePicker
 import com.example.schetodo.ui.util.showSnackbarWithActionHandler
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import com.example.schetodo.feature.schedule.list.ScheduleEvent.*
 import java.time.LocalTime
 
 @Composable
@@ -75,6 +71,16 @@ fun ScheduleScreen(
         currentDateString = state.currentDateString,
         currentDate = state.currentDate,
         maxDate = state.maxDate,
+        scheduleTemplateName = state.scheduleTemplateName,
+        showInvalidScheduleTemplateNameError = state.showInvalidScheduleTemplateNameError,
+        showEnterScheduleTemplateNameDialog = state.showEnterScheduleTemplateNameDialog,
+        onChangeScheduleTemplateName = { viewModel.onEvent(ChangeScheduleTemplateName(it)) },
+        onOpenEnterScheduleTemplateNameDialog = {
+            viewModel.onEvent(OpenEnterScheduleTemplateNameDialog)
+        },
+        onCloseEnterScheduleTemplateNameDialog = {
+            viewModel.onEvent(CloseEnterScheduleTemplateNameDialog)
+        },
         canNavigateToPreviousDate = state.canNavigateToPreviousDate,
         canNavigateToNextDate = state.canNavigateToNextDate,
         onNavigateToPreviousDate = { viewModel.onEvent(GoToPreviousDate) },
@@ -82,7 +88,7 @@ fun ScheduleScreen(
         onNavigateToAnyDate = { date -> viewModel.onEvent(GoToAnyDate(date)) },
         onGoToCurrentDateButtonClick = { viewModel.onEvent(GoToCurrentDate) },
         onScheduleTemplatesButtonClick = onScheduleTemplatesScreenNavigation,
-        onSaveScheduleAsTemplateButtonClick = { viewModel.onEvent(SaveCurrentScheduleAsTemplate(it)) },
+        onSaveScheduleAsTemplateButtonClick = { viewModel.onEvent(SaveCurrentScheduleAsTemplate) },
         onFabClick = { onAddScheduleBlockNavigation(state.currentDate.toEpochDay()) },
         onEditScheduleBlock = { todoBlockId -> onEditScheduleBlockNavigation(todoBlockId) },
         onAddScheduleGapButtonClick = { startTime, endTime ->
@@ -104,6 +110,12 @@ fun ScheduleScreen(
     currentDateString: String,
     currentDate: LocalDate,
     maxDate: LocalDate,
+    scheduleTemplateName: String,
+    showInvalidScheduleTemplateNameError: Boolean,
+    showEnterScheduleTemplateNameDialog: Boolean,
+    onOpenEnterScheduleTemplateNameDialog: () -> Unit,
+    onCloseEnterScheduleTemplateNameDialog: () -> Unit,
+    onChangeScheduleTemplateName: (templateName: String) -> Unit,
     canNavigateToNextDate: Boolean,
     canNavigateToPreviousDate: Boolean,
     onNavigateToPreviousDate: () -> Unit,
@@ -111,13 +123,11 @@ fun ScheduleScreen(
     onNavigateToAnyDate: (LocalDate) -> Unit,
     onGoToCurrentDateButtonClick: () -> Unit,
     onScheduleTemplatesButtonClick: () -> Unit,
-    onSaveScheduleAsTemplateButtonClick: (templateName: String) -> Unit,
+    onSaveScheduleAsTemplateButtonClick: () -> Unit,
     onFabClick: () -> Unit,
     onEditScheduleBlock: (todoBlockId: Int) -> Unit,
     onAddScheduleGapButtonClick: (startTime: LocalTime, endTime: LocalTime) -> Unit,
 ) {
-    var showEnterScheduleTemplateNameDialog by rememberSaveable { mutableStateOf(false) }
-
     Scaffold(
         topBar = {
             SchetodoTopAppBar(
@@ -134,7 +144,7 @@ fun ScheduleScreen(
 
                     ScheduleOverflowMenu(
                         onScheduleTemplatesOptionClick = onScheduleTemplatesButtonClick,
-                        onSaveAsTemplateOptionClick = { showEnterScheduleTemplateNameDialog = true }
+                        onSaveAsTemplateOptionClick = onOpenEnterScheduleTemplateNameDialog
                     )
                 }
             )
@@ -189,11 +199,11 @@ fun ScheduleScreen(
 
     if (showEnterScheduleTemplateNameDialog)
         EnterScheduleTemplateNameDialog(
-            onDismiss = { showEnterScheduleTemplateNameDialog = false },
-            onSaveName = { templateName ->
-                showEnterScheduleTemplateNameDialog = false
-                onSaveScheduleAsTemplateButtonClick(templateName)
-            }
+            onDismiss = onCloseEnterScheduleTemplateNameDialog,
+            onSaveName = onSaveScheduleAsTemplateButtonClick,
+            scheduleTemplateName = scheduleTemplateName,
+            onChangeScheduleTemplateName = onChangeScheduleTemplateName,
+            showInvalidScheduleTemplateNameError = showInvalidScheduleTemplateNameError
         )
 }
 
@@ -202,11 +212,11 @@ fun ScheduleScreen(
 fun EnterScheduleTemplateNameDialog(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
-    onSaveName: (name: String) -> Unit
+    onSaveName: () -> Unit,
+    scheduleTemplateName: String,
+    onChangeScheduleTemplateName: (templateName: String) -> Unit,
+    showInvalidScheduleTemplateNameError: Boolean
 ) {
-    var showInvalidScheduleTemplateNameError by rememberSaveable { mutableStateOf(false) }
-    var nameInput by rememberSaveable { mutableStateOf("") }
-
     Dialog(
         onDismissRequest = onDismiss
     ) {
@@ -223,11 +233,8 @@ fun EnterScheduleTemplateNameDialog(
                 modifier = Modifier
                     .padding(12.dp)
                     .fillMaxWidth(),
-                value = nameInput,
-                onValueChange = {
-                    nameInput = it
-                    showInvalidScheduleTemplateNameError = false
-                },
+                value = scheduleTemplateName,
+                onValueChange = onChangeScheduleTemplateName,
                 label = { Text(stringResource(R.string.name)) },
                 singleLine = true,
                 isError = showInvalidScheduleTemplateNameError,
@@ -252,13 +259,7 @@ fun EnterScheduleTemplateNameDialog(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                 positiveButtonText = stringResource(id = R.string.save),
                 negativeButtonText = stringResource(id = R.string.cancel),
-                onPositiveClick = {
-                    val trimmedNameInput = nameInput.trim()
-                    if (trimmedNameInput == "")
-                        showInvalidScheduleTemplateNameError = true
-                    else
-                        onSaveName(trimmedNameInput)
-                },
+                onPositiveClick = onSaveName,
                 onNegativeClick = onDismiss
             )
         }
@@ -401,7 +402,10 @@ fun EnterScheduleTemplateNameDialogPreview() {
     SchetodoTheme {
         EnterScheduleTemplateNameDialog(
             onDismiss = {},
-            onSaveName = {}
+            onSaveName = {},
+            scheduleTemplateName = "",
+            onChangeScheduleTemplateName = {},
+            showInvalidScheduleTemplateNameError = false
         )
     }
 }
@@ -417,6 +421,12 @@ fun ScheduleScreenPreview() {
             currentDateString = "2023-02-01",
             currentDate = LocalDate.now(),
             maxDate = LocalDate.now(),
+            scheduleTemplateName = "",
+            showInvalidScheduleTemplateNameError = false,
+            onChangeScheduleTemplateName = {},
+            onOpenEnterScheduleTemplateNameDialog = {},
+            onCloseEnterScheduleTemplateNameDialog = {},
+            showEnterScheduleTemplateNameDialog = false,
             canNavigateToPreviousDate = true,
             canNavigateToNextDate = true,
             onNavigateToPreviousDate = {},

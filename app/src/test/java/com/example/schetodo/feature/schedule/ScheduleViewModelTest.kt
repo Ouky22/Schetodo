@@ -64,7 +64,9 @@ internal class ScheduleViewModelTest {
     @Test
     fun test_saving_current_schedule_as_template() = runTest {
         val templateName = "template_test"
-        viewModel.onEvent(SaveCurrentScheduleAsTemplate(templateName))
+        viewModel.onEvent(OpenEnterScheduleTemplateNameDialog)
+        viewModel.onEvent(ChangeScheduleTemplateName(templateName))
+        viewModel.onEvent(SaveCurrentScheduleAsTemplate)
         fakeScheduleBlockRepository.insertOrUpdateScheduleBlock(testScheduleBlock1)
         fakeScheduleBlockRepository.insertOrUpdateScheduleBlock(testScheduleBlock2)
         advanceUntilIdle()
@@ -90,6 +92,8 @@ internal class ScheduleViewModelTest {
                 notifications = testScheduleBlock2.notifications.map { it.copy(notificationId = 0) }
             )
         )
+
+        assertThat(viewModel.scheduleState.value.showEnterScheduleTemplateNameDialog).isFalse()
     }
 
     @Test
