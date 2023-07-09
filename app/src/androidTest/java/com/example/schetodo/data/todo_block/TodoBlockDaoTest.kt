@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.example.schetodo.data.SchetodoDatabase
+import com.example.schetodo.data.schedule_template.ScheduleTemplate
+import com.example.schetodo.data.schedule_template.ScheduleTemplateDao
+import com.example.schetodo.ui.navigation.schedule.Schedule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -18,6 +21,7 @@ import java.time.LocalTime
 @ExperimentalCoroutinesApi
 class TodoBlockDaoTest {
     private lateinit var todoBlockDao: TodoBlockDao
+    private lateinit var templateDao: ScheduleTemplateDao
     private lateinit var db: SchetodoDatabase
 
     private val testTime = LocalTime.now().withNano(0)
@@ -27,12 +31,29 @@ class TodoBlockDaoTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         db = Room.inMemoryDatabaseBuilder(context, SchetodoDatabase::class.java).build()
         todoBlockDao = db.todoBlockDao
+        templateDao = db.scheduleTemplateDao
     }
 
     @After
     @Throws(IOException::class)
     fun closeDb() {
         db.close()
+    }
+
+    @Test
+    fun delete_all_todo_blocks_of_schedule_template() = runTest {
+        val template = ScheduleTemplate(1, "st")
+        val date = LocalDate.of(2023, 2, 1)
+        val todoBlock1 = TodoBlock(1, null, date, testTime, testTime, template.templateId)
+        val todoBlock2 = TodoBlock(2, null, date, testTime, testTime, template.templateId)
+        templateDao.insert(template)
+        todoBlockDao.insertTodoBlock(todoBlock1)
+        todoBlockDao.insertTodoBlock(todoBlock2)
+
+        todoBlockDao.deleteAllTodoBlocksOfScheduleTemplate(template.templateId)
+
+        assertThat(todoBlockDao.getTodoBlockById(todoBlock1.todoBlockId).first()).isNull()
+        assertThat(todoBlockDao.getTodoBlockById(todoBlock2.todoBlockId).first()).isNull()
     }
 
     @Test

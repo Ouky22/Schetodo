@@ -38,4 +38,7 @@ interface TodoBlockDao {
 
     @Query("DELETE FROM TodoBlock WHERE markedForDeletion = 1")
     suspend fun deleteAllTodoBlocksMarkedForDeletion()
+
+    @Query("DELETE FROM TodoBlock WHERE templateId = :templateId")
+    suspend fun deleteAllTodoBlocksOfScheduleTemplate(templateId: Int)
 }

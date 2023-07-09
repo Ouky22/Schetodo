@@ -48,6 +48,9 @@ class TodoBlockRepositoryImpl @Inject constructor(
     override suspend fun deleteTodoBlockById(todoBlockId: Int) =
         todoBlockDao.deleteTodoBlockById(todoBlockId)
 
+    override suspend fun deleteAllTodoBlocksOfScheduleTemplate(templateId: Int) =
+        todoBlockDao.deleteAllTodoBlocksOfScheduleTemplate(templateId)
+
     override suspend fun todoBlockOverlapsWithOtherTodoBlock(
         todoBlock: TodoBlock, exceptOfTodoBlockId: Int?
     ): Boolean {

@@ -89,4 +89,8 @@ class FakeTodoBlockDao : TodoBlockDao {
     override suspend fun deleteAllTodoBlocksMarkedForDeletion() {
         todoBlocks.removeIf { it.markedForDeletion }
     }
+
+    override suspend fun deleteAllTodoBlocksOfScheduleTemplate(templateId: Int) {
+        todoBlocks.removeIf { it.templateId == templateId }
+    }
 }

@@ -91,4 +91,8 @@ class FakeTodoBlockRepository : TodoBlockRepository {
         val newTodoBlock = oldTodoBlock.copy(markedForDeletion = false)
         todoBlocks.add(newTodoBlock)
     }
+
+    override suspend fun deleteAllTodoBlocksOfScheduleTemplate(templateId: Int) {
+        todoBlocks.removeIf { it.templateId == templateId }
+    }
 }
