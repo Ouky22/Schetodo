@@ -101,7 +101,10 @@ fun NavGraphBuilder.scheduleNavGraph(
             arguments = EditScheduleTemplate.args
         ) {
             val viewModel = hiltViewModel<EditScheduleTemplateViewModel>()
-            EditScheduleTemplateScreen(viewModel = viewModel)
+            EditScheduleTemplateScreen(
+                viewModel = viewModel,
+                schetodoAppState = schetodoAppState
+            )
         }
     }
 }

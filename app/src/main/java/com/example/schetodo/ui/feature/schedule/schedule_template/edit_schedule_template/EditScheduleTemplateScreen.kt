@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
+import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.feature.schedule.components.ScheduleList
 import com.example.schetodo.ui.feature.schedule.components.ScheduleListItem
@@ -25,7 +26,8 @@ import java.time.LocalTime
 @Composable
 fun EditScheduleTemplateScreen(
     modifier: Modifier = Modifier,
-    viewModel: EditScheduleTemplateViewModel
+    viewModel: EditScheduleTemplateViewModel,
+    schetodoAppState: SchetodoAppState
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -35,7 +37,7 @@ fun EditScheduleTemplateScreen(
         onScheduleBlockItemClick = {},
         onScheduleGapClick = { startTime, endTime -> },
         scheduleTemplateName = state.scheduleTemplateName,
-        onBackButtonClick = {},
+        onBackButtonClick = { schetodoAppState.navController.popBackStack() },
         onFabClick = {}
     )
 }
