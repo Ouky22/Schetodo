@@ -27,6 +27,7 @@ import com.example.schetodo.feature.todos.getTodoPriorityColorOf
 import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.AddEditTopBar
 import com.example.schetodo.ui.components.CategoryItem
+import com.example.schetodo.ui.components.OutlinedTextFieldWithErrorMessage
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.pushOntoPreviousBackStackEntry
@@ -157,16 +158,13 @@ fun AddEditTodoScreen(
                     )
                 Spacer(modifier = Modifier.size(32.dp))
 
-                OutlinedTextField(
-                    value = todoDescription,
-                    onValueChange = onTodoDescriptionChanged,
-                    label = { Text(text = stringResource(R.string.description)) },
-                    modifier = Modifier.fillMaxWidth(),
-                    isError = showDescriptionError,
-                    supportingText = {
-                        if (showDescriptionError)
-                            Text(text = stringResource(R.string.please_enter_description))
-                    }
+                OutlinedTextFieldWithErrorMessage(
+                    nameInput = todoDescription,
+                    onInputValueChange = onTodoDescriptionChanged,
+                    labelText = stringResource(R.string.description),
+                    errorText = stringResource(R.string.please_enter_description),
+                    showError = showDescriptionError,
+                    singleLine = false
                 )
             }
 

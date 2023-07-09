@@ -33,6 +33,7 @@ import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.ElementPickerDialog
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.AddEditTopBar
+import com.example.schetodo.ui.components.OutlinedTextFieldWithErrorMessage
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.pushOntoPreviousBackStackEntry
 
@@ -132,20 +133,13 @@ fun AddEditTodoCategoryScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            OutlinedTextField(
-                value = todoCategoryName,
-                onValueChange = onTodoCategoryNameChanged,
-                label = { Text(stringResource(R.string.todoCategoryName)) },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                isError = showInvalidTodoCategoryNameError,
-                supportingText = {
-                    if (showInvalidTodoCategoryNameError)
-                        Text(
-                            stringResource(R.string.please_enter_name),
-                            color = Color.Red
-                        )
-                }
+            OutlinedTextFieldWithErrorMessage(
+                nameInput = todoCategoryName,
+                onInputValueChange = onTodoCategoryNameChanged,
+                labelText = stringResource(R.string.todoCategoryName),
+                errorText = stringResource(R.string.please_enter_name),
+                showError = showInvalidTodoCategoryNameError,
+                singleLine = true
             )
 
             SelectColorAndIconArea(

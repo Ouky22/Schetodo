@@ -23,6 +23,7 @@ import com.example.schetodo.feature.schedule.add_edit_schedule_block.ID_OF_TODO_
 import com.example.schetodo.feature.schedule.components.*
 import com.example.schetodo.feature.schedule.list.ScheduleEvent.*
 import com.example.schetodo.ui.SchetodoAppState
+import com.example.schetodo.ui.components.OutlinedTextFieldWithErrorMessage
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.theme.SchetodoTheme
@@ -207,7 +208,6 @@ fun ScheduleScreen(
         )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EnterScheduleTemplateNameDialog(
     modifier: Modifier = Modifier,
@@ -229,30 +229,13 @@ fun EnterScheduleTemplateNameDialog(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
             )
 
-            OutlinedTextField(
-                modifier = Modifier
-                    .padding(12.dp)
-                    .fillMaxWidth(),
-                value = scheduleTemplateName,
-                onValueChange = onChangeScheduleTemplateName,
-                label = { Text(stringResource(R.string.name)) },
-                singleLine = true,
-                isError = showInvalidScheduleTemplateNameError,
-                trailingIcon = {
-                    if (showInvalidScheduleTemplateNameError)
-                        Icon(
-                            Icons.Filled.Error,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                },
-                supportingText = {
-                    if (showInvalidScheduleTemplateNameError)
-                        Text(
-                            stringResource(R.string.please_enter_name),
-                            color = MaterialTheme.colorScheme.error
-                        )
-                }
+            OutlinedTextFieldWithErrorMessage(
+                nameInput = scheduleTemplateName,
+                onInputValueChange = onChangeScheduleTemplateName,
+                labelText = stringResource(R.string.name),
+                errorText = stringResource(R.string.please_enter_name),
+                showError = showInvalidScheduleTemplateNameError,
+                singleLine = true
             )
 
             PositiveNegativeButtonRow(
