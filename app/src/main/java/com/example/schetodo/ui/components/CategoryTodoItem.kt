@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
-import com.example.schetodo.ui.feature.todos.getTodoPriorityColorOf
+import com.example.schetodo.feature.todos.getTodoPriorityColorOf
 import com.example.schetodo.ui.theme.SchetodoTheme
 
 

@@ -1,7 +1,7 @@
 package com.example.schetodo.di
 
-import com.example.schetodo.ui.feature.schedule.notification.TodoBlockNotificationScheduler
-import com.example.schetodo.ui.feature.schedule.notification.TodoBlockNotificationSchedulerImpl
+import com.example.schetodo.feature.schedule.notification.TodoBlockNotificationScheduler
+import com.example.schetodo.feature.schedule.notification.TodoBlockNotificationSchedulerImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

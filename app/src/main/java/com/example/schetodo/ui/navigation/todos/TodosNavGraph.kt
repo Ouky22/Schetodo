@@ -11,16 +11,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.schetodo.ui.SchetodoAppState
-import com.example.schetodo.ui.feature.todos.list.TodosScreen
-import com.example.schetodo.ui.feature.todos.list.TodosViewModel
-import com.example.schetodo.ui.feature.todos.add_edit_category.AddEditTodoCategoryScreen
-import com.example.schetodo.ui.feature.todos.add_edit_category.AddEditTodoCategoryViewModel
-import com.example.schetodo.ui.feature.todos.add_edit_todo.AddEditTodoScreen
-import com.example.schetodo.ui.feature.todos.add_edit_todo.AddEditTodoViewModel
-import com.example.schetodo.ui.feature.todos.check_off_todos.CheckOffTodosScreen
-import com.example.schetodo.ui.feature.todos.check_off_todos.CheckOffTodosViewModel
+import com.example.schetodo.feature.todos.list.TodosScreen
+import com.example.schetodo.feature.todos.list.TodosViewModel
+import com.example.schetodo.feature.todos.add_edit_category.AddEditTodoCategoryScreen
+import com.example.schetodo.feature.todos.add_edit_category.AddEditTodoCategoryViewModel
+import com.example.schetodo.feature.todos.add_edit_todo.AddEditTodoScreen
+import com.example.schetodo.feature.todos.add_edit_todo.AddEditTodoViewModel
+import com.example.schetodo.feature.todos.check_off_todos.CheckOffTodosScreen
+import com.example.schetodo.feature.todos.check_off_todos.CheckOffTodosViewModel
 import com.example.schetodo.ui.navigation.*
-import com.example.schetodo.ui.navigation.schedule.scheduleNavGraph
 
 @ExperimentalFoundationApi
 @ExperimentalMaterial3Api
