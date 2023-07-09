@@ -24,14 +24,15 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 fun ScheduleTemplatesScreen(
     modifier: Modifier = Modifier,
     viewModel: ScheduleTemplatesViewModel,
-    schetodoAppState: SchetodoAppState
+    schetodoAppState: SchetodoAppState,
+    onEditScheduleTemplate: (templateId: Int) -> Unit
 ) {
     val scheduleTemplates = viewModel.scheduleTemplates.collectAsState()
 
     ScheduleTemplatesScreen(
         modifier = modifier,
         scheduleTemplates = scheduleTemplates.value,
-        onClickOnScheduleTemplate = {/*TODO*/ },
+        onClickOnScheduleTemplate = onEditScheduleTemplate,
         onBackButtonClick = { schetodoAppState.navController.popBackStack() }
     )
 }
@@ -41,7 +42,7 @@ fun ScheduleTemplatesScreen(
 fun ScheduleTemplatesScreen(
     modifier: Modifier = Modifier,
     scheduleTemplates: List<ScheduleTemplate>,
-    onClickOnScheduleTemplate: (ScheduleTemplate) -> Unit,
+    onClickOnScheduleTemplate: (templateId: Int) -> Unit,
     onBackButtonClick: () -> Unit
 ) {
     Scaffold(
@@ -62,7 +63,7 @@ fun ScheduleTemplatesScreen(
                 ScheduleTemplateListItem(
                     modifier = Modifier.fillMaxWidth(),
                     scheduleTemplateName = template.name,
-                    onClick = { onClickOnScheduleTemplate(template) }
+                    onClick = { onClickOnScheduleTemplate(template.templateId) }
                 )
             }
         }

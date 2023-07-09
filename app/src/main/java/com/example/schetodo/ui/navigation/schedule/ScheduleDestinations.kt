@@ -64,3 +64,16 @@ object TodoCategoryPicker: SchetodoDestination {
 object ScheduleTemplates: SchetodoDestination {
     override val route = "schedule_templates"
 }
+
+object EditScheduleTemplate : SchetodoDestination {
+    override val route = "edit_schedule_template"
+    const val scheduleTemplateIdArg = "schedule_template_id"
+
+    val routeWithArgs = "$route/{$scheduleTemplateIdArg}"
+
+    val args = listOf(
+        navArgument(scheduleTemplateIdArg) {
+            type = NavType.IntType
+        }
+    )
+}

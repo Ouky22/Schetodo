@@ -15,6 +15,8 @@ import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.t
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.todo.TodoPickerViewModel
 import com.example.schetodo.ui.feature.schedule.list.ScheduleScreen
 import com.example.schetodo.ui.feature.schedule.list.ScheduleViewModel
+import com.example.schetodo.ui.feature.schedule.schedule_template.add_edit_schedule_template.AddEditScheduleTemplateScreen
+import com.example.schetodo.ui.feature.schedule.schedule_template.add_edit_schedule_template.AddEditScheduleTemplateViewModel
 import com.example.schetodo.ui.feature.schedule.schedule_template.list.ScheduleTemplatesScreen
 import com.example.schetodo.ui.feature.schedule.schedule_template.list.ScheduleTemplatesViewModel
 import com.example.schetodo.ui.navigation.Graph
@@ -88,8 +90,18 @@ fun NavGraphBuilder.scheduleNavGraph(
             val viewModel = hiltViewModel<ScheduleTemplatesViewModel>()
             ScheduleTemplatesScreen(
                 viewModel = viewModel,
-                schetodoAppState = schetodoAppState
+                schetodoAppState = schetodoAppState,
+                onEditScheduleTemplate = { templateId ->
+                    schetodoAppState.navController.navigateToEditScheduleTemplateScreen(templateId)
+                }
             )
+        }
+        composable(
+            route = EditScheduleTemplate.routeWithArgs,
+            arguments = EditScheduleTemplate.args
+        ) {
+            val viewModel = hiltViewModel<AddEditScheduleTemplateViewModel>()
+            AddEditScheduleTemplateScreen(viewModel = viewModel)
         }
     }
 }
@@ -112,4 +124,8 @@ fun NavHostController.navigateToAddScheduleBlockScreen(dateStamp: Long) {
 
 fun NavHostController.navigateToEditScheduleBlockScreen(todoBlockId: Int) {
     navigate("${EditScheduleBlock.route}/$todoBlockId")
+}
+
+fun NavHostController.navigateToEditScheduleTemplateScreen(scheduleTemplateId: Int) {
+    navigate("${EditScheduleTemplate.route}/$scheduleTemplateId")
 }

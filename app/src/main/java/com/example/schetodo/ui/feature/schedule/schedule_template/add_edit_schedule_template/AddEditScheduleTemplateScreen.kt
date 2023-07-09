@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
 import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.feature.schedule.components.ScheduleList
@@ -21,6 +22,24 @@ import com.example.schetodo.ui.feature.schedule.components.createTodoBlocksForPr
 import com.example.schetodo.ui.theme.SchetodoTheme
 import java.time.LocalTime
 
+@Composable
+fun AddEditScheduleTemplateScreen(
+    modifier: Modifier = Modifier,
+    viewModel: AddEditScheduleTemplateViewModel
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    AddEditScheduleTemplateScreen(
+        modifier = modifier,
+        scheduleListItems = state.scheduleItems,
+        onScheduleBlockItemClick = {},
+        onScheduleGapClick = { startTime, endTime -> },
+        scheduleTemplateName = state.scheduleTemplateName,
+        onBackButtonClick = {},
+        onFabClick = {}
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEditScheduleTemplateScreen(
@@ -28,16 +47,16 @@ fun AddEditScheduleTemplateScreen(
     scheduleListItems: List<ScheduleListItem>,
     onScheduleBlockItemClick: (todoBlockId: Int) -> Unit,
     onScheduleGapClick: (startTime: LocalTime, endTime: LocalTime) -> Unit,
-    scheduleName: String,
-    onBackButtonButtonClick: () -> Unit,
+    scheduleTemplateName: String,
+    onBackButtonClick: () -> Unit,
     onFabClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
             SchetodoTopAppBar(
-                title = scheduleName,
+                title = scheduleTemplateName,
                 showBackButton = true,
-                onBackButtonClick = onBackButtonButtonClick
+                onBackButtonClick = onBackButtonClick
             ) {
                 ScheduleTemplateOverflowMenu(
                     onApplyScheduleTemplate = {},
@@ -115,8 +134,8 @@ fun AddEditScheduleTemplateScreenPreview() {
             scheduleListItems = createTodoBlocksForPreview(),
             onScheduleBlockItemClick = {},
             onScheduleGapClick = { _, _ -> },
-            scheduleName = "This is the name for the schedule template",
-            onBackButtonButtonClick = {},
+            scheduleTemplateName = "This is the name for the schedule template",
+            onBackButtonClick = {},
             onFabClick = {}
         )
     }
