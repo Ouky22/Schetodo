@@ -187,8 +187,8 @@ fun ScheduleScreen(
                 ScheduleList(
                     modifier = Modifier.fillMaxSize(),
                     scheduleListItems = schedules[page.toLong()] ?: emptyList(),
-                    onListItemClick = onEditScheduleBlock,
-                    onAddScheduleGapButtonClick = onAddScheduleGapButtonClick
+                    onScheduleBlockItemClick = onEditScheduleBlock,
+                    onScheduleGapClick = onAddScheduleGapButtonClick
                 )
             }
         }

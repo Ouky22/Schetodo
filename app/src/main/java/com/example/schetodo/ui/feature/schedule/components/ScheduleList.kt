@@ -49,8 +49,8 @@ data class UiScheduleBlock(
 fun ScheduleList(
     modifier: Modifier = Modifier,
     scheduleListItems: List<ScheduleListItem>,
-    onListItemClick: (todoBlockId: Int) -> Unit,
-    onAddScheduleGapButtonClick: (startTime: LocalTime, endTime: LocalTime) -> Unit
+    onScheduleBlockItemClick: (todoBlockId: Int) -> Unit,
+    onScheduleGapClick: (startTime: LocalTime, endTime: LocalTime) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
@@ -70,13 +70,13 @@ fun ScheduleList(
                         startTimeString = scheduleListItem.startTimeText,
                         endTimeString = scheduleListItem.endTimeText,
                         durationString = "${scheduleListItem.durationHours.asString()} ${scheduleListItem.durationMinutes.asString()}",
-                        modifier = Modifier.clickable { onListItemClick(scheduleListItem.todoBlockId) },
+                        modifier = Modifier.clickable { onScheduleBlockItemClick(scheduleListItem.todoBlockId) },
                         elevate = scheduleListItem.isCurrentScheduleBlock
                     )
                 is ScheduleGap ->
                     OutlinedButton(
                         onClick = {
-                            onAddScheduleGapButtonClick(
+                            onScheduleGapClick(
                                 scheduleListItem.startTime,
                                 scheduleListItem.endTime
                             )
