@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.feature.schedule.schedule_template
+package com.example.schetodo.ui.feature.schedule.schedule_template.list
 
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
@@ -23,7 +23,7 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 @Composable
 fun ScheduleTemplatesScreen(
     modifier: Modifier = Modifier,
-    viewModel: ScheduleTemplateViewModel,
+    viewModel: ScheduleTemplatesViewModel,
     schetodoAppState: SchetodoAppState
 ) {
     val scheduleTemplates = viewModel.scheduleTemplates.collectAsState()

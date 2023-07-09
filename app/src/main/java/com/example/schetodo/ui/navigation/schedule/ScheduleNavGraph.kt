@@ -15,8 +15,8 @@ import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.t
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.todo.TodoPickerViewModel
 import com.example.schetodo.ui.feature.schedule.list.ScheduleScreen
 import com.example.schetodo.ui.feature.schedule.list.ScheduleViewModel
-import com.example.schetodo.ui.feature.schedule.schedule_template.ScheduleTemplatesScreen
-import com.example.schetodo.ui.feature.schedule.schedule_template.ScheduleTemplateViewModel
+import com.example.schetodo.ui.feature.schedule.schedule_template.list.ScheduleTemplatesScreen
+import com.example.schetodo.ui.feature.schedule.schedule_template.list.ScheduleTemplatesViewModel
 import com.example.schetodo.ui.navigation.Graph
 
 fun NavGraphBuilder.scheduleNavGraph(
@@ -85,7 +85,7 @@ fun NavGraphBuilder.scheduleNavGraph(
             )
         }
         composable(route = ScheduleTemplates.route) {
-            val viewModel = hiltViewModel<ScheduleTemplateViewModel>()
+            val viewModel = hiltViewModel<ScheduleTemplatesViewModel>()
             ScheduleTemplatesScreen(
                 viewModel = viewModel,
                 schetodoAppState = schetodoAppState

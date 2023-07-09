@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.feature.schedule.schedule_template
+package com.example.schetodo.ui.feature.schedule.schedule_template.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ScheduleTemplateViewModel @Inject constructor(
+class ScheduleTemplatesViewModel @Inject constructor(
     scheduleTemplateRepository: ScheduleTemplateRepository
 ) : ViewModel() {
 
