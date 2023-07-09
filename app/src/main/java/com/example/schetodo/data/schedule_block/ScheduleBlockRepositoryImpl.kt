@@ -50,6 +50,11 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
             .map { scheduleBlock -> scheduleBlock?.let { removeTodosMarkedForDeletion(it) } }
             .map { scheduleBlock -> scheduleBlock?.let { removeTodoCategoriesMarkedForDeletion(it) } }
 
+    override fun getScheduleBlocksOfScheduleTemplate(templateId: Int): Flow<List<ScheduleBlock>> =
+        scheduleBlockDao.getScheduleBlocksOfScheduleTemplate(templateId)
+            .map { scheduleBlocks -> removeTodosMarkedForDeletion(scheduleBlocks) }
+            .map { scheduleBlocks -> removeTodoCategoriesMarkedForDeletion(scheduleBlocks) }
+
     override suspend fun insertOrUpdateScheduleBlock(scheduleBlock: ScheduleBlock) {
         var todoBlockId = todoBlockDao.updateOrInsertTodoBlock(scheduleBlock.todoBlock).toInt()
 

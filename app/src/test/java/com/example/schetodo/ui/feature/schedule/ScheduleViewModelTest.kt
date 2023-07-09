@@ -11,9 +11,9 @@ import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_block.TodoBlock
 import com.example.schetodo.data.todo_category.TodoCategory
+import com.example.schetodo.ui.feature.schedule.components.UiScheduleBlock
 import com.example.schetodo.ui.feature.schedule.list.ScheduleEvent.*
 import com.example.schetodo.ui.feature.schedule.list.ScheduleViewModel
-import com.example.schetodo.ui.feature.schedule.list.UiScheduleBlock
 import com.example.schetodo.ui.feature.schedule.notification.FakeTodoBlockNotificationScheduler
 import com.example.schetodo.util.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat

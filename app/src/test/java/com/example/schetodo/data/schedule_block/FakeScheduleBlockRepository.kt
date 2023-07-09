@@ -6,7 +6,7 @@ import java.time.LocalDate
 
 class FakeScheduleBlockRepository : ScheduleBlockRepository {
 
-    public val scheduleBlocks = mutableListOf<ScheduleBlock>()
+    val scheduleBlocks = mutableListOf<ScheduleBlock>()
 
     override fun getScheduleBlocksOnDate(date: LocalDate): Flow<List<ScheduleBlock>> {
         return flow {
@@ -57,5 +57,11 @@ class FakeScheduleBlockRepository : ScheduleBlockRepository {
             todoBlock = oldScheduleBlock.todoBlock.copy(markedForDeletion = false)
         )
         scheduleBlocks.add(newScheduleBlock)
+    }
+
+    override fun getScheduleBlocksOfScheduleTemplate(templateId: Int): Flow<List<ScheduleBlock>> {
+        return flow {
+            emit(scheduleBlocks.filter { it.todoBlock.templateId == templateId })
+        }
     }
 }

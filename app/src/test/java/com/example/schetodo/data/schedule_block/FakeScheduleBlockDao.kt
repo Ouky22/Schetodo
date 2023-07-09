@@ -24,6 +24,12 @@ class FakeScheduleBlockDao : ScheduleBlockDao {
         }
     }
 
+    override fun getScheduleBlocksOfScheduleTemplate(scheduleTemplateId: Int): Flow<List<ScheduleBlock>> {
+        return flow {
+            emit(scheduleBlocks.filter { it.todoBlock.templateId == scheduleTemplateId })
+        }
+    }
+
     fun insertScheduleBlock(scheduleBlock: ScheduleBlock) {
         scheduleBlocks.add(scheduleBlock)
     }

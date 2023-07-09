@@ -6,6 +6,8 @@ import androidx.test.core.app.ApplicationProvider
 import com.example.schetodo.data.SchetodoDatabase
 import com.example.schetodo.data.relationship.TodoBlockCategoryRelationshipDao
 import com.example.schetodo.data.relationship.TodoBlockTodoRelationshipDao
+import com.example.schetodo.data.schedule_template.ScheduleTemplate
+import com.example.schetodo.data.schedule_template.ScheduleTemplateDao
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoDao
 import com.example.schetodo.data.todo.TodoFlag
@@ -33,6 +35,7 @@ class ScheduleBlockDaoTest {
     private lateinit var todoBlockTodoRelationshipDao: TodoBlockTodoRelationshipDao
     private lateinit var todoBlockTodoCategoryRelationshipDao: TodoBlockCategoryRelationshipDao
     private lateinit var scheduleBlockDao: ScheduleBlockDao
+    private lateinit var scheduleTemplateDao: ScheduleTemplateDao
     private lateinit var db: SchetodoDatabase
 
     // test data
@@ -59,12 +62,40 @@ class ScheduleBlockDaoTest {
         todoCategoryDao = db.todoCategoryDao
         todoBlockTodoRelationshipDao = db.todoBlockTodoRelationshipDao
         todoBlockTodoCategoryRelationshipDao = db.todoBlockCategoryRelationshipDao
+        scheduleTemplateDao = db.scheduleTemplateDao
     }
 
     @After
     @Throws(IOException::class)
     fun closeDb() {
         db.close()
+    }
+
+    @Test
+    fun test_getting_schedule_blocks_of_schedule_template() = runTest {
+        val todoCategory1 = TodoCategory(1, "c1", 0, null, "")
+        val todo1 = Todo(1, "t1", TodoPriority.HIGH, TodoFlag.DONE, todoCategory1.categoryId)
+        val date = LocalDate.of(2023, 2, 1)
+        val scheduleTemplate = ScheduleTemplate(1, "st")
+        val todoBlock1 = TodoBlock(1, null, date, testTime, testTime, scheduleTemplate.templateId)
+        val todoBlock2 =
+            TodoBlock(2, null, date, testTime, testTime, scheduleTemplate.templateId)
+        val todoBlock3 = TodoBlock(3, null, date, testTime, testTime, null)
+        todoCategoryDao.insertTodoCategory(todoCategory1)
+        todoDao.insertTodo(todo1)
+        scheduleTemplateDao.insert(scheduleTemplate)
+        todoBlockDao.insertTodoBlock(todoBlock1)
+        todoBlockDao.insertTodoBlock(todoBlock2)
+        todoBlockDao.insertTodoBlock(todoBlock3)
+
+        todoBlockDao.markTodoBlockForDeletion(todoBlock2.todoBlockId)
+
+        val todoBlocksOfTemplate = scheduleBlockDao
+            .getScheduleBlocksOfScheduleTemplate(scheduleTemplate.templateId)
+            .first()
+            .map { it.todoBlock }
+
+        assertThat(todoBlocksOfTemplate).containsExactly(todoBlock1)
     }
 
     @Test

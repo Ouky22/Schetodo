@@ -18,4 +18,8 @@ interface ScheduleBlockDao {
     @Transaction
     @Query("SELECT * FROM TodoBlock WHERE todoBlockId = :todoBlockId")
     fun getScheduleBlockByTodoBlockId(todoBlockId: Int): Flow<ScheduleBlock?>
+
+    @Transaction
+    @Query("SELECT * FROM TodoBlock WHERE templateId = :scheduleTemplateId AND markedForDeletion = 0")
+    fun getScheduleBlocksOfScheduleTemplate(scheduleTemplateId: Int): Flow<List<ScheduleBlock>>
 }

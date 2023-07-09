@@ -10,4 +10,5 @@ interface ScheduleBlockRepository {
     val showScheduleBlockNotificationAtEnd: Flow<Boolean>
     val showScheduleBlockNotificationAtBeginning: Flow<Boolean>
     suspend fun unmarkTodoBlockForDeletion(todoBlockId: Int)
+    fun getScheduleBlocksOfScheduleTemplate(templateId: Int): Flow<List<ScheduleBlock>>
 }
