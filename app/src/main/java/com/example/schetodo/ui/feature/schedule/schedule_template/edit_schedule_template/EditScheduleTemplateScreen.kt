@@ -1,4 +1,4 @@
-package com.example.schetodo.ui.feature.schedule.schedule_template.add_edit_schedule_template
+package com.example.schetodo.ui.feature.schedule.schedule_template.edit_schedule_template
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,13 +23,13 @@ import com.example.schetodo.ui.theme.SchetodoTheme
 import java.time.LocalTime
 
 @Composable
-fun AddEditScheduleTemplateScreen(
+fun EditScheduleTemplateScreen(
     modifier: Modifier = Modifier,
-    viewModel: AddEditScheduleTemplateViewModel
+    viewModel: EditScheduleTemplateViewModel
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    AddEditScheduleTemplateScreen(
+    EditScheduleTemplateScreen(
         modifier = modifier,
         scheduleListItems = state.scheduleItems,
         onScheduleBlockItemClick = {},
@@ -42,7 +42,7 @@ fun AddEditScheduleTemplateScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddEditScheduleTemplateScreen(
+fun EditScheduleTemplateScreen(
     modifier: Modifier = Modifier,
     scheduleListItems: List<ScheduleListItem>,
     onScheduleBlockItemClick: (todoBlockId: Int) -> Unit,
@@ -127,9 +127,9 @@ fun ScheduleTemplateOverflowMenu(
 
 @Preview
 @Composable
-fun AddEditScheduleTemplateScreenPreview() {
+fun EditScheduleTemplateScreenPreview() {
     SchetodoTheme {
-        AddEditScheduleTemplateScreen(
+        EditScheduleTemplateScreen(
             modifier = Modifier.fillMaxSize(),
             scheduleListItems = createTodoBlocksForPreview(),
             onScheduleBlockItemClick = {},

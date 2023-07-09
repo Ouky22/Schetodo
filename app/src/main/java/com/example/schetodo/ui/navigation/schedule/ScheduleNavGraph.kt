@@ -15,8 +15,8 @@ import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.t
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.picker.todo.TodoPickerViewModel
 import com.example.schetodo.ui.feature.schedule.list.ScheduleScreen
 import com.example.schetodo.ui.feature.schedule.list.ScheduleViewModel
-import com.example.schetodo.ui.feature.schedule.schedule_template.add_edit_schedule_template.AddEditScheduleTemplateScreen
-import com.example.schetodo.ui.feature.schedule.schedule_template.add_edit_schedule_template.AddEditScheduleTemplateViewModel
+import com.example.schetodo.ui.feature.schedule.schedule_template.edit_schedule_template.EditScheduleTemplateScreen
+import com.example.schetodo.ui.feature.schedule.schedule_template.edit_schedule_template.EditScheduleTemplateViewModel
 import com.example.schetodo.ui.feature.schedule.schedule_template.list.ScheduleTemplatesScreen
 import com.example.schetodo.ui.feature.schedule.schedule_template.list.ScheduleTemplatesViewModel
 import com.example.schetodo.ui.navigation.Graph
@@ -100,8 +100,8 @@ fun NavGraphBuilder.scheduleNavGraph(
             route = EditScheduleTemplate.routeWithArgs,
             arguments = EditScheduleTemplate.args
         ) {
-            val viewModel = hiltViewModel<AddEditScheduleTemplateViewModel>()
-            AddEditScheduleTemplateScreen(viewModel = viewModel)
+            val viewModel = hiltViewModel<EditScheduleTemplateViewModel>()
+            EditScheduleTemplateScreen(viewModel = viewModel)
         }
     }
 }
