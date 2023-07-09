@@ -13,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,22 +20,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
-import com.example.schetodo.data.todo.Todo
-import com.example.schetodo.data.todo.TodoFlag
-import com.example.schetodo.data.todo.TodoPriority
-import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.feature.schedule.add_edit_schedule_block.ID_OF_TODO_BLOCK_MARKED_FOR_DELETION
-import com.example.schetodo.ui.feature.schedule.components.ScheduleGap
-import com.example.schetodo.ui.feature.schedule.components.ScheduleList
-import com.example.schetodo.ui.feature.schedule.components.ScheduleListItem
-import com.example.schetodo.ui.feature.schedule.components.UiScheduleBlock
+import com.example.schetodo.ui.feature.schedule.components.*
 import com.example.schetodo.ui.feature.schedule.list.ScheduleEvent.*
-import com.example.schetodo.ui.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.theme.SchetodoTheme
-import com.example.schetodo.ui.util.UiText
 import com.example.schetodo.ui.util.popFromCurrentBackStackEntry
 import com.example.schetodo.ui.util.showDatePicker
 import com.example.schetodo.ui.util.showSnackbarWithActionHandler
@@ -420,7 +410,7 @@ fun ScheduleScreenPreview() {
         ScheduleScreen(
             modifier = Modifier.fillMaxSize(),
             snackbarHostState = remember { SnackbarHostState() },
-            schedules = createTodoBlocksForPreview(),
+            schedules = mapOf(LocalDate.now().toEpochDay() to createTodoBlocksForPreview()),
             currentDateString = "2023-02-01",
             currentDate = LocalDate.now(),
             maxDate = LocalDate.now(),
@@ -437,82 +427,4 @@ fun ScheduleScreenPreview() {
             onAddScheduleGapButtonClick = { _, _ -> }
         )
     }
-}
-
-private fun createTodoBlocksForPreview(): Map<Long, List<ScheduleListItem>> {
-    val todoCategories = listOf(
-        TodoCategory(
-            1, "Household", todoCategoryColors[0].toArgb().toLong(), null,
-            Icons.Filled.House.name
-        ),
-        TodoCategory(
-            2, "Study", todoCategoryColors[6].toArgb().toLong(), null, Icons.Filled.School.name
-        ),
-        TodoCategory(
-            2, "Sports", todoCategoryColors[4].toArgb().toLong(), null, Icons.Filled.School.name
-        ),
-        TodoCategory(
-            2, "Piano", todoCategoryColors[3].toArgb().toLong(), null, Icons.Filled.School.name
-        )
-    )
-    val todos = listOf(
-        Todo(1, "Wash the dishes", TodoPriority.LOW, TodoFlag.UNDONE, 1),
-        Todo(2, "Clean the floor", TodoPriority.LOW, TodoFlag.UNDONE, 1),
-        Todo(3, "Bake a cake", TodoPriority.LOW, TodoFlag.UNDONE, 1)
-    )
-    val scheduleListItems = listOf(
-        ScheduleGap(
-            startTime = LocalTime.of(0, 0),
-            endTime = LocalTime.of(12, 0),
-            durationHours = UiText.DynamicString("12h")
-        ),
-        UiScheduleBlock(
-            todoBlockId = 1,
-            startTime = LocalTime.of(12, 0),
-            endTime = LocalTime.of(15, 0),
-            startTimeText = "12:00",
-            endTimeText = "15:00",
-            durationHours = UiText.DynamicString("3h"),
-            durationMinutes = UiText.DynamicString("30min"),
-            categories = todoCategories.subList(0, 1),
-            todoDescriptions = todos.subList(0, 1).map { it.description },
-            notes = "",
-            isCurrentScheduleBlock = false
-        ),
-        ScheduleGap(
-            startTime = LocalTime.of(15, 0),
-            endTime = LocalTime.of(15, 30),
-            durationMinutes = UiText.DynamicString("30min")
-        ),
-        UiScheduleBlock(
-            todoBlockId = 3,
-            startTime = LocalTime.of(15, 30),
-            endTime = LocalTime.of(16, 0),
-            startTimeText = "15:30",
-            endTimeText = "16:00",
-            durationMinutes = UiText.DynamicString("30min"),
-            categories = todoCategories,
-            todoDescriptions = todos.map { it.description },
-            notes = "Lorem ipsum dolor sit",
-            isCurrentScheduleBlock = true
-        ),
-        UiScheduleBlock(
-            todoBlockId = 4,
-            startTime = LocalTime.of(16, 0),
-            endTime = LocalTime.of(17, 0),
-            startTimeText = "16:00",
-            endTimeText = "17:00",
-            durationHours = UiText.DynamicString("1h"),
-            notes = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna",
-            isCurrentScheduleBlock = false
-        ),
-        ScheduleGap(
-            startTime = LocalTime.of(17, 0),
-            endTime = LocalTime.of(23, 59),
-            durationHours = UiText.DynamicString("6h"),
-            durationMinutes = UiText.DynamicString("59min")
-        )
-    )
-
-    return mapOf(LocalDate.now().toEpochDay() to scheduleListItems)
 }
