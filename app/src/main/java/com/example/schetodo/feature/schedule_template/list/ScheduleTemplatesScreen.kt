@@ -1,4 +1,4 @@
-package com.example.schetodo.feature.schedule.schedule_template.list
+package com.example.schetodo.feature.schedule_template.list
 
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable

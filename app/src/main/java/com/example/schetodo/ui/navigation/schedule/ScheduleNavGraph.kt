@@ -15,10 +15,10 @@ import com.example.schetodo.feature.schedule.add_edit_schedule_block.picker.todo
 import com.example.schetodo.feature.schedule.add_edit_schedule_block.picker.todo.TodoPickerViewModel
 import com.example.schetodo.feature.schedule.list.ScheduleScreen
 import com.example.schetodo.feature.schedule.list.ScheduleViewModel
-import com.example.schetodo.feature.schedule.schedule_template.edit_schedule_template.EditScheduleTemplateScreen
-import com.example.schetodo.feature.schedule.schedule_template.edit_schedule_template.EditScheduleTemplateViewModel
-import com.example.schetodo.feature.schedule.schedule_template.list.ScheduleTemplatesScreen
-import com.example.schetodo.feature.schedule.schedule_template.list.ScheduleTemplatesViewModel
+import com.example.schetodo.feature.schedule_template.edit_schedule_template.EditScheduleTemplateScreen
+import com.example.schetodo.feature.schedule_template.edit_schedule_template.EditScheduleTemplateViewModel
+import com.example.schetodo.feature.schedule_template.list.ScheduleTemplatesScreen
+import com.example.schetodo.feature.schedule_template.list.ScheduleTemplatesViewModel
 import com.example.schetodo.ui.navigation.Graph
 
 fun NavGraphBuilder.scheduleNavGraph(

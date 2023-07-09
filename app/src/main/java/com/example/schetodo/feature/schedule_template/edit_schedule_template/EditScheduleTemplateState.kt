@@ -1,4 +1,4 @@
-package com.example.schetodo.feature.schedule.schedule_template.edit_schedule_template
+package com.example.schetodo.feature.schedule_template.edit_schedule_template
 
 import com.example.schetodo.feature.schedule.components.ScheduleListItem
 

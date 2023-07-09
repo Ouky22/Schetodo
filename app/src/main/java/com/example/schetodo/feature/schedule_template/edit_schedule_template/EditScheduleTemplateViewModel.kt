@@ -1,4 +1,4 @@
-package com.example.schetodo.feature.schedule.schedule_template.edit_schedule_template
+package com.example.schetodo.feature.schedule_template.edit_schedule_template
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
