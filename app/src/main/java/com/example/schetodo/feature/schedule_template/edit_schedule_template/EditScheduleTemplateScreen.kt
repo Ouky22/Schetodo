@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import com.example.schetodo.feature.schedule_template.edit_schedule_template.EditScheduleTemplateEvent.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +36,10 @@ fun EditScheduleTemplateScreen(
         modifier = modifier,
         scheduleListItems = state.scheduleItems,
         onScheduleBlockItemClick = {},
+        onDeleteScheduleTemplate = {
+            viewModel.onEvent(DeleteScheduleTemplate)
+            schetodoAppState.navController.popBackStack()
+        },
         onScheduleGapClick = { startTime, endTime -> },
         scheduleTemplateName = state.scheduleTemplateName,
         onBackButtonClick = { schetodoAppState.navController.popBackStack() },
@@ -49,6 +54,7 @@ fun EditScheduleTemplateScreen(
     scheduleListItems: List<ScheduleListItem>,
     onScheduleBlockItemClick: (todoBlockId: Int) -> Unit,
     onScheduleGapClick: (startTime: LocalTime, endTime: LocalTime) -> Unit,
+    onDeleteScheduleTemplate: () -> Unit,
     scheduleTemplateName: String,
     onBackButtonClick: () -> Unit,
     onFabClick: () -> Unit
@@ -62,7 +68,7 @@ fun EditScheduleTemplateScreen(
             ) {
                 ScheduleTemplateOverflowMenu(
                     onApplyScheduleTemplate = {},
-                    onDeleteScheduleTemplate = {}
+                    onDeleteScheduleTemplate = onDeleteScheduleTemplate
                 )
             }
         },
@@ -135,6 +141,7 @@ fun EditScheduleTemplateScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             scheduleListItems = createTodoBlocksForPreview(),
             onScheduleBlockItemClick = {},
+            onDeleteScheduleTemplate = {},
             onScheduleGapClick = { _, _ -> },
             scheduleTemplateName = "This is the name for the schedule template",
             onBackButtonClick = {},

@@ -4,7 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
-import com.example.schetodo.feature.use_case.ConvertScheduleBlocksToScheduleListItemsUseCase
+import com.example.schetodo.feature.schedule_template.edit_schedule_template.EditScheduleTemplateEvent.*
+import com.example.schetodo.feature.schedule_template.use_case.DeleteScheduleTemplateUseCase
 import com.example.schetodo.feature.use_case.GeneralUseCases
 import com.example.schetodo.ui.navigation.schedule.EditScheduleTemplate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class EditScheduleTemplateViewModel @Inject constructor(
     private val scheduleBlockRepository: ScheduleBlockRepository,
     private val generalUseCases: GeneralUseCases,
+    private val deleteScheduleTemplateUseCase: DeleteScheduleTemplateUseCase,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -25,8 +27,10 @@ class EditScheduleTemplateViewModel @Inject constructor(
     val state: StateFlow<EditScheduleTemplateState>
         get() = _state.asStateFlow()
 
+    private val templateId: Int
+
     init {
-        val templateId: Int = savedStateHandle[EditScheduleTemplate.scheduleTemplateIdArg]
+        templateId = savedStateHandle[EditScheduleTemplate.scheduleTemplateIdArg]
             ?: throw Exception("No schedule template id provided")
 
         viewModelScope.launch {
@@ -34,6 +38,18 @@ class EditScheduleTemplateViewModel @Inject constructor(
                 val scheduleListItems = generalUseCases.convertScheduleBlocksToScheduleListItems(it)
                 _state.value = _state.value.copy(scheduleItems = scheduleListItems)
             }
+        }
+    }
+
+    fun onEvent(editScheduleTemplateEvent: EditScheduleTemplateEvent) {
+        when (editScheduleTemplateEvent) {
+            is DeleteScheduleTemplate -> deleteScheduleTemplate()
+        }
+    }
+
+    private fun deleteScheduleTemplate() {
+        viewModelScope.launch {
+            deleteScheduleTemplateUseCase(templateId)
         }
     }
 }
