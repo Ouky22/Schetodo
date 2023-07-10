@@ -235,7 +235,10 @@ fun EnterScheduleTemplateNameDialog(
                 labelText = stringResource(R.string.name),
                 errorText = stringResource(R.string.please_enter_name),
                 showError = showInvalidScheduleTemplateNameError,
-                singleLine = true
+                singleLine = true,
+                modifier = Modifier
+                    .padding(12.dp)
+                    .fillMaxWidth()
             )
 
             PositiveNegativeButtonRow(

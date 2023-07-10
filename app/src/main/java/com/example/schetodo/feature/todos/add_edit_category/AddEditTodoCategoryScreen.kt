@@ -139,7 +139,8 @@ fun AddEditTodoCategoryScreen(
                 labelText = stringResource(R.string.todoCategoryName),
                 errorText = stringResource(R.string.please_enter_name),
                 showError = showInvalidTodoCategoryNameError,
-                singleLine = true
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
             )
 
             SelectColorAndIconArea(

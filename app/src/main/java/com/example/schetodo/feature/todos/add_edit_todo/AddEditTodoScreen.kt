@@ -164,7 +164,8 @@ fun AddEditTodoScreen(
                     labelText = stringResource(R.string.description),
                     errorText = stringResource(R.string.please_enter_description),
                     showError = showDescriptionError,
-                    singleLine = false
+                    singleLine = false,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
 
