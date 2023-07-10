@@ -1,8 +1,6 @@
 package com.example.schetodo.feature.schedule_template.edit_schedule_template
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -10,18 +8,27 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import com.example.schetodo.feature.schedule_template.edit_schedule_template.EditScheduleTemplateEvent.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
 import com.example.schetodo.feature.schedule.components.ScheduleList
 import com.example.schetodo.feature.schedule.components.ScheduleListItem
 import com.example.schetodo.feature.schedule.components.createTodoBlocksForPreview
 import com.example.schetodo.ui.SchetodoAppState
+import com.example.schetodo.ui.components.ClickableReadOnlyOutlinedTextField
+import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.SchetodoTopAppBar
 import com.example.schetodo.ui.theme.SchetodoTheme
+import com.example.schetodo.ui.util.showDatePicker
+import java.time.LocalDate
 import java.time.LocalTime
 
 @Composable
@@ -88,6 +95,13 @@ fun EditScheduleTemplateScreen(
             onScheduleGapClick = onScheduleGapClick
         )
     }
+
+    SelectScheduleTemplateApplyDateDialog(
+        onDismiss = { /*TODO*/ },
+        selectedDate = "22-02-2023",
+        onDateSelected = {},
+        onSaveApplyDateForTemplate = {}
+    )
 }
 
 @Composable
@@ -128,6 +142,49 @@ fun ScheduleTemplateOverflowMenu(
                 leadingIcon = {
                     Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
                 }
+            )
+        }
+    }
+}
+
+@Composable
+fun SelectScheduleTemplateApplyDateDialog(
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit,
+    selectedDate: String,
+    onDateSelected: (date: LocalDate) -> Unit,
+    onSaveApplyDateForTemplate: () -> Unit
+) {
+    val context = LocalContext.current
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(modifier = modifier) {
+            Text(
+                text = stringResource(R.string.apply_template),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+            )
+
+            ClickableReadOnlyOutlinedTextField(
+                modifier = Modifier
+                    .padding(horizontal = 12.dp, vertical = 20.dp)
+                    .fillMaxWidth(),
+                value = selectedDate,
+                labelText = stringResource(R.string.date),
+                onClick = {
+                    showDatePicker(
+                        context = context,
+                        onDateSetListener = { date -> onDateSelected(date) }
+                    )
+                }
+            )
+
+            PositiveNegativeButtonRow(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                positiveButtonText = stringResource(id = R.string.apply),
+                negativeButtonText = stringResource(id = R.string.cancel),
+                onPositiveClick = onSaveApplyDateForTemplate,
+                onNegativeClick = onDismiss
             )
         }
     }

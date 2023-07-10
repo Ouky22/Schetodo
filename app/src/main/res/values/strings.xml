@@ -82,4 +82,6 @@
     <string name="save_schedule_as_template">Save schedule as template</string>
     <string name="more">More</string>
     <string name="apply">Apply</string>
+    <string name="apply_template">Apply template</string>
+    <string name="date">Date</string>
 </resources>
