@@ -49,6 +49,10 @@ fun EditScheduleTemplateScreen(
         },
         onScheduleGapClick = { startTime, endTime -> },
         scheduleTemplateName = state.scheduleTemplateName,
+        scheduleTemplateApplyDate = state.scheduleTemplateApplyDate,
+        onScheduleTemplateApplyDateSelected = { selectedDate ->
+            viewModel.onEvent(SelectScheduleTemplateApplyDate(selectedDate))
+        },
         onBackButtonClick = { schetodoAppState.navController.popBackStack() },
         onFabClick = {}
     )
@@ -63,6 +67,8 @@ fun EditScheduleTemplateScreen(
     onScheduleGapClick: (startTime: LocalTime, endTime: LocalTime) -> Unit,
     onDeleteScheduleTemplate: () -> Unit,
     scheduleTemplateName: String,
+    scheduleTemplateApplyDate: String,
+    onScheduleTemplateApplyDateSelected: (LocalDate) -> Unit,
     onBackButtonClick: () -> Unit,
     onFabClick: () -> Unit
 ) {
@@ -101,9 +107,9 @@ fun EditScheduleTemplateScreen(
     if (openSelectScheduleTemplateApplyDate)
         SelectScheduleTemplateApplyDateDialog(
             onDismiss = { openSelectScheduleTemplateApplyDate = false },
-            selectedDate = "22-02-2023",
-            onDateSelected = { openSelectScheduleTemplateApplyDate = false },
-            onSaveApplyDateForTemplate = {}
+            selectedDate = scheduleTemplateApplyDate,
+            onDateSelected = onScheduleTemplateApplyDateSelected,
+            onSaveApplyDateForTemplate = { openSelectScheduleTemplateApplyDate = false }
         )
 }
 
@@ -204,6 +210,8 @@ fun EditScheduleTemplateScreenPreview() {
             onDeleteScheduleTemplate = {},
             onScheduleGapClick = { _, _ -> },
             scheduleTemplateName = "This is the name for the schedule template",
+            scheduleTemplateApplyDate = "2023-02-02",
+            onScheduleTemplateApplyDateSelected = {},
             onBackButtonClick = {},
             onFabClick = {}
         )

@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,6 +30,8 @@ class EditScheduleTemplateViewModel @Inject constructor(
 
     private val templateId: Int
 
+    private lateinit var scheduleTemplateApplyDate: LocalDate
+
     init {
         templateId = savedStateHandle[EditScheduleTemplate.scheduleTemplateIdArg]
             ?: throw Exception("No schedule template id provided")
@@ -39,12 +42,22 @@ class EditScheduleTemplateViewModel @Inject constructor(
                 _state.value = _state.value.copy(scheduleItems = scheduleListItems)
             }
         }
+
+        updateScheduleTemplateApplyDate(LocalDate.now())
     }
 
-    fun onEvent(editScheduleTemplateEvent: EditScheduleTemplateEvent) {
-        when (editScheduleTemplateEvent) {
+    fun onEvent(event: EditScheduleTemplateEvent) {
+        when (event) {
             is DeleteScheduleTemplate -> deleteScheduleTemplate()
+            is SelectScheduleTemplateApplyDate -> updateScheduleTemplateApplyDate(event.date)
         }
+    }
+
+    private fun updateScheduleTemplateApplyDate(date: LocalDate) {
+        scheduleTemplateApplyDate = date
+        _state.value = _state.value.copy(
+            scheduleTemplateApplyDate = generalUseCases.formatDate(date)
+        )
     }
 
     private fun deleteScheduleTemplate() {

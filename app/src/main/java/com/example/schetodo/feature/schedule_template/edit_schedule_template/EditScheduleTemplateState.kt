@@ -5,5 +5,6 @@ import com.example.schetodo.feature.schedule.components.ScheduleListItem
 
 data class EditScheduleTemplateState(
     val scheduleItems: List<ScheduleListItem> = emptyList(),
-    val scheduleTemplateName: String = ""
+    val scheduleTemplateName: String = "",
+    val scheduleTemplateApplyDate: String = ""
 )
