@@ -52,22 +52,15 @@ class TodoBlockRepositoryImpl @Inject constructor(
         todoBlockDao.deleteAllTodoBlocksOfScheduleTemplate(templateId)
 
     override suspend fun todoBlockOverlapsWithOtherTodoBlock(
-        todoBlock: TodoBlock, exceptOfTodoBlockId: Int?
+        todoBlock: TodoBlock,
+        exceptOfTodoBlockId: Int?
     ): Boolean {
         val date = todoBlock.date ?: return false
-        val startTime = todoBlock.startTime
-        val endTime = todoBlock.endTime
 
-        val allTodoBlocksOnDate = getTodoBlocksOnDate(date).first()
-
-        if (allTodoBlocksOnDate.isEmpty())
-            return false
-
-        for (otherTodoBlock in allTodoBlocksOnDate) {
+        for (otherTodoBlock in getTodoBlocksOnDate(date).first()) {
             val overlapsWithTodoBlock =
                 if (otherTodoBlock.todoBlockId == exceptOfTodoBlockId) false
-                else startTime.isBefore(otherTodoBlock.endTime) and
-                        otherTodoBlock.startTime.isBefore(endTime)
+                else todoBlocksOverlap(todoBlock, otherTodoBlock)
 
             if (overlapsWithTodoBlock)
                 return true
@@ -75,4 +68,21 @@ class TodoBlockRepositoryImpl @Inject constructor(
 
         return false
     }
+
+    override suspend fun getTodoBlocksThatOverlapWith(
+        todoBlock: TodoBlock,
+        date: LocalDate
+    ): List<TodoBlock> {
+        val overlappingTodoBlocks = mutableListOf<TodoBlock>()
+
+        for (otherTodoBlock in getTodoBlocksOnDate(date).first())
+            if (todoBlocksOverlap(todoBlock, otherTodoBlock))
+                overlappingTodoBlocks.add(otherTodoBlock)
+
+        return overlappingTodoBlocks
+    }
+
+    private fun todoBlocksOverlap(todoBlock1: TodoBlock, todoBlock2: TodoBlock): Boolean =
+        todoBlock1.startTime.isBefore(todoBlock2.endTime)
+                && todoBlock2.startTime.isBefore(todoBlock1.endTime)
 }

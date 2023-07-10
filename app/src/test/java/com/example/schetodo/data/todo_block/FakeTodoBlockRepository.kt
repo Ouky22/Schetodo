@@ -95,4 +95,11 @@ class FakeTodoBlockRepository : TodoBlockRepository {
     override suspend fun deleteAllTodoBlocksOfScheduleTemplate(templateId: Int) {
         todoBlocks.removeIf { it.templateId == templateId }
     }
+
+    override suspend fun getTodoBlocksThatOverlapWith(
+        todoBlock: TodoBlock,
+        date: LocalDate
+    ): List<TodoBlock> {
+        return emptyList()
+    }
 }
