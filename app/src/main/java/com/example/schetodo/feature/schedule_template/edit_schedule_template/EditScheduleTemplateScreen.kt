@@ -66,6 +66,8 @@ fun EditScheduleTemplateScreen(
     onBackButtonClick: () -> Unit,
     onFabClick: () -> Unit
 ) {
+    var openSelectScheduleTemplateApplyDate by rememberSaveable { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             SchetodoTopAppBar(
@@ -74,7 +76,7 @@ fun EditScheduleTemplateScreen(
                 onBackButtonClick = onBackButtonClick
             ) {
                 ScheduleTemplateOverflowMenu(
-                    onApplyScheduleTemplate = {},
+                    onApplyScheduleTemplate = { openSelectScheduleTemplateApplyDate = true },
                     onDeleteScheduleTemplate = onDeleteScheduleTemplate
                 )
             }
@@ -96,12 +98,13 @@ fun EditScheduleTemplateScreen(
         )
     }
 
-    SelectScheduleTemplateApplyDateDialog(
-        onDismiss = { /*TODO*/ },
-        selectedDate = "22-02-2023",
-        onDateSelected = {},
-        onSaveApplyDateForTemplate = {}
-    )
+    if (openSelectScheduleTemplateApplyDate)
+        SelectScheduleTemplateApplyDateDialog(
+            onDismiss = { openSelectScheduleTemplateApplyDate = false },
+            selectedDate = "22-02-2023",
+            onDateSelected = { openSelectScheduleTemplateApplyDate = false },
+            onSaveApplyDateForTemplate = {}
+        )
 }
 
 @Composable
