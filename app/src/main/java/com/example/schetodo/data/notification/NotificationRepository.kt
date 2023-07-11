@@ -9,4 +9,5 @@ interface NotificationRepository {
     suspend fun deleteNotification(notification: Notification)
     suspend fun setNotificationsOfTodoBlock(todoBlockId: Int, notifications: List<Notification>)
     fun getNotificationById(id: Int): Flow<Notification?>
+    fun getAllNotifications(): Flow<List<Notification>>
 }

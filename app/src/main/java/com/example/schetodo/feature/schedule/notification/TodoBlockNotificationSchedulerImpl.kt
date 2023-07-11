@@ -9,7 +9,12 @@ import android.content.pm.PackageManager
 import android.os.Build
 import com.example.schetodo.data.notification.Notification
 import com.example.schetodo.data.notification.NotificationRepository
+import com.example.schetodo.data.todo_block.TodoBlockRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.time.ZoneId
 import javax.inject.Inject
 
@@ -17,10 +22,28 @@ const val NOTIFICATION_ID_EXTRA_KEY = "notificationIdExtra"
 
 class TodoBlockNotificationSchedulerImpl @Inject constructor(
     private val notificationRepository: NotificationRepository,
+    private val todoBlockRepository: TodoBlockRepository,
     @ApplicationContext private val context: Context
 ) : TodoBlockNotificationScheduler {
 
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+    private var previousScheduleNotification: Notification? = null
+
+    override fun startObservationOfNotifications() {
+        CoroutineScope(Dispatchers.IO).launch {
+            launch {
+                notificationRepository.getAllNotifications().collectLatest {
+                    scheduleNextNotificationIfExists()
+                }
+            }
+            launch {
+                todoBlockRepository.getAllTodoBlocks().collectLatest {
+                    scheduleNextNotificationIfExists()
+                }
+            }
+        }
+    }
 
     override suspend fun scheduleNextNotificationIfExists() {
         val nextNotification = notificationRepository.getNextNotification()
@@ -31,8 +54,12 @@ class TodoBlockNotificationSchedulerImpl @Inject constructor(
             return
         }
 
-        scheduleNotification(nextNotification)
-        activateRebootBroadcastReceiver()
+        if (nextNotification != previousScheduleNotification) {
+            scheduleNotification(nextNotification)
+            activateRebootBroadcastReceiver()
+        }
+
+        previousScheduleNotification = nextNotification
     }
 
     private fun scheduleNotification(notification: Notification) {

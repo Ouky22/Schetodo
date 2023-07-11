@@ -38,4 +38,10 @@ class FakeNotificationRepository : NotificationRepository {
             emit(notifications.firstOrNull { it.notificationId == id })
         }
     }
+
+    override fun getAllNotifications(): Flow<List<Notification>> {
+        return flow {
+            emit(notifications)
+        }
+    }
 }

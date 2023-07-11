@@ -17,7 +17,6 @@ import com.example.schetodo.data.todo_block.TodoBlockRepository
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.todo_category.TodoCategoryRepository
 import com.example.schetodo.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockEvent.*
-import com.example.schetodo.feature.schedule.notification.TodoBlockNotificationScheduler
 import com.example.schetodo.feature.use_case.GeneralUseCases
 import com.example.schetodo.ui.navigation.schedule.AddScheduleBlock
 import com.example.schetodo.ui.navigation.schedule.EditScheduleBlock
@@ -36,7 +35,6 @@ class AddEditScheduleBlockViewModel @Inject constructor(
     private val todoRepository: TodoRepository,
     private val todoCategoryRepository: TodoCategoryRepository,
     private val todoBlockRepository: TodoBlockRepository,
-    private val todoBlockNotificationScheduler: TodoBlockNotificationScheduler,
     private val generalUseCases: GeneralUseCases,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -103,7 +101,6 @@ class AddEditScheduleBlockViewModel @Inject constructor(
 
         viewModelScope.launch {
             todoBlockRepository.markTodoBlockForDeletion(todoBlockId)
-            todoBlockNotificationScheduler.scheduleNextNotificationIfExists()
             _closeAddEditScheduleBlockScreen.value = true
         }
     }
@@ -137,7 +134,6 @@ class AddEditScheduleBlockViewModel @Inject constructor(
                 )
             )
 
-            todoBlockNotificationScheduler.scheduleNextNotificationIfExists()
             _closeAddEditScheduleBlockScreen.value = true
         }
     }

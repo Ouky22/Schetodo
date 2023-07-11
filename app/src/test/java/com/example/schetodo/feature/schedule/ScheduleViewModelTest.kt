@@ -55,7 +55,6 @@ internal class ScheduleViewModelTest {
         viewModel = ScheduleViewModel(
             fakeScheduleBlockRepository,
             fakeScheduleTemplateRepository,
-            fakeTodoBlockNotificationScheduler,
             generalUseCases
         )
         createTestScheduleBlock()
@@ -160,7 +159,6 @@ internal class ScheduleViewModelTest {
             ScheduleViewModel(
                 fakeScheduleBlockRepository,
                 fakeScheduleTemplateRepository,
-                fakeTodoBlockNotificationScheduler,
                 generalUseCases
             )
         advanceUntilIdle()

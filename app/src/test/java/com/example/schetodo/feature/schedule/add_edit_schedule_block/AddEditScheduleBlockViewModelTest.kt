@@ -54,32 +54,6 @@ internal class AddEditScheduleBlockViewModelTest {
     }
 
     @Test
-    fun `when saving schedule block and selected notification is next notification then schedule it`() =
-        runTest {
-            val date = LocalDate.of(2023, 2, 15)
-            val savedStateHandle = SavedStateHandle(
-                mapOf(AddScheduleBlock.dateStampArg to date.toEpochDay())
-            )
-            val viewModel = createAddEditScheduleBlockViewModel(savedStateHandle)
-            val startTime = LocalTime.of(12, 0)
-            val endTime = LocalTime.of(15, 0)
-            fakeNotificationsRepository.insertNotification(
-                Notification(1, LocalDateTime.of(date, startTime))
-            )
-            viewModel.onEvent(ChangeStartTime(startTime))
-            viewModel.onEvent(ChangeEndTime(endTime))
-            viewModel.onEvent(ChangeTodoBlockNotes("test"))
-            viewModel.onEvent(ChangeShowNotificationAtBeginning(showNotification = true))
-            viewModel.onEvent(ChangeShowNotificationAtEnd(showNotification = true))
-            viewModel.onEvent(SaveScheduleBlock)
-
-            advanceUntilIdle()
-
-            assertThat(fakeTodoBlockNotificationScheduler.currentlyScheduledNotification?.dateTime)
-                .isEqualTo(LocalDateTime.of(date, startTime))
-        }
-
-    @Test
     fun `when saving schedule block then also save selected notifications`() = runTest {
         val date = LocalDate.of(2023, 2, 15)
         val savedStateHandle = SavedStateHandle(
@@ -430,7 +404,6 @@ internal class AddEditScheduleBlockViewModelTest {
             fakeTodoRepository,
             fakeTodoCategoryRepository,
             fakeTodoBlockRepository,
-            fakeTodoBlockNotificationScheduler,
             generalUseCases,
             savedStateHandle
         )

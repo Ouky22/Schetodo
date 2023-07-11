@@ -7,7 +7,6 @@ import com.example.schetodo.data.MIN_DATE
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.data.schedule_template.ScheduleTemplate
 import com.example.schetodo.data.schedule_template.ScheduleTemplateRepository
-import com.example.schetodo.feature.schedule.notification.TodoBlockNotificationScheduler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -24,7 +23,6 @@ import com.example.schetodo.feature.use_case.GeneralUseCases
 class ScheduleViewModel @Inject constructor(
     private val scheduleBlockRepository: ScheduleBlockRepository,
     private val scheduleTemplateRepository: ScheduleTemplateRepository,
-    private val todoBlockNotificationScheduler: TodoBlockNotificationScheduler,
     private val generalUseCases: GeneralUseCases
 ) : ViewModel() {
 
@@ -118,7 +116,6 @@ class ScheduleViewModel @Inject constructor(
     private fun unmarkTodoBlockForDeletion(todoBlockId: Int) {
         viewModelScope.launch {
             scheduleBlockRepository.unmarkTodoBlockForDeletion(todoBlockId)
-            todoBlockNotificationScheduler.scheduleNextNotificationIfExists()
         }
     }
 

@@ -1,6 +1,7 @@
 package com.example.schetodo.data.notification
 
 import com.example.schetodo.data.todo_block.TodoBlockDao
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -31,6 +32,9 @@ class NotificationRepositoryImpl @Inject constructor(
                 notification.dateTime
             }
     }
+
+    override fun getAllNotifications(): Flow<List<Notification>> =
+        notificationDao.getAllNotifications()
 
     override fun getNotificationById(id: Int) = notificationDao.getNotificationById(id)
 

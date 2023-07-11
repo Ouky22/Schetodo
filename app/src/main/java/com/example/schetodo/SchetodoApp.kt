@@ -5,16 +5,22 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import androidx.compose.ui.graphics.toArgb
+import com.example.schetodo.feature.schedule.notification.TodoBlockNotificationScheduler
 import com.example.schetodo.ui.theme.md_theme_dark_primary
 import com.example.schetodo.ui.util.NotificationService
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
 @HiltAndroidApp
 class SchetodoApp : Application() {
 
+    @Inject
+    lateinit var todoBlockNotificationScheduler: TodoBlockNotificationScheduler
+
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
+        todoBlockNotificationScheduler.startObservationOfNotifications()
     }
 
     private fun createNotificationChannel() {

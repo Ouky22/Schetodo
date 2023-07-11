@@ -11,15 +11,11 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class RebootReceiver : BroadcastReceiver() {
 
-    @Inject
-    lateinit var notificationScheduler: TodoBlockNotificationScheduler
-
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != "android.intent.action.BOOT_COMPLETED")
             return
 
-        MainScope().launch {
-            notificationScheduler.scheduleNextNotificationIfExists()
-        }
+        // when the app is started an instance of TodoBlockNotificationScheduler is created and
+        // the next notification (is exists) is scheduled
     }
 }

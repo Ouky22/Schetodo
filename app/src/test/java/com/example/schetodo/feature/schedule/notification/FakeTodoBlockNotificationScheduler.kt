@@ -14,4 +14,8 @@ class FakeTodoBlockNotificationScheduler @Inject constructor(
     override suspend fun scheduleNextNotificationIfExists() {
         currentlyScheduledNotification = notificationRepository.getNextNotification()
     }
+
+    override fun startObservationOfNotifications() {
+        TODO("Not yet implemented")
+    }
 }

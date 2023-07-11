@@ -17,9 +17,6 @@ import javax.inject.Inject
 class NotificationBroadcastReceiver : BroadcastReceiver() {
 
     @Inject
-    lateinit var todoBlockNotificationScheduler: TodoBlockNotificationScheduler
-
-    @Inject
     lateinit var scheduleBlockRepository: ScheduleBlockRepository
 
     @Inject
@@ -46,7 +43,9 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
             )
 
             notificationRepository.deleteNotification(notification)
-            todoBlockNotificationScheduler.scheduleNextNotificationIfExists()
+
+            // when the app is started an instance of TodoBlockNotificationScheduler is created and
+            // the next notification (is exists) is scheduled
         }
     }
 }
