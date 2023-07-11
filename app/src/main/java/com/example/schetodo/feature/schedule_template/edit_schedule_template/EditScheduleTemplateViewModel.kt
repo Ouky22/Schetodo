@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.feature.schedule_template.edit_schedule_template.EditScheduleTemplateEvent.*
-import com.example.schetodo.feature.schedule_template.use_case.DeleteScheduleTemplateUseCase
+import com.example.schetodo.feature.schedule_template.use_case.ApplyScheduleConflictStrategy
+import com.example.schetodo.feature.schedule_template.use_case.ApplyScheduleTemplateUseCase
+import com.example.schetodo.feature.schedule_template.use_case.ScheduleTemplateUseCases
 import com.example.schetodo.feature.use_case.GeneralUseCases
 import com.example.schetodo.ui.navigation.schedule.EditScheduleTemplate
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +22,7 @@ import javax.inject.Inject
 class EditScheduleTemplateViewModel @Inject constructor(
     private val scheduleBlockRepository: ScheduleBlockRepository,
     private val generalUseCases: GeneralUseCases,
-    private val deleteScheduleTemplateUseCase: DeleteScheduleTemplateUseCase,
+    private val scheduleTemplateUseCases: ScheduleTemplateUseCases,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -50,6 +52,17 @@ class EditScheduleTemplateViewModel @Inject constructor(
         when (event) {
             is DeleteScheduleTemplate -> deleteScheduleTemplate()
             is SelectScheduleTemplateApplyDate -> updateScheduleTemplateApplyDate(event.date)
+            is ApplyScheduleTemplateToDate -> applyScheduleTemplateToDate()
+        }
+    }
+
+    private fun applyScheduleTemplateToDate() {
+        viewModelScope.launch {
+            scheduleTemplateUseCases.applyScheduleTemplate(
+                scheduleTemplateId = templateId,
+                applyDate = scheduleTemplateApplyDate,
+                applyScheduleConflictStrategy = ApplyScheduleConflictStrategy.REPLACE
+            )
         }
     }
 
@@ -62,7 +75,7 @@ class EditScheduleTemplateViewModel @Inject constructor(
 
     private fun deleteScheduleTemplate() {
         viewModelScope.launch {
-            deleteScheduleTemplateUseCase(templateId)
+            scheduleTemplateUseCases.deleteScheduleTemplate(templateId)
         }
     }
 }

@@ -9,7 +9,6 @@ import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import com.example.schetodo.feature.schedule_template.edit_schedule_template.EditScheduleTemplateEvent.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -53,6 +52,9 @@ fun EditScheduleTemplateScreen(
         onScheduleTemplateApplyDateSelected = { selectedDate ->
             viewModel.onEvent(SelectScheduleTemplateApplyDate(selectedDate))
         },
+        onApplyTemplateToSelectedDate = {
+          viewModel.onEvent(ApplyScheduleTemplateToDate)
+        },
         onBackButtonClick = { schetodoAppState.navController.popBackStack() },
         onFabClick = {}
     )
@@ -69,6 +71,7 @@ fun EditScheduleTemplateScreen(
     scheduleTemplateName: String,
     scheduleTemplateApplyDate: String,
     onScheduleTemplateApplyDateSelected: (LocalDate) -> Unit,
+    onApplyTemplateToSelectedDate: () -> Unit,
     onBackButtonClick: () -> Unit,
     onFabClick: () -> Unit
 ) {
@@ -109,7 +112,10 @@ fun EditScheduleTemplateScreen(
             onDismiss = { openSelectScheduleTemplateApplyDate = false },
             selectedDate = scheduleTemplateApplyDate,
             onDateSelected = onScheduleTemplateApplyDateSelected,
-            onSaveApplyDateForTemplate = { openSelectScheduleTemplateApplyDate = false }
+            onApplyTemplateToSelectedDate = {
+                onApplyTemplateToSelectedDate()
+                openSelectScheduleTemplateApplyDate = false
+            }
         )
 }
 
@@ -162,7 +168,7 @@ fun SelectScheduleTemplateApplyDateDialog(
     onDismiss: () -> Unit,
     selectedDate: String,
     onDateSelected: (date: LocalDate) -> Unit,
-    onSaveApplyDateForTemplate: () -> Unit
+    onApplyTemplateToSelectedDate: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -192,7 +198,7 @@ fun SelectScheduleTemplateApplyDateDialog(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                 positiveButtonText = stringResource(id = R.string.apply),
                 negativeButtonText = stringResource(id = R.string.cancel),
-                onPositiveClick = onSaveApplyDateForTemplate,
+                onPositiveClick = onApplyTemplateToSelectedDate,
                 onNegativeClick = onDismiss
             )
         }
@@ -209,6 +215,7 @@ fun EditScheduleTemplateScreenPreview() {
             onScheduleBlockItemClick = {},
             onDeleteScheduleTemplate = {},
             onScheduleGapClick = { _, _ -> },
+            onApplyTemplateToSelectedDate = {},
             scheduleTemplateName = "This is the name for the schedule template",
             scheduleTemplateApplyDate = "2023-02-02",
             onScheduleTemplateApplyDateSelected = {},
