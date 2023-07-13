@@ -11,7 +11,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.schetodo.R
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
-import com.example.schetodo.ui.components.SchetodoTopAppBar
+import com.example.schetodo.ui.components.MainDestinationTopAppBar
+import com.example.schetodo.ui.components.SubDestinationTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,7 +28,7 @@ fun PickerScreen(
 ) {
     Scaffold(
         topBar = {
-            SchetodoTopAppBar(
+            SubDestinationTopAppBar(
                 title = topAppBarTitle,
                 showBackButton = showTopBarBackButton,
                 onBackButtonClick = onTopBarBackButtonClick

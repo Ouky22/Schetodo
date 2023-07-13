@@ -47,7 +47,8 @@ import com.example.schetodo.feature.todos.getIconByName
 import com.example.schetodo.feature.todos.todoCategoryColors
 import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.CategoryItem
-import com.example.schetodo.ui.components.SchetodoTopAppBar
+import com.example.schetodo.ui.components.MainDestinationTopAppBar
+import com.example.schetodo.ui.components.SubDestinationTopAppBar
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.showSnackbarWithActionHandler
 
@@ -117,7 +118,7 @@ fun CheckOffTodosScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-            SchetodoTopAppBar(
+            SubDestinationTopAppBar(
                 title = stringResource(R.string.check_off_done_todos),
                 showBackButton = true,
                 onBackButtonClick = onBackButtonClick

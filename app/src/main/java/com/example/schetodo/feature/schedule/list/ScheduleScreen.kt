@@ -25,7 +25,7 @@ import com.example.schetodo.feature.schedule.list.ScheduleEvent.*
 import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.OutlinedTextFieldWithErrorMessage
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
-import com.example.schetodo.ui.components.SchetodoTopAppBar
+import com.example.schetodo.ui.components.MainDestinationTopAppBar
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.popFromCurrentBackStackEntry
 import com.example.schetodo.ui.util.showDatePicker
@@ -131,10 +131,8 @@ fun ScheduleScreen(
 ) {
     Scaffold(
         topBar = {
-            SchetodoTopAppBar(
+            MainDestinationTopAppBar(
                 title = stringResource(R.string.schedule),
-                showBackButton = false,
-                onBackButtonClick = { },
                 actions = {
                     IconButton(onClick = onGoToCurrentDateButtonClick) {
                         Icon(

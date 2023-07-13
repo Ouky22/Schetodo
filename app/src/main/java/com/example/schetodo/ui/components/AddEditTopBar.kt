@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.schetodo.R
-import com.example.schetodo.ui.components.SchetodoTopAppBar
 
 
 @ExperimentalMaterial3Api
@@ -21,7 +20,7 @@ fun AddEditTopBar(
     onCloseDialog: () -> Unit,
     onDeleteClick: () -> Unit
 ) {
-    SchetodoTopAppBar(
+    SubDestinationTopAppBar(
         modifier = modifier,
         title = title,
         showBackButton = true,

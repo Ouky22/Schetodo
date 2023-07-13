@@ -36,11 +36,8 @@ import com.example.schetodo.feature.todos.add_edit_category.ID_OF_TODO_CATEGORY_
 import com.example.schetodo.feature.todos.add_edit_todo.ID_OF_TODO_MARKED_FOR_DELETION
 import com.example.schetodo.feature.todos.getIconByName
 import com.example.schetodo.ui.SchetodoAppState
-import com.example.schetodo.ui.components.CategoryItem
-import com.example.schetodo.ui.components.OverflowMenu
-import com.example.schetodo.ui.components.SchetodoTopAppBar
-import com.example.schetodo.ui.components.TodoItem
 import com.example.schetodo.feature.todos.list.TodosEvent.*
+import com.example.schetodo.ui.components.*
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.popFromCurrentBackStackEntry
 import com.example.schetodo.ui.util.showSnackbarWithActionHandler
@@ -119,18 +116,12 @@ fun TodosScreen(
 
     Scaffold(
         topBar = {
-            SchetodoTopAppBar(
-                title = state.currentCategory?.name ?: stringResource(id = R.string.todos),
-                showBackButton = state.currentCategoryIsChildCategory,
-                onBackButtonClick = {
-                    viewModel.onEvent(NavigateToPreviousTodoCategory)
-                },
-                actions = {
-                    TodosFilterOverflowMenu(
-                        todoFilterSettings = state.todoFilterSettings,
-                        filterSettingsChanged = { viewModel.onEvent(ChangeTodoFilterSettings(it)) }
-                    )
-                }
+            TodosAppBar(
+                currentCategoryName = state.currentCategory?.name,
+                currentCategoryIsChildCategory = state.currentCategoryIsChildCategory,
+                onBackButtonClick = { viewModel.onEvent(NavigateToPreviousTodoCategory) },
+                todoFilterSettings = state.todoFilterSettings,
+                onChangeTodoFilterSettings = { viewModel.onEvent(ChangeTodoFilterSettings(it)) }
             )
         },
         floatingActionButton = {
@@ -179,6 +170,35 @@ fun TodosScreen(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TodosAppBar(
+    currentCategoryName: String?,
+    currentCategoryIsChildCategory: Boolean,
+    onBackButtonClick: () -> Unit,
+    todoFilterSettings: TodoFilterSettings,
+    onChangeTodoFilterSettings: (TodoFilterSettings) -> Unit
+) {
+    if (currentCategoryIsChildCategory)
+        SubDestinationTopAppBar(
+            title = currentCategoryName ?: stringResource(id = R.string.todos),
+            onBackButtonClick = onBackButtonClick,
+            actions = {
+                TodosFilterOverflowMenu(
+                    todoFilterSettings = todoFilterSettings,
+                    filterSettingsChanged = onChangeTodoFilterSettings
+                )
+            }
+        )
+    else
+        MainDestinationTopAppBar(title = stringResource(id = R.string.todos)) {
+            TodosFilterOverflowMenu(
+                todoFilterSettings = todoFilterSettings,
+                filterSettingsChanged = onChangeTodoFilterSettings
+            )
+        }
 }
 
 @Composable

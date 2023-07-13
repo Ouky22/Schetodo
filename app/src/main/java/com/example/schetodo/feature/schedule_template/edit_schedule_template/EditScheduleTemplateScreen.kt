@@ -24,7 +24,8 @@ import com.example.schetodo.feature.schedule.components.createTodoBlocksForPrevi
 import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.ClickableReadOnlyOutlinedTextField
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
-import com.example.schetodo.ui.components.SchetodoTopAppBar
+import com.example.schetodo.ui.components.MainDestinationTopAppBar
+import com.example.schetodo.ui.components.SubDestinationTopAppBar
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.showDatePicker
 import java.time.LocalDate
@@ -92,7 +93,7 @@ fun EditScheduleTemplateScreen(
 
     Scaffold(
         topBar = {
-            SchetodoTopAppBar(
+            SubDestinationTopAppBar(
                 title = scheduleTemplateName,
                 showBackButton = true,
                 onBackButtonClick = onBackButtonClick

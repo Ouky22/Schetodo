@@ -19,11 +19,9 @@ import com.example.schetodo.R
 
 @Composable
 @ExperimentalMaterial3Api
-fun SchetodoTopAppBar(
+fun MainDestinationTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
-    showBackButton: Boolean,
-    onBackButtonClick: () -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     Row(
@@ -36,15 +34,6 @@ fun SchetodoTopAppBar(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-            },
-            navigationIcon = {
-                if (showBackButton)
-                    IconButton(onClick = onBackButtonClick) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.go_back)
-                        )
-                    }
             },
             actions = actions
         )

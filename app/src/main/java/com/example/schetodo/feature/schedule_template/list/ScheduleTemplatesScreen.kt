@@ -17,7 +17,8 @@ import androidx.compose.ui.unit.dp
 import com.example.schetodo.R
 import com.example.schetodo.data.schedule_template.ScheduleTemplate
 import com.example.schetodo.ui.SchetodoAppState
-import com.example.schetodo.ui.components.SchetodoTopAppBar
+import com.example.schetodo.ui.components.MainDestinationTopAppBar
+import com.example.schetodo.ui.components.SubDestinationTopAppBar
 import com.example.schetodo.ui.theme.SchetodoTheme
 
 @Composable
@@ -47,7 +48,7 @@ fun ScheduleTemplatesScreen(
 ) {
     Scaffold(
         topBar = {
-            SchetodoTopAppBar(
+            SubDestinationTopAppBar(
                 title = stringResource(R.string.schedule_templates),
                 showBackButton = true,
                 onBackButtonClick = onBackButtonClick
