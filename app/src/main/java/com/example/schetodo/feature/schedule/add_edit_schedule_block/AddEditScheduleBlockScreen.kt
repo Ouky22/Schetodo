@@ -185,7 +185,7 @@ fun AddEditScheduleBlockScreen(
     todoCategories: List<TodoCategory>,
     todos: List<Todo>,
     notes: String,
-    date: String,
+    date: String?,
     startTime: String,
     endTime: String,
     showNotificationAtBeginning: Boolean,
@@ -230,10 +230,11 @@ fun AddEditScheduleBlockScreen(
                     .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    modifier = Modifier.clickable { onDateClick() },
-                    text = date, style = MaterialTheme.typography.headlineMedium
-                )
+                if (date != null)
+                    Text(
+                        modifier = Modifier.clickable { onDateClick() },
+                        text = date, style = MaterialTheme.typography.headlineMedium
+                    )
                 SelectTimeButtonRow(
                     startTimeButtonText = startTime,
                     endTimeButtonText = endTime,

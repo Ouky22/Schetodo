@@ -34,14 +34,17 @@ import java.time.LocalTime
 fun EditScheduleTemplateScreen(
     modifier: Modifier = Modifier,
     viewModel: EditScheduleTemplateViewModel,
-    schetodoAppState: SchetodoAppState
+    schetodoAppState: SchetodoAppState,
+    onEditScheduleBlockNavigation: (todoBlockId: Int) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     EditScheduleTemplateScreen(
         modifier = modifier,
         scheduleListItems = state.scheduleItems,
-        onScheduleBlockItemClick = {},
+        onScheduleBlockItemClick = { todoBlockId ->
+            onEditScheduleBlockNavigation(todoBlockId)
+        },
         onDeleteScheduleTemplate = {
             viewModel.onEvent(DeleteScheduleTemplate)
             schetodoAppState.navController.popBackStack()
@@ -53,7 +56,7 @@ fun EditScheduleTemplateScreen(
             viewModel.onEvent(SelectScheduleTemplateApplyDate(selectedDate))
         },
         onApplyTemplateToSelectedDate = {
-          viewModel.onEvent(ApplyScheduleTemplateToDate)
+            viewModel.onEvent(ApplyScheduleTemplateToDate)
         },
         onBackButtonClick = { schetodoAppState.navController.popBackStack() },
         onFabClick = {}

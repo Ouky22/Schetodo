@@ -1,7 +1,6 @@
 package com.example.schetodo.feature.schedule.add_edit_schedule_block
 
 import androidx.lifecycle.SavedStateHandle
-import com.example.schetodo.data.notification.FakeNotificationRepository
 import com.example.schetodo.data.notification.Notification
 import com.example.schetodo.data.schedule_block.ScheduleBlock
 import com.example.schetodo.data.todo.Todo
@@ -14,8 +13,6 @@ import com.example.schetodo.data.todo.FakeTodoRepository
 import com.example.schetodo.data.todo_block.FakeTodoBlockRepository
 import com.example.schetodo.data.todo_category.FakeTodoCategoryRepository
 import com.example.schetodo.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockEvent.*
-import com.example.schetodo.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockViewModel
-import com.example.schetodo.feature.schedule.notification.FakeTodoBlockNotificationScheduler
 import com.example.schetodo.ui.navigation.schedule.AddScheduleBlock
 import com.example.schetodo.ui.navigation.schedule.EditScheduleBlock
 import com.example.schetodo.util.MainDispatcherRule
@@ -44,13 +41,61 @@ internal class AddEditScheduleBlockViewModelTest {
     private val fakeTodoRepository = FakeTodoRepository()
     private val fakeTodoCategoryRepository = FakeTodoCategoryRepository()
     private val fakeTodoBlockRepository = FakeTodoBlockRepository()
-    private val fakeNotificationsRepository = FakeNotificationRepository()
-    private val fakeTodoBlockNotificationScheduler =
-        FakeTodoBlockNotificationScheduler(fakeNotificationsRepository)
 
     @Before
     fun init() {
         Locale.setDefault(Locale.US)
+    }
+
+    @Test
+    fun `test saving notifications of added schedule block for template`() = runTest {
+        val viewModel = createAddEditScheduleBlockViewModel(SavedStateHandle())
+        advanceUntilIdle()
+
+        val endTime = LocalTime.of(15, 0)
+        viewModel.onEvent(ChangeStartTime(LocalTime.of(12, 0)))
+        viewModel.onEvent(ChangeEndTime(endTime))
+        viewModel.onEvent(ChangeTodoBlockNotes("test"))
+        viewModel.onEvent(ChangeShowNotificationAtBeginning(showNotification = true))
+        viewModel.onEvent(ChangeShowNotificationAtBeginning(showNotification = false))
+        viewModel.onEvent(ChangeShowNotificationAtEnd(showNotification = true))
+        viewModel.onEvent(SaveScheduleBlock)
+        advanceUntilIdle()
+
+        assertThat(viewModel.state.showNotificationAtEnd).isTrue()
+        assertThat(viewModel.state.showNotificationAtBeginning).isFalse()
+        val addedScheduleBlock = fakeScheduleBlockRepository.scheduleBlocks[0]
+        assertThat(addedScheduleBlock.notifications.size).isEqualTo(1)
+        val notification = addedScheduleBlock.notifications.first()
+        assertThat(notification.dateTime).isEqualTo(LocalDateTime.of(LocalDate.now(), endTime))
+    }
+
+    @Test
+    fun `test saving notifications of edited schedule block for template`() = runTest {
+        val scheduleBlock = createTestScheduleBlock(date = null)
+        fakeScheduleBlockRepository.insertOrUpdateScheduleBlock(scheduleBlock)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(EditScheduleBlock.todoBlockIdArg to scheduleBlock.todoBlock.todoBlockId)
+        )
+        val viewModel = createAddEditScheduleBlockViewModel(savedStateHandle)
+        advanceUntilIdle()
+
+        val startTime = LocalTime.of(12, 0)
+        viewModel.onEvent(ChangeStartTime(startTime))
+        viewModel.onEvent(ChangeEndTime(LocalTime.of(15, 0)))
+        viewModel.onEvent(ChangeTodoBlockNotes("test"))
+        viewModel.onEvent(ChangeShowNotificationAtBeginning(showNotification = true))
+        viewModel.onEvent(ChangeShowNotificationAtEnd(showNotification = true))
+        viewModel.onEvent(ChangeShowNotificationAtEnd(showNotification = false))
+        viewModel.onEvent(SaveScheduleBlock)
+        advanceUntilIdle()
+
+        assertThat(viewModel.state.showNotificationAtEnd).isFalse()
+        assertThat(viewModel.state.showNotificationAtBeginning).isTrue()
+        val editedScheduleBlock = fakeScheduleBlockRepository.scheduleBlocks[0]
+        assertThat(editedScheduleBlock.notifications.size).isEqualTo(1)
+        val notification = editedScheduleBlock.notifications.first()
+        assertThat(notification.dateTime).isEqualTo(LocalDateTime.of(LocalDate.now(), startTime))
     }
 
     @Test
@@ -391,13 +436,6 @@ internal class AddEditScheduleBlockViewModelTest {
         }
     }
 
-    @Test
-    fun when_creating_view_model_and_no_date_is_passed_then_throw_exception() = runTest {
-        assertThrows(Exception::class.java) {
-            createAddEditScheduleBlockViewModel()
-        }
-    }
-
     private fun createAddEditScheduleBlockViewModel(savedStateHandle: SavedStateHandle = SavedStateHandle()) =
         AddEditScheduleBlockViewModel(
             fakeScheduleBlockRepository,
@@ -408,8 +446,9 @@ internal class AddEditScheduleBlockViewModelTest {
             savedStateHandle
         )
 
-    private fun createTestScheduleBlock(): ScheduleBlock {
-        val date = LocalDate.of(2023, 2, 15)
+    private fun createTestScheduleBlock(
+        date: LocalDate? = LocalDate.of(2023, 2, 15)
+    ): ScheduleBlock {
         val startTime = LocalTime.of(13, 45)
         val endTime = LocalTime.of(15, 0)
         val todoBlock = TodoBlock(1, "test", date, startTime, endTime, null)
@@ -417,7 +456,11 @@ internal class AddEditScheduleBlockViewModelTest {
         val category2 = TodoCategory(2, "c2", 0, null, "")
         val todo1 = Todo(1, "t1", TodoPriority.LOW, TodoFlag.DONE, category1.categoryId)
         val todo2 = Todo(2, "t2", TodoPriority.HIGH, TodoFlag.UNDONE, category2.categoryId)
-        val notification = Notification(1, LocalDateTime.of(date, startTime), todoBlock.todoBlockId)
+        val notification = Notification(
+            1,
+            LocalDateTime.of(date ?: LocalDate.now(), startTime),
+            todoBlock.todoBlockId
+        )
         return ScheduleBlock(
             todoBlock, listOf(todo1, todo2), listOf(category1, category2), listOf(notification)
         )

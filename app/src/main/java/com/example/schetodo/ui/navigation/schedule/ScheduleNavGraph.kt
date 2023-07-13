@@ -103,7 +103,10 @@ fun NavGraphBuilder.scheduleNavGraph(
             val viewModel = hiltViewModel<EditScheduleTemplateViewModel>()
             EditScheduleTemplateScreen(
                 viewModel = viewModel,
-                schetodoAppState = schetodoAppState
+                schetodoAppState = schetodoAppState,
+                onEditScheduleBlockNavigation = { todoBlockId ->
+                    schetodoAppState.navController.navigateToEditScheduleBlockScreen(todoBlockId)
+                }
             )
         }
     }

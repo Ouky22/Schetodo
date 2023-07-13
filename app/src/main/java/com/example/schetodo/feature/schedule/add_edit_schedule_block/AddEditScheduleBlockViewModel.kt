@@ -52,7 +52,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
     val todoBlockId: Int
     private var todoBlockTemplateId: Int? = null
 
-    private lateinit var scheduleBlockDate: LocalDate
+    private var scheduleBlockDate: LocalDate? = null
     private lateinit var startTime: LocalTime
     private lateinit var endTime: LocalTime
 
@@ -142,11 +142,11 @@ class AddEditScheduleBlockViewModel @Inject constructor(
         val notifications = mutableListOf<Notification>()
         if (state.showNotificationAtBeginning)
             notifications += Notification(
-                dateTime = LocalDateTime.of(todoBlock.date, todoBlock.startTime)
+                dateTime = LocalDateTime.of(todoBlock.date ?: LocalDate.now(), todoBlock.startTime)
             )
         if (state.showNotificationAtEnd)
             notifications += Notification(
-                dateTime = LocalDateTime.of(todoBlock.date, todoBlock.endTime)
+                dateTime = LocalDateTime.of(todoBlock.date ?: LocalDate.now(), todoBlock.endTime)
             )
         return notifications
     }
@@ -228,9 +228,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
                 scheduleBlockRepository.getScheduleBlockByTodoBlockId(todoBlockId).first()
                     ?: throw Exception("There is no ScheduleBlock with TodoBlock id $todoBlockId")
 
-            updateCurrentDate(
-                scheduleBlock.todoBlock.date ?: throw Exception("TodoBlock needs a date")
-            )
+            scheduleBlock.todoBlock.date?.let { updateCurrentDate(it) }
             updateStartTime(scheduleBlock.todoBlock.startTime.toSecondOfDay())
             updateEndTime(scheduleBlock.todoBlock.endTime.toSecondOfDay())
 
@@ -246,30 +244,41 @@ class AddEditScheduleBlockViewModel @Inject constructor(
     }
 
     private fun setNotificationsState(scheduleBlock: ScheduleBlock) {
-        val showNotificationAtBeginning = scheduleBlock.notifications.any {
-            it.dateTime == LocalDateTime.of(
-                scheduleBlock.todoBlock.date,
-                scheduleBlock.todoBlock.startTime
-            )
-        }
-        val showNotificationAtEnd = scheduleBlock.notifications.any {
-            it.dateTime == LocalDateTime.of(
-                scheduleBlock.todoBlock.date,
-                scheduleBlock.todoBlock.endTime
-            )
-        }
+        val scheduleBlockFromTemplate = scheduleBlock.todoBlock.date == null
+        if (scheduleBlockFromTemplate) {
+            val showNotificationAtBeginning = scheduleBlock.notifications.any {
+                it.dateTime.toLocalTime() == scheduleBlock.todoBlock.startTime
+            }
+            val showNotificationAtEnd = scheduleBlock.notifications.any {
+                it.dateTime.toLocalTime() == scheduleBlock.todoBlock.endTime
+            }
 
-        state = state.copy(
-            showNotificationAtBeginning = showNotificationAtBeginning,
-            showNotificationAtEnd = showNotificationAtEnd
-        )
+            state = state.copy(
+                showNotificationAtBeginning = showNotificationAtBeginning,
+                showNotificationAtEnd = showNotificationAtEnd
+            )
+        } else {
+            val showNotificationAtBeginning = scheduleBlock.notifications.any {
+                it.dateTime == LocalDateTime.of(
+                    scheduleBlock.todoBlock.date, scheduleBlock.todoBlock.startTime
+                )
+            }
+            val showNotificationAtEnd = scheduleBlock.notifications.any {
+                it.dateTime == LocalDateTime.of(
+                    scheduleBlock.todoBlock.date, scheduleBlock.todoBlock.endTime
+                )
+            }
+
+            state = state.copy(
+                showNotificationAtBeginning = showNotificationAtBeginning,
+                showNotificationAtEnd = showNotificationAtEnd
+            )
+        }
     }
 
     private fun loadDataForAddingScheduleBlock(savedStateHandle: SavedStateHandle) {
         val dateStamp = savedStateHandle.get<Long>(AddScheduleBlock.dateStampArg)
-            ?: throw Exception("Date stamp argument cannot be null when adding ScheduleBlock")
-
-        updateCurrentDate(dateStamp)
+        dateStamp?.let { updateCurrentDate(dateStamp) }
 
         val startTimeStamp = savedStateHandle.get<Int>(AddScheduleBlock.startTimeStampArg)
         val startTimeReceived = startTimeStamp != null && startTimeStamp >= 0
@@ -291,7 +300,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
         }
     }
 
-    private suspend fun todoBlockOverlapsWithOtherTodoBlock(todoBlock: TodoBlock) =
+    private suspend fun todoBlockOverlapsWithOtherTodoBlock(todoBlock: TodoBlock) = // TODO how to compare when there is an schedule block for a template
         if (state.inEditingMode) // do not check if an existing TodoBlock overlaps with itself
             todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(
                 todoBlock = todoBlock, exceptOfTodoBlockId = todoBlock.todoBlockId

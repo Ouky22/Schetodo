@@ -21,17 +21,8 @@ class FakeScheduleBlockRepository : ScheduleBlockRepository {
     }
 
     override suspend fun insertOrUpdateScheduleBlock(scheduleBlock: ScheduleBlock) {
-        val indexOfScheduleBlock = scheduleBlocks.indexOfFirst {
-            it.todoBlock.todoBlockId == scheduleBlock.todoBlock.todoBlockId
-        }
-
-        if (indexOfScheduleBlock >= 0) {
-            val oldTodoBlock = scheduleBlock.todoBlock
-            val updatedScheduleBlock =
-                scheduleBlock.copy(todoBlock = oldTodoBlock.copy(todoBlockId = oldTodoBlock.todoBlockId))
-            scheduleBlocks.add(updatedScheduleBlock)
-        } else
-            scheduleBlocks.add(scheduleBlock)
+        scheduleBlocks.removeIf { it.todoBlock.todoBlockId == scheduleBlock.todoBlock.todoBlockId }
+        scheduleBlocks.add(scheduleBlock)
     }
 
     override val showScheduleBlockNotificationAtEnd: Flow<Boolean>

@@ -4,7 +4,7 @@ import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo_category.TodoCategory
 
 data class AddEditScheduleBlockScreenState(
-    val date: String = "",
+    val date: String? = "",
     val startTime: String = "",
     val endTime: String = "",
     val todoCategories: List<TodoCategory> = emptyList(),

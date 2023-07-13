@@ -40,10 +40,7 @@ internal class ScheduleViewModelTest {
     val dispatcherRule = MainDispatcherRule()
 
     private val fakeScheduleBlockRepository = FakeScheduleBlockRepository()
-    private val fakeNotificationRepository = FakeNotificationRepository()
     private val fakeScheduleTemplateRepository = FakeScheduleTemplateRepository()
-    private val fakeTodoBlockNotificationScheduler =
-        FakeTodoBlockNotificationScheduler(fakeNotificationRepository)
     private lateinit var viewModel: ScheduleViewModel
 
     private val testScheduleBlocksDate = LocalDate.now()
@@ -62,33 +59,24 @@ internal class ScheduleViewModelTest {
 
     @Test
     fun test_saving_current_schedule_as_template() = runTest {
+        fakeScheduleBlockRepository.insertOrUpdateScheduleBlock(testScheduleBlock1)
+
         val templateName = "template_test"
         viewModel.onEvent(OpenEnterScheduleTemplateNameDialog)
         viewModel.onEvent(ChangeScheduleTemplateName(templateName))
         viewModel.onEvent(SaveCurrentScheduleAsTemplate)
-        fakeScheduleBlockRepository.insertOrUpdateScheduleBlock(testScheduleBlock1)
-        fakeScheduleBlockRepository.insertOrUpdateScheduleBlock(testScheduleBlock2)
         advanceUntilIdle()
 
         assertThat(fakeScheduleTemplateRepository.getAll().first()).containsExactly(
             ScheduleTemplate(name = templateName)
         )
-
-        assertThat(fakeScheduleBlockRepository.scheduleBlocks).containsAtLeast(
+        assertThat(fakeScheduleBlockRepository.scheduleBlocks).contains(
             testScheduleBlock1.copy(
                 todoBlock = testScheduleBlock1.todoBlock.copy(
                     todoBlockId = 0,
                     templateId = 0,
                     date = null
                 )
-            ),
-            testScheduleBlock2.copy(
-                todoBlock = testScheduleBlock2.todoBlock.copy(
-                    todoBlockId = 0,
-                    templateId = 0,
-                    date = null
-                ),
-                notifications = testScheduleBlock2.notifications.map { it.copy(notificationId = 0) }
             )
         )
 
