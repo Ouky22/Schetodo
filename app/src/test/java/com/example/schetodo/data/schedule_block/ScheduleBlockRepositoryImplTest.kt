@@ -9,6 +9,7 @@ import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_block.FakeTodoBlockDao
+import com.example.schetodo.data.todo_block.FakeTodoBlockRepository
 import com.example.schetodo.data.todo_block.TodoBlock
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.user_preferences.FakeUserPreferencesRepository
@@ -30,7 +31,7 @@ internal class ScheduleBlockRepositoryImplTest {
     private val fakeScheduleBlockDao = FakeScheduleBlockDao()
     private val fakeTodoBlockCategoryRelationshipDao = FakeTodoBlockCategoryRelationshipDao()
     private val fakeTodoBlockTodoRelationshipDao = FakeTodoBlockTodoRelationshipDao()
-    private val fakeTodoBlockDao = FakeTodoBlockDao()
+    private val fakeTodoBlockRepository = FakeTodoBlockRepository()
     private val fakeTodoDao = FakeTodoDao()
     private val fakeNotificationRepository = FakeNotificationRepository()
     private val fakeUserPreferencesRepository = FakeUserPreferencesRepository()
@@ -39,7 +40,7 @@ internal class ScheduleBlockRepositoryImplTest {
             fakeScheduleBlockDao,
             fakeTodoBlockCategoryRelationshipDao,
             fakeTodoBlockTodoRelationshipDao,
-            fakeTodoBlockDao,
+            fakeTodoBlockRepository,
             fakeTodoDao,
             fakeNotificationRepository,
             fakeUserPreferencesRepository

@@ -7,13 +7,13 @@ import com.example.schetodo.data.relationship.TodoBlockTodoRelationshipDao
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoDao
 import com.example.schetodo.data.todo.TodoFlag
-import com.example.schetodo.data.todo_block.TodoBlockDao
+import com.example.schetodo.data.todo_block.TodoBlockRepository
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.user_preferences.UserPreferencesRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -24,7 +24,7 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
     private val scheduleBlockDao: ScheduleBlockDao,
     private val todoBlockCategoryRelationshipDao: TodoBlockCategoryRelationshipDao,
     private val todoBlockTodoRelationshipDao: TodoBlockTodoRelationshipDao,
-    private val todoBlockDao: TodoBlockDao,
+    private val todoBlockRepository: TodoBlockRepository,
     private val todoDao: TodoDao,
     private val notificationRepository: NotificationRepository,
     private val userPreferencesRepository: UserPreferencesRepository
@@ -32,12 +32,17 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
-            todoBlockDao.deleteAllTodoBlocksMarkedForDeletion()
+            todoBlockRepository.deleteAllTodoBlocksMarkedForDeletion()
         }
     }
 
     override suspend fun unmarkTodoBlockForDeletion(todoBlockId: Int) {
-        todoBlockDao.unmarkTodoBlockForDeletion(todoBlockId)
+        val todoBlock = todoBlockRepository.getBlockById(todoBlockId).first() ?: return
+        val doesNotOverlapWithOtherTodoBlock =
+            !todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(todoBlock)
+
+        if (doesNotOverlapWithOtherTodoBlock)
+            todoBlockRepository.unmarkTodoBlockForDeletion(todoBlockId)
     }
 
     override fun getScheduleBlocksOnDate(date: LocalDate): Flow<List<ScheduleBlock>> =
@@ -56,7 +61,8 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
             .map { scheduleBlocks -> removeTodoCategoriesMarkedForDeletion(scheduleBlocks) }
 
     override suspend fun insertOrUpdateScheduleBlock(scheduleBlock: ScheduleBlock) {
-        var todoBlockId = todoBlockDao.updateOrInsertTodoBlock(scheduleBlock.todoBlock).toInt()
+        var todoBlockId =
+            todoBlockRepository.updateOrInsertTodoBlock(scheduleBlock.todoBlock).toInt()
 
         // updateOrInsertTodoBlock returns -1 when todoBlock is updated
         val todoBlockUpdated = todoBlockId <= 0

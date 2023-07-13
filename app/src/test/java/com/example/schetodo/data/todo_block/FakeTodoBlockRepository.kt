@@ -93,4 +93,8 @@ class FakeTodoBlockRepository : TodoBlockRepository {
     override suspend fun templateTodoBlockOverlapsWithTodoBlockFromSameTemplate(todoBlock: TodoBlock): Boolean {
         return false
     }
+
+    override suspend fun deleteAllTodoBlocksMarkedForDeletion() {
+        todoBlocks.removeIf { it.markedForDeletion }
+    }
 }

@@ -42,6 +42,9 @@ class TodoBlockRepositoryImpl @Inject constructor(
     override suspend fun unmarkTodoBlockForDeletion(todoBlockId: Int) =
         todoBlockDao.unmarkTodoBlockForDeletion(todoBlockId)
 
+    override suspend fun deleteAllTodoBlocksMarkedForDeletion() =
+        todoBlockDao.deleteAllTodoBlocksMarkedForDeletion()
+
     override suspend fun deleteTodoBlock(todoBlock: TodoBlock) =
         todoBlockDao.deleteTodoBlock(todoBlock)
 
