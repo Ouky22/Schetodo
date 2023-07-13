@@ -230,10 +230,11 @@ fun AddEditScheduleBlockScreen(
                     .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (date != null)
+                if (date != null && date.isNotEmpty())
                     Text(
                         modifier = Modifier.clickable { onDateClick() },
-                        text = date, style = MaterialTheme.typography.headlineMedium
+                        text = date,
+                        style = MaterialTheme.typography.headlineMedium
                     )
                 SelectTimeButtonRow(
                     startTimeButtonText = startTime,
