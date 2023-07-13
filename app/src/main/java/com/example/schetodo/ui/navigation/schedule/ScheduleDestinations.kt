@@ -40,6 +40,33 @@ object AddScheduleBlock : SchetodoDestination {
     )
 }
 
+object AddScheduleBlockForTemplate : SchetodoDestination {
+    override val route = "add_schedule_block_for_template"
+    const val templateId = "templateId"
+    const val startTimeStampArg = "start_time_stamp"
+    const val endTimeStampArg = "end_time_stamp"
+
+    val routeWithArgs =
+        "${route}/{${templateId}}" +
+                "?$startTimeStampArg={$startTimeStampArg}&" +
+                "$endTimeStampArg={$endTimeStampArg}"
+
+    val args = listOf(
+        navArgument(templateId) {
+            type = NavType.IntType
+            defaultValue = -1
+        },
+        navArgument(startTimeStampArg) {
+            type = NavType.IntType
+            defaultValue = -1
+        },
+        navArgument(endTimeStampArg) {
+            type = NavType.IntType
+            defaultValue = -1
+        }
+    )
+}
+
 object EditScheduleBlock: SchetodoDestination {
     override val route = "edit_schedule_block"
     const val todoBlockIdArg = "todo_block_id"

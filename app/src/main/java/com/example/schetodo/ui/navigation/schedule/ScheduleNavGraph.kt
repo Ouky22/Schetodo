@@ -66,6 +66,16 @@ fun NavGraphBuilder.scheduleNavGraph(
             )
         }
         composable(
+            route = AddScheduleBlockForTemplate.routeWithArgs,
+            arguments = AddScheduleBlockForTemplate.args
+        ) {
+            val viewModel = hiltViewModel<AddEditScheduleBlockViewModel>()
+            AddEditScheduleBlockScreen(
+                viewModel = viewModel,
+                schetodoAppState = schetodoAppState
+            )
+        }
+        composable(
             route = EditScheduleBlock.routeWithArgs,
             arguments = EditScheduleBlock.args
         ) {
@@ -106,10 +116,38 @@ fun NavGraphBuilder.scheduleNavGraph(
                 schetodoAppState = schetodoAppState,
                 onEditScheduleBlockNavigation = { todoBlockId ->
                     schetodoAppState.navController.navigateToEditScheduleBlockScreen(todoBlockId)
+                },
+                onAddScheduleBlockNavigation = { templateId ->
+                    schetodoAppState.navController.navigateToAddScheduleBlockForTemplateScreen(
+                        templateId = templateId
+                    )
+                },
+                onAddScheduleBlockInGapNavigation = { templateId, startTimeStamp, endTimeStamp ->
+                    schetodoAppState.navController.navigateToAddScheduleBlockForTemplateScreen(
+                        templateId = templateId,
+                        startTimeStamp = startTimeStamp,
+                        endTimeStamp = endTimeStamp
+                    )
                 }
             )
         }
     }
+}
+
+fun NavHostController.navigateToAddScheduleBlockForTemplateScreen(templateId: Int) {
+    navigate("${AddScheduleBlockForTemplate.route}/$templateId")
+}
+
+fun NavHostController.navigateToAddScheduleBlockForTemplateScreen(
+    templateId: Int,
+    startTimeStamp: Int,
+    endTimeStamp: Int
+) {
+    navigate(
+        "${AddScheduleBlockForTemplate.route}/$templateId" +
+                "?${AddScheduleBlockForTemplate.startTimeStampArg}=$startTimeStamp" +
+                "&${AddScheduleBlockForTemplate.endTimeStampArg}=$endTimeStamp"
+    )
 }
 
 fun NavHostController.navigateToAddScheduleBlockScreen(

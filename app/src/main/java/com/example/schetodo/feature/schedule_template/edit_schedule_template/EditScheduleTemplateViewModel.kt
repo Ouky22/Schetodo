@@ -30,7 +30,7 @@ class EditScheduleTemplateViewModel @Inject constructor(
     val state: StateFlow<EditScheduleTemplateState>
         get() = _state.asStateFlow()
 
-    private val templateId: Int
+    val templateId: Int
 
     private lateinit var scheduleTemplateApplyDate: LocalDate
 

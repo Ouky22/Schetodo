@@ -19,6 +19,7 @@ import com.example.schetodo.data.todo_category.TodoCategoryRepository
 import com.example.schetodo.feature.schedule.add_edit_schedule_block.AddEditScheduleBlockEvent.*
 import com.example.schetodo.feature.use_case.GeneralUseCases
 import com.example.schetodo.ui.navigation.schedule.AddScheduleBlock
+import com.example.schetodo.ui.navigation.schedule.AddScheduleBlockForTemplate
 import com.example.schetodo.ui.navigation.schedule.EditScheduleBlock
 import com.example.schetodo.ui.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -278,7 +279,10 @@ class AddEditScheduleBlockViewModel @Inject constructor(
 
     private fun loadDataForAddingScheduleBlock(savedStateHandle: SavedStateHandle) {
         val dateStamp = savedStateHandle.get<Long>(AddScheduleBlock.dateStampArg)
-        dateStamp?.let { updateCurrentDate(dateStamp) }
+        if (dateStamp != null && dateStamp >= 0)
+            updateCurrentDate(dateStamp)
+
+        todoBlockTemplateId = savedStateHandle.get<Int>(AddScheduleBlockForTemplate.templateId)
 
         val startTimeStamp = savedStateHandle.get<Int>(AddScheduleBlock.startTimeStampArg)
         val startTimeReceived = startTimeStamp != null && startTimeStamp >= 0

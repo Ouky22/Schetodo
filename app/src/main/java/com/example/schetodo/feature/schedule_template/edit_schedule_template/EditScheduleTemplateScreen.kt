@@ -35,7 +35,9 @@ fun EditScheduleTemplateScreen(
     modifier: Modifier = Modifier,
     viewModel: EditScheduleTemplateViewModel,
     schetodoAppState: SchetodoAppState,
-    onEditScheduleBlockNavigation: (todoBlockId: Int) -> Unit
+    onEditScheduleBlockNavigation: (todoBlockId: Int) -> Unit,
+    onAddScheduleBlockNavigation: (templateId: Int) -> Unit,
+    onAddScheduleBlockInGapNavigation: (templateId: Int, startTimeStamp: Int, endTimeStamp: Int) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -49,7 +51,6 @@ fun EditScheduleTemplateScreen(
             viewModel.onEvent(DeleteScheduleTemplate)
             schetodoAppState.navController.popBackStack()
         },
-        onScheduleGapClick = { startTime, endTime -> },
         scheduleTemplateName = state.scheduleTemplateName,
         scheduleTemplateApplyDate = state.scheduleTemplateApplyDate,
         onScheduleTemplateApplyDateSelected = { selectedDate ->
@@ -59,7 +60,16 @@ fun EditScheduleTemplateScreen(
             viewModel.onEvent(ApplyScheduleTemplateToDate)
         },
         onBackButtonClick = { schetodoAppState.navController.popBackStack() },
-        onFabClick = {}
+        onFabClick = {
+            onAddScheduleBlockNavigation(viewModel.templateId)
+        },
+        onScheduleGapClick = { startTime, endTime ->
+            onAddScheduleBlockInGapNavigation(
+                viewModel.templateId,
+                startTime.toSecondOfDay(),
+                endTime.toSecondOfDay()
+            )
+        }
     )
 }
 
