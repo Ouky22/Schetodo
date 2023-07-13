@@ -301,7 +301,11 @@ class AddEditScheduleBlockViewModel @Inject constructor(
     }
 
     private suspend fun todoBlockOverlapsWithOtherTodoBlock(todoBlock: TodoBlock): Boolean {
-        return todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(todoBlock)
+        val isTemplateTodoBlock = todoBlock.templateId != null
+        return if (isTemplateTodoBlock)
+            todoBlockRepository.templateTodoBlockOverlapsWithTodoBlockFromSameTemplate(todoBlock)
+        else
+            todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(todoBlock)
     }
 
     private fun endTimeIsNotAfterStartTime() = !endTime.isAfter(startTime)
