@@ -74,6 +74,17 @@ internal class TodoBlockRepositoryTest {
     }
 
     @Test
+    fun todo_block_can_not_overlap_with_itself() = runTest {
+        val date = LocalDate.of(2023, 2, 20)
+
+        val alreadyExistingTodoBlock =
+            TodoBlock(1, "", date, LocalTime.of(10, 0), LocalTime.of(11, 0), null)
+        fakeTodoBlockDao.insertTodoBlock(alreadyExistingTodoBlock)
+
+        assertThat(todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(alreadyExistingTodoBlock)).isFalse()
+    }
+
+    @Test
     fun when_todo_block_is_before_other_todo_blocks_then_they_do_not_overlap() = runTest {
         val date = LocalDate.of(2023, 2, 20)
 

@@ -63,10 +63,7 @@ class FakeTodoBlockRepository : TodoBlockRepository {
         todoBlocks.removeIf { it.todoBlockId == todoBlockId }
     }
 
-    override suspend fun todoBlockOverlapsWithOtherTodoBlock(
-        todoBlock: TodoBlock,
-        exceptOfTodoBlockId: Int?
-    ): Boolean {
+    override suspend fun todoBlockOverlapsWithOtherTodoBlock(todoBlock: TodoBlock): Boolean {
         return false
     }
 

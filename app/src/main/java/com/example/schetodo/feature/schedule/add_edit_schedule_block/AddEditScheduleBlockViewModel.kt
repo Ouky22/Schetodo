@@ -300,13 +300,9 @@ class AddEditScheduleBlockViewModel @Inject constructor(
         }
     }
 
-    private suspend fun todoBlockOverlapsWithOtherTodoBlock(todoBlock: TodoBlock) = // TODO how to compare when there is an schedule block for a template
-        if (state.inEditingMode) // do not check if an existing TodoBlock overlaps with itself
-            todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(
-                todoBlock = todoBlock, exceptOfTodoBlockId = todoBlock.todoBlockId
-            )
-        else
-            todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(todoBlock)
+    private suspend fun todoBlockOverlapsWithOtherTodoBlock(todoBlock: TodoBlock): Boolean {
+        return todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(todoBlock)
+    }
 
     private fun endTimeIsNotAfterStartTime() = !endTime.isAfter(startTime)
 
