@@ -16,6 +16,27 @@ internal class TodoBlockRepositoryTest {
     private val testTime = LocalTime.now()
 
     @Test
+    fun check_if_template_todo_blocks_overlap_with_todo_block_from_same_template() = runTest {
+        val todoBlock1 = TodoBlock(1, "", null, LocalTime.of(10, 0), LocalTime.of(11, 0), 1)
+        val todoBlock2 = TodoBlock(2, "", null, LocalTime.of(12, 0), LocalTime.of(13, 0), 1)
+        fakeTodoBlockDao.insertTodoBlock(todoBlock1)
+        fakeTodoBlockDao.insertTodoBlock(todoBlock2)
+
+        val todoBlock3 = TodoBlock(3, "", null, LocalTime.of(12, 0), LocalTime.of(13, 0), 1)
+        val todoBlock4 = TodoBlock(4, "", null, LocalTime.of(12, 0), LocalTime.of(13, 0), 2)
+        val todoBlock5 = TodoBlock(5, "", null, LocalTime.of(11, 0), LocalTime.of(12, 0), 1)
+        assertThat(
+            todoBlockRepository.templateTodoBlockOverlapsWithTodoBlockFromSameTemplate(todoBlock3)
+        ).isTrue()
+        assertThat(
+            todoBlockRepository.templateTodoBlockOverlapsWithTodoBlockFromSameTemplate(todoBlock4)
+        ).isFalse()
+        assertThat(
+            todoBlockRepository.templateTodoBlockOverlapsWithTodoBlockFromSameTemplate(todoBlock5)
+        ).isFalse()
+    }
+
+    @Test
     fun test_getting_todo_blocks_that_overlap_with_todo_block_on_certain_date() = runTest {
         val date = LocalDate.of(2023, 2, 20)
 

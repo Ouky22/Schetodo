@@ -102,4 +102,8 @@ class FakeTodoBlockRepository : TodoBlockRepository {
     ): List<TodoBlock> {
         return emptyList()
     }
+
+    override suspend fun templateTodoBlockOverlapsWithTodoBlockFromSameTemplate(todoBlock: TodoBlock): Boolean {
+        return false
+    }
 }

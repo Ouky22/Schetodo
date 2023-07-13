@@ -69,6 +69,19 @@ class TodoBlockRepositoryImpl @Inject constructor(
         return false
     }
 
+    override suspend fun templateTodoBlockOverlapsWithTodoBlockFromSameTemplate(todoBlock: TodoBlock): Boolean {
+        if (todoBlock.templateId == null) throw Exception("TodoBlock is not from a schedule template.")
+
+        val otherTodoBlocksOfTodoBlockTemplate = todoBlockDao.getAllTodoBlocks().first().filter {
+            it.templateId == todoBlock.templateId && it.todoBlockId != todoBlock.todoBlockId
+        }
+        for (otherTodoBlock in otherTodoBlocksOfTodoBlockTemplate)
+            if (todoBlocksOverlap(todoBlock, otherTodoBlock))
+                return true
+
+        return false
+    }
+
     override suspend fun getTodoBlocksThatOverlapWith(
         todoBlock: TodoBlock,
         date: LocalDate
