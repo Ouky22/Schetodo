@@ -41,18 +41,9 @@ class FakeTodoBlockRepository : TodoBlockRepository {
     }
 
     override suspend fun updateOrInsertTodoBlock(todoBlock: TodoBlock): Long {
-        val indexOfTodoBlock = todoBlocks.indexOfFirst { it.todoBlockId == todoBlock.todoBlockId }
-        var id = todoBlock.todoBlockId
-
-        if (indexOfTodoBlock >= 0) {
-            val oldTodoBlock = todoBlocks.removeAt(indexOfTodoBlock)
-            val updatedTodoBlock = todoBlock.copy(todoBlockId = oldTodoBlock.todoBlockId)
-            todoBlocks.add(updatedTodoBlock)
-            id = oldTodoBlock.todoBlockId
-        } else
-            todoBlocks.add(todoBlock)
-
-        return id.toLong()
+        todoBlocks.removeIf { it.todoBlockId == todoBlock.todoBlockId }
+        todoBlocks.add(todoBlock)
+        return todoBlock.todoBlockId.toLong()
     }
 
     override suspend fun deleteTodoBlock(todoBlock: TodoBlock) {

@@ -14,18 +14,9 @@ class FakeTodoDao : TodoDao {
     }
 
     override suspend fun insertOrUpdateTodo(todo: Todo): Long {
-        val indexOfTodoInList = todos.indexOfFirst { it.todoId == todo.todoId }
-        var id = todo.todoId
-
-        if (indexOfTodoInList >= 0) {
-            val oldTodo = todos.removeAt(indexOfTodoInList)
-            val updatedTodo = todo.copy(todoId = oldTodo.todoId)
-            todos.add(updatedTodo)
-            id = todo.todoId
-        } else
-            todos.add(todo)
-
-        return id.toLong()
+        todos.removeIf { it.todoId == todo.todoId }
+        todos.add(todo)
+        return todo.todoId.toLong()
     }
 
     override suspend fun updateTodo(todo: Todo) {

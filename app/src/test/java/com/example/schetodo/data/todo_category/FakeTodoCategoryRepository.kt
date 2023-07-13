@@ -12,15 +12,8 @@ class FakeTodoCategoryRepository : TodoCategoryRepository {
     }
 
     override suspend fun insertOrUpdateTodoCategory(todoCategory: TodoCategory) {
-        val indexOfCategoryInList =
-            todoCategories.indexOfFirst { it.categoryId == todoCategory.categoryId }
-
-        if (indexOfCategoryInList >= 0) {
-            val oldCategory = todoCategories.removeAt(indexOfCategoryInList)
-            val updatedTodoCategory = todoCategory.copy(categoryId = oldCategory.categoryId)
-            todoCategories.add(updatedTodoCategory)
-        } else
-            todoCategories.add(todoCategory.copy(categoryId = todoCategories.size))
+        todoCategories.removeIf { todoCategory.categoryId == it.categoryId }
+        todoCategories.add(todoCategory)
     }
 
     override suspend fun deleteTodoCategory(todoCategory: Int) {

@@ -12,14 +12,8 @@ class FakeTodoRepository : TodoRepository {
     }
 
     override suspend fun insertOrUpdateTodo(todo: Todo) {
-        val indexOfTodoInList = todos.indexOfFirst { it.todoId == todo.todoId }
-
-        if (indexOfTodoInList >= 0) {
-            val oldTodo = todos.removeAt(indexOfTodoInList)
-            val updatedTodo = todo.copy(todoId = oldTodo.todoId)
-            todos.add(updatedTodo)
-        } else
-            todos.add(todo)
+        todos.removeIf { it.todoId == todo.todoId }
+        todos.add(todo)
     }
 
     override suspend fun deleteTodoById(todoId: Int) {
