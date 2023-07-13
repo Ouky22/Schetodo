@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
+import com.example.schetodo.data.schedule_template.ScheduleTemplateRepository
 import com.example.schetodo.feature.schedule_template.edit_schedule_template.EditScheduleTemplateEvent.*
 import com.example.schetodo.feature.schedule_template.use_case.ApplyScheduleConflictStrategy
 import com.example.schetodo.feature.schedule_template.use_case.ApplyScheduleTemplateUseCase
@@ -14,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -23,6 +25,7 @@ class EditScheduleTemplateViewModel @Inject constructor(
     private val scheduleBlockRepository: ScheduleBlockRepository,
     private val generalUseCases: GeneralUseCases,
     private val scheduleTemplateUseCases: ScheduleTemplateUseCases,
+    private val scheduleTemplateRepository: ScheduleTemplateRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -42,6 +45,14 @@ class EditScheduleTemplateViewModel @Inject constructor(
             scheduleBlockRepository.getScheduleBlocksOfScheduleTemplate(templateId).collect {
                 val scheduleListItems = generalUseCases.convertScheduleBlocksToScheduleListItems(it)
                 _state.value = _state.value.copy(scheduleItems = scheduleListItems)
+            }
+        }
+
+        viewModelScope.launch {
+            scheduleTemplateRepository.getById(templateId).collect {
+                it?.let { template ->
+                    _state.value = _state.value.copy(scheduleTemplateName = template.name)
+                }
             }
         }
 
