@@ -87,9 +87,9 @@ class UserPreferencesRepositoryImpl @Inject constructor(
 
     private fun mapTodoFilterSettingsPreferences(preferences: Preferences) =
         TodoFilterSettings(
-            showRecurringTodos = preferences[SHOW_RECURRING_TODOS] ?: false,
-            showUndoneTodos = preferences[SHOW_UNDONE_TODOS] ?: false,
-            showInProgressTodos = preferences[SHOW_IN_PROGRESS_TODOS] ?: false,
+            showRecurringTodos = preferences[SHOW_RECURRING_TODOS] ?: true,
+            showUndoneTodos = preferences[SHOW_UNDONE_TODOS] ?: true,
+            showInProgressTodos = preferences[SHOW_IN_PROGRESS_TODOS] ?: true,
             showDoneTodos = preferences[SHOW_DONE_TODOS] ?: false
         )
 }
