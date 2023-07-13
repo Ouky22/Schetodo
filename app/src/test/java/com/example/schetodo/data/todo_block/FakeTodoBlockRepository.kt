@@ -34,9 +34,8 @@ class FakeTodoBlockRepository : TodoBlockRepository {
         val indexOfTodoBlock = todoBlocks.indexOfFirst { it.todoBlockId == todoBlock.todoBlockId }
 
         if (indexOfTodoBlock >= 0) {
-            val oldTodoBlock = todoBlocks.removeAt(indexOfTodoBlock)
-            val updatedTodoBlock = todoBlock.copy(todoBlockId = oldTodoBlock.todoBlockId)
-            todoBlocks.add(updatedTodoBlock)
+            todoBlocks.removeAt(indexOfTodoBlock)
+            todoBlocks.add(todoBlock)
         }
     }
 

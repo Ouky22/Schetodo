@@ -34,9 +34,8 @@ class FakeTodoBlockDao : TodoBlockDao {
             todoBlocks.indexOfFirst { it.todoBlockId == todoBlock.todoBlockId }
 
         if (indexOfTodoBlockInList >= 0) {
-            val oldTodoBlock = todoBlocks.removeAt(indexOfTodoBlockInList)
-            val updatedTodoBlock = todoBlock.copy(todoBlockId = oldTodoBlock.todoBlockId)
-            todoBlocks.add(updatedTodoBlock)
+            todoBlocks.removeAt(indexOfTodoBlockInList)
+            todoBlocks.add(todoBlock)
         }
     }
 
