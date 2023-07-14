@@ -41,6 +41,46 @@ class TodoBlockDaoTest {
     }
 
     @Test
+    fun unmark_all_todo_blocks_on_date_for_deletion() = runTest {
+        val date = LocalDate.of(2023, 2, 1)
+        val template = ScheduleTemplate(1, "test")
+        val todoBlock1 = TodoBlock(1, null, date, testTime, testTime, null)
+        val todoBlock2 = TodoBlock(2, null, date, testTime, testTime, null, true)
+        val todoBlock3 = TodoBlock(3, null, null, testTime, testTime, template.templateId)
+        templateDao.insert(template)
+        todoBlockDao.insertTodoBlock(todoBlock1)
+        todoBlockDao.insertTodoBlock(todoBlock2)
+        todoBlockDao.insertTodoBlock(todoBlock3)
+
+        todoBlockDao.unmarkTodoBlocksOnDateForDeletion(date.toEpochDay())
+
+        assertThat(todoBlockDao.getAllTodoBlocks().first()).containsExactly(
+            todoBlock1, todoBlock2.copy(markedForDeletion = false), todoBlock3
+        )
+        assertThat(todoBlockDao.getTodoBlocksOnDate(date.toEpochDay()).first()).containsExactly(
+            todoBlock1, todoBlock2.copy(markedForDeletion = false)
+        )
+    }
+
+    @Test
+    fun mark_all_todo_blocks_on_date_for_deletion() = runTest {
+        val date = LocalDate.of(2023, 2, 1)
+        val template = ScheduleTemplate(1, "test")
+        val todoBlock1 = TodoBlock(1, null, date, testTime, testTime, null)
+        val todoBlock2 = TodoBlock(2, null, date, testTime, testTime, null, true)
+        val todoBlock3 = TodoBlock(3, null, null, testTime, testTime, template.templateId)
+        templateDao.insert(template)
+        todoBlockDao.insertTodoBlock(todoBlock1)
+        todoBlockDao.insertTodoBlock(todoBlock2)
+        todoBlockDao.insertTodoBlock(todoBlock3)
+
+        todoBlockDao.markTodoBlocksOnDateForDeletion(date.toEpochDay())
+
+        assertThat(todoBlockDao.getAllTodoBlocks().first()).containsExactly(todoBlock3)
+        assertThat(todoBlockDao.getTodoBlocksOnDate(date.toEpochDay()).first()).isEmpty()
+    }
+
+    @Test
     fun delete_all_todo_blocks_of_schedule_template() = runTest {
         val template = ScheduleTemplate(1, "st")
         val date = LocalDate.of(2023, 2, 1)

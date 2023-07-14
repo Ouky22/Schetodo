@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class FakeTodoBlockDao : TodoBlockDao {
-    private val todoBlocks = mutableListOf<TodoBlock>()
+    private var todoBlocks = mutableListOf<TodoBlock>()
 
     override fun getTodoBlockById(todoBlockId: Int): Flow<TodoBlock?> {
         return flow {
@@ -62,6 +62,24 @@ class FakeTodoBlockDao : TodoBlockDao {
         val oldTodoBlock = todoBlocks.removeAt(indexOfTodoBlockInList)
         val newTodoBlock = oldTodoBlock.copy(markedForDeletion = true)
         todoBlocks.add(newTodoBlock)
+    }
+
+    override suspend fun markTodoBlocksOnDateForDeletion(dateStampInDays: Long) {
+        todoBlocks = todoBlocks.map { todoBlock ->
+            if (todoBlock.date?.toEpochDay() == dateStampInDays)
+                todoBlock.copy(markedForDeletion = true)
+            else
+                todoBlock
+        }.toMutableList()
+    }
+
+    override suspend fun unmarkTodoBlocksOnDateForDeletion(dateStampInDays: Long) {
+        todoBlocks = todoBlocks.map { todoBlock ->
+            if (todoBlock.date?.toEpochDay() == dateStampInDays)
+                todoBlock.copy(markedForDeletion = false)
+            else
+                todoBlock
+        }.toMutableList()
     }
 
     override suspend fun unmarkTodoBlockForDeletion(todoBlockId: Int) {

@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.flow
 import java.time.LocalDate
 
 class FakeTodoBlockRepository : TodoBlockRepository {
-    private val todoBlocks = mutableListOf<TodoBlock>()
+    private var todoBlocks = mutableListOf<TodoBlock>()
 
     override fun getBlockById(todoBlockId: Int): Flow<TodoBlock?> {
         return flow {
@@ -96,5 +96,23 @@ class FakeTodoBlockRepository : TodoBlockRepository {
 
     override suspend fun deleteAllTodoBlocksMarkedForDeletion() {
         todoBlocks.removeIf { it.markedForDeletion }
+    }
+
+    override suspend fun markTodoBlocksOnDateForDeletion(date: LocalDate) {
+        todoBlocks = todoBlocks.map { todoBlock ->
+            if (todoBlock.date == date)
+                todoBlock.copy(markedForDeletion = true)
+            else
+                todoBlock
+        }.toMutableList()
+    }
+
+    override suspend fun unmarkTodoBlocksOnDateForDeletion(date: LocalDate) {
+        todoBlocks = todoBlocks.map { todoBlock ->
+            if (todoBlock.date == date)
+                todoBlock.copy(markedForDeletion = false)
+            else
+                todoBlock
+        }.toMutableList()
     }
 }

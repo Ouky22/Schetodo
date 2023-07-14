@@ -33,6 +33,12 @@ interface TodoBlockDao {
     @Query("UPDATE TodoBlock SET markedForDeletion = 1 WHERE todoBlockId = :todoBlockId")
     suspend fun markTodoBlockForDeletion(todoBlockId: Int)
 
+    @Query("UPDATE TodoBlock SET markedForDeletion = 1 WHERE date = :dateStampInDays")
+    suspend fun markTodoBlocksOnDateForDeletion(dateStampInDays: Long)
+
+    @Query("UPDATE TodoBlock SET markedForDeletion = 0 WHERE date = :dateStampInDays")
+    suspend fun unmarkTodoBlocksOnDateForDeletion(dateStampInDays: Long)
+
     @Query("UPDATE TodoBlock SET markedForDeletion = 0 WHERE todoBlockId = :todoBlockId")
     suspend fun unmarkTodoBlockForDeletion(todoBlockId: Int)
 

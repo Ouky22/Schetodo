@@ -19,4 +19,6 @@ interface TodoBlockRepository {
     suspend fun getTodoBlocksThatOverlapWith(todoBlock: TodoBlock, date: LocalDate): List<TodoBlock>
     suspend fun templateTodoBlockOverlapsWithTodoBlockFromSameTemplate(todoBlock: TodoBlock): Boolean
     suspend fun deleteAllTodoBlocksMarkedForDeletion()
+    suspend fun markTodoBlocksOnDateForDeletion(date: LocalDate)
+    suspend fun unmarkTodoBlocksOnDateForDeletion(date: LocalDate)
 }
