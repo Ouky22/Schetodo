@@ -252,6 +252,7 @@ fun EnterScheduleTemplateNameDialog(
                 singleLine = true,
                 modifier = Modifier
                     .padding(12.dp)
+                    .padding(bottom = if (showInvalidScheduleTemplateNameError) 0.dp else 12.dp)
                     .fillMaxWidth()
             )
 
