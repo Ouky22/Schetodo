@@ -7,6 +7,7 @@ import com.example.schetodo.data.MIN_DATE
 import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.data.schedule_template.ScheduleTemplate
 import com.example.schetodo.data.schedule_template.ScheduleTemplateRepository
+import com.example.schetodo.data.todo_block.TodoBlockRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -22,6 +23,7 @@ import com.example.schetodo.feature.use_case.GeneralUseCases
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
     private val scheduleBlockRepository: ScheduleBlockRepository,
+    private val todoBlockRepository: TodoBlockRepository,
     private val scheduleTemplateRepository: ScheduleTemplateRepository,
     private val generalUseCases: GeneralUseCases
 ) : ViewModel() {
@@ -45,6 +47,8 @@ class ScheduleViewModel @Inject constructor(
             is GoToCurrentDate -> goToCurrentDate()
             is GoToAnyDate -> goToDate(event.date)
             is UnmarkTodoBlockForDeletion -> unmarkTodoBlockForDeletion(event.todoBlockId)
+            is MarkAllTodoBlocksForDeletion -> markAllTodoBlocksForDeletion()
+            is UndoMarkAllTodoBlocksForDeletion -> undoMarkAllTodoBlocksForDeletion()
             is ChangeScheduleTemplateName -> changeScheduleTemplateName(event.templateName)
             is SaveCurrentScheduleAsTemplate -> saveCurrentScheduleAsTemplate()
             is OpenEnterScheduleTemplateNameDialog -> openEnterScheduleTemplateNameDialog()
@@ -112,6 +116,18 @@ class ScheduleViewModel @Inject constructor(
 
     private fun scheduleTemplateNameIsInvalid() =
         _scheduleState.value.scheduleTemplateName.trim() == ""
+
+    private fun markAllTodoBlocksForDeletion() {
+        viewModelScope.launch {
+            todoBlockRepository.markTodoBlocksOnDateForDeletion(_scheduleState.value.currentDate)
+        }
+    }
+
+    private fun undoMarkAllTodoBlocksForDeletion() {
+        viewModelScope.launch {
+            todoBlockRepository.unmarkTodoBlocksOnDateForDeletion(_scheduleState.value.currentDate)
+        }
+    }
 
     private fun unmarkTodoBlockForDeletion(todoBlockId: Int) {
         viewModelScope.launch {

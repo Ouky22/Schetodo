@@ -6,6 +6,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.TableRows
 import androidx.compose.material3.*
@@ -98,7 +99,9 @@ fun ScheduleScreen(
                 startTime.toSecondOfDay(),
                 endTime.toSecondOfDay()
             )
-        }
+        },
+        onDeleteAllScheduleBlocks = { viewModel.onEvent(MarkAllTodoBlocksForDeletion) },
+        onUndoDeleteAllScheduleBlocks = { viewModel.onEvent(UndoMarkAllTodoBlocksForDeletion) }
     )
 }
 
@@ -128,7 +131,12 @@ fun ScheduleScreen(
     onFabClick: () -> Unit,
     onEditScheduleBlock: (todoBlockId: Int) -> Unit,
     onAddScheduleGapButtonClick: (startTime: LocalTime, endTime: LocalTime) -> Unit,
+    onDeleteAllScheduleBlocks: () -> Unit,
+    onUndoDeleteAllScheduleBlocks: () -> Unit
 ) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
     Scaffold(
         topBar = {
             MainDestinationTopAppBar(
@@ -143,7 +151,17 @@ fun ScheduleScreen(
 
                     ScheduleOverflowMenu(
                         onScheduleTemplatesOptionClick = onScheduleTemplatesButtonClick,
-                        onSaveAsTemplateOptionClick = onOpenEnterScheduleTemplateNameDialog
+                        onSaveAsTemplateOptionClick = onOpenEnterScheduleTemplateNameDialog,
+                        onDeleteAllScheduleBlocks = {
+                            onDeleteAllScheduleBlocks()
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbarWithActionHandler(
+                                    message = context.getString(R.string.cleared_schedule),
+                                    actionLabel = context.getString(R.string.undo),
+                                    onActionPerformed = onUndoDeleteAllScheduleBlocks
+                                )
+                            }
+                        }
                     )
                 }
             )
@@ -162,8 +180,6 @@ fun ScheduleScreen(
             modifier = modifier.padding(contentPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val context = LocalContext.current
-
             DateNavigator(
                 currentDate = currentDateString,
                 onPreviousDateButtonEnabled = canNavigateToPreviousDate,
@@ -341,7 +357,8 @@ fun DateNavigator(
 fun ScheduleOverflowMenu(
     modifier: Modifier = Modifier,
     onScheduleTemplatesOptionClick: () -> Unit,
-    onSaveAsTemplateOptionClick: () -> Unit
+    onSaveAsTemplateOptionClick: () -> Unit,
+    onDeleteAllScheduleBlocks: () -> Unit
 ) {
     Box(modifier = modifier) {
         var expandOverflowMenu by remember { mutableStateOf(false) }
@@ -374,6 +391,17 @@ fun ScheduleOverflowMenu(
                 },
                 leadingIcon = {
                     Icon(imageVector = Icons.Outlined.Save, contentDescription = null)
+                }
+            )
+            Divider()
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.clear_schedule)) },
+                onClick = {
+                    expandOverflowMenu = false
+                    onDeleteAllScheduleBlocks()
+                },
+                leadingIcon = {
+                    Icon(imageVector = Icons.Outlined.DeleteSweep, contentDescription = null)
                 }
             )
         }
@@ -421,7 +449,9 @@ fun ScheduleScreenPreview() {
             onSaveScheduleAsTemplateButtonClick = {},
             onFabClick = {},
             onEditScheduleBlock = {},
-            onAddScheduleGapButtonClick = { _, _ -> }
+            onAddScheduleGapButtonClick = { _, _ -> },
+            onDeleteAllScheduleBlocks = {},
+            onUndoDeleteAllScheduleBlocks = {}
         )
     }
 }

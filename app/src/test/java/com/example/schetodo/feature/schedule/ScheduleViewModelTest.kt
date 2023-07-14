@@ -9,6 +9,7 @@ import com.example.schetodo.data.schedule_template.ScheduleTemplate
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
+import com.example.schetodo.data.todo_block.FakeTodoBlockRepository
 import com.example.schetodo.data.todo_block.TodoBlock
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.feature.schedule.components.UiScheduleBlock
@@ -41,6 +42,7 @@ internal class ScheduleViewModelTest {
 
     private val fakeScheduleBlockRepository = FakeScheduleBlockRepository()
     private val fakeScheduleTemplateRepository = FakeScheduleTemplateRepository()
+    private val fakeTodoBlockRepository = FakeTodoBlockRepository()
     private lateinit var viewModel: ScheduleViewModel
 
     private val testScheduleBlocksDate = LocalDate.now()
@@ -51,6 +53,7 @@ internal class ScheduleViewModelTest {
     fun init() {
         viewModel = ScheduleViewModel(
             fakeScheduleBlockRepository,
+            fakeTodoBlockRepository,
             fakeScheduleTemplateRepository,
             generalUseCases
         )
@@ -146,6 +149,7 @@ internal class ScheduleViewModelTest {
         val viewModel =
             ScheduleViewModel(
                 fakeScheduleBlockRepository,
+                fakeTodoBlockRepository,
                 fakeScheduleTemplateRepository,
                 generalUseCases
             )
