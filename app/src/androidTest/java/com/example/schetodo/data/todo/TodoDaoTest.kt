@@ -3,10 +3,9 @@ package com.example.schetodo.data.todo
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import app.cash.turbine.test
 import com.example.schetodo.data.SchetodoDatabase
-import com.example.schetodo.data.todo_category.TodoCategoryDao
 import com.example.schetodo.data.todo_category.TodoCategory
+import com.example.schetodo.data.todo_category.TodoCategoryDao
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -226,18 +225,14 @@ class TodoDaoTest {
         todoDao.insertTodo(todo2)
         todoDao.insertTodo(todo3)
 
-        todoDao.getAllTodosOfTodoCategory(category1.categoryId).test {
-            val todos = awaitItem()
-            assertThat(todos.size).isEqualTo(2)
-            // todo2 has highest priority and therefore should be the first in the list
-            assertThat(todos.first()).isEqualTo(todo2)
-            assertThat(todos).contains(todo1)
-        }
-        todoDao.getAllTodosOfTodoCategory(category2.categoryId).test {
-            val todos = awaitItem()
-            assertThat(todos.size).isEqualTo(1)
-            assertThat(todos).contains(todo3)
-        }
+        // todo2 has highest priority and therefore should be the first in the list
+        assertThat(todoDao.getAllTodosOfTodoCategory(category1.categoryId).first()).containsExactly(
+            todo2, todo1
+        ).inOrder()
+
+        assertThat(todoDao.getAllTodosOfTodoCategory(category2.categoryId).first()).containsExactly(
+            todo3
+        )
     }
 
     @Test
@@ -255,15 +250,9 @@ class TodoDaoTest {
         todoDao.insertTodo(todo3)
 
         todoCategoryDao.deleteTodoCategory(category2)
-        todoDao.getAllTodosOfTodoCategory(category2.categoryId).test {
-            val todos = awaitItem()
-            assertThat(todos.isEmpty())
-        }
 
+        assertThat(todoDao.getAllTodosOfTodoCategory(category2.categoryId).first()).isEmpty()
         todoCategoryDao.deleteTodoCategory(category1)
-        todoDao.getAllTodos().test {
-            val todos = awaitItem()
-            assertThat(todos.isEmpty())
-        }
+        assertThat(todoDao.getAllTodos().first()).isEmpty()
     }
 }

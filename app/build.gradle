@@ -94,9 +94,6 @@ dependencies {
     androidTestImplementation "androidx.test:runner:$testRunner_version"
     testImplementation "com.google.truth:truth:$truth_version"
     androidTestImplementation "com.google.truth:truth:$truth_version"
-    // Turbine for testing flows
-    testImplementation "app.cash.turbine:turbine:$turbine_version"
-    androidTestImplementation "app.cash.turbine:turbine:$turbine_version"
 
     // Room
     implementation "androidx.room:room-runtime:$room_version"

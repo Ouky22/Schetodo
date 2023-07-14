@@ -1,10 +1,8 @@
 package com.example.schetodo.data.todo_category
 
-import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -63,11 +61,9 @@ internal class TodoCategoryRepositoryImplTest {
         fakeTodoCategoryDao.insertTodoCategory(category1)
         fakeTodoCategoryDao.insertTodoCategory(category2)
 
-        todoCategoryRepositoryImpl.getTodoCategory(category1.categoryId).test {
-            val category = awaitItem()
-            assertThat(category).isEqualTo(category1)
-            awaitComplete()
-        }
+        assertThat(
+            todoCategoryRepositoryImpl.getTodoCategory(category1.categoryId).first()
+        ).isEqualTo(category1)
     }
 
     @Test
@@ -77,20 +73,12 @@ internal class TodoCategoryRepositoryImplTest {
         fakeTodoCategoryDao.insertTodoCategory(category1)
         fakeTodoCategoryDao.insertTodoCategory(category2)
 
-        todoCategoryRepositoryImpl.getTodoCategory(3).test {
-            val category = awaitItem()
-            assertThat(category).isEqualTo(null)
-            awaitComplete()
-        }
+        assertThat(todoCategoryRepositoryImpl.getTodoCategory(3).first()).isNull()
     }
 
     @Test
     fun test_getting_category_by_id_when_null_as_id_provided() = runTest {
-        todoCategoryRepositoryImpl.getTodoCategory(null).test {
-            val value = awaitItem()
-            assertThat(value).isNull()
-            awaitComplete()
-        }
+        assertThat(todoCategoryRepositoryImpl.getTodoCategory(null).first()).isNull()
     }
 
     @Test
@@ -102,23 +90,17 @@ internal class TodoCategoryRepositoryImplTest {
         fakeTodoCategoryDao.insertTodoCategory(topLevelCategory2)
         fakeTodoCategoryDao.insertTodoCategory(childCategory1)
 
-        todoCategoryRepositoryImpl.getChildTodoCategoriesOf(null).test {
-            val categories = awaitItem()
-            assertThat(categories.size).isEqualTo(2)
-            assertThat(categories).contains(topLevelCategory1)
-            assertThat(categories).contains(topLevelCategory2)
-            awaitComplete()
-        }
+        assertThat(
+            todoCategoryRepositoryImpl.getChildTodoCategoriesOf(null).first()
+        ).containsExactly(
+            topLevelCategory1, topLevelCategory2
+        )
     }
 
     @Test
     fun when_no_categories_exist_then_getting_child_categories_returns_flow_of_empty_list() =
         runTest {
-            todoCategoryRepositoryImpl.getChildTodoCategoriesOf(1).test {
-                val categories = awaitItem()
-                assertThat(categories).isEmpty()
-                awaitComplete()
-            }
+            assertThat(todoCategoryRepositoryImpl.getChildTodoCategoriesOf(1).first()).isEmpty()
         }
 
     @Test
@@ -128,11 +110,9 @@ internal class TodoCategoryRepositoryImplTest {
         fakeTodoCategoryDao.insertTodoCategory(category1)
         fakeTodoCategoryDao.insertTodoCategory(category2)
 
-        todoCategoryRepositoryImpl.getChildTodoCategoriesOf(category2.categoryId).test {
-            val categories = awaitItem()
-            assertThat(categories).isEmpty()
-            awaitComplete()
-        }
+        assertThat(
+            todoCategoryRepositoryImpl.getChildTodoCategoriesOf(category2.categoryId).first()
+        ).isEmpty()
     }
 
     @Test
@@ -146,12 +126,10 @@ internal class TodoCategoryRepositoryImplTest {
         fakeTodoCategoryDao.insertTodoCategory(childCategory2)
         fakeTodoCategoryDao.insertTodoCategory(category)
 
-        todoCategoryRepositoryImpl.getChildTodoCategoriesOf(parentCategory.categoryId).test {
-            val categories = awaitItem()
-            assertThat(categories.size).isEqualTo(2)
-            assertThat(categories).contains(childCategory1)
-            assertThat(categories).contains(childCategory2)
-            awaitComplete()
-        }
+        assertThat(
+            todoCategoryRepositoryImpl.getChildTodoCategoriesOf(parentCategory.categoryId).first()
+        ).containsExactly(
+            childCategory1, childCategory2
+        )
     }
 }
