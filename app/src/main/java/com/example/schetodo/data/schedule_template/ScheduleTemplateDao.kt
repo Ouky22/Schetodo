@@ -12,7 +12,7 @@ interface ScheduleTemplateDao {
     @Upsert
     suspend fun insertOrUpdate(scheduleTemplate: ScheduleTemplate): Long
 
-    @Query("SELECT * FROM ScheduleTemplate")
+    @Query("SELECT * FROM ScheduleTemplate WHERE markedForDeletion = 0")
     fun getAll(): Flow<List<ScheduleTemplate>>
 
     @Query("SELECT * FROM ScheduleTemplate WHERE templateId = :templateId")

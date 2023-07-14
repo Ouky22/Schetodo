@@ -33,6 +33,16 @@ class ScheduleTemplateDaoTest {
     }
 
     @Test
+    fun when_getting_all_templates_only_templates_not_marked_for_deletion_are_returned() = runTest {
+        val template1 = ScheduleTemplate(1, "t1", markedForDeletion = true)
+        val template2 = ScheduleTemplate(2, "t2")
+        scheduleTemplateDao.insert(template1).toInt()
+        scheduleTemplateDao.insert(template2).toInt()
+
+        assertThat(scheduleTemplateDao.getAll().first()).containsExactly(template2)
+    }
+
+    @Test
     fun test_marking_schedule_template_for_deletion() = runTest {
         val template = ScheduleTemplate(0, "t1")
         val templateId = scheduleTemplateDao.insert(template).toInt()
