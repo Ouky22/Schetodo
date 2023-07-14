@@ -62,6 +62,13 @@ class EditScheduleTemplateViewModel @Inject constructor(
             is DeleteScheduleTemplate -> markScheduleTemplateForDeletion()
             is SelectScheduleTemplateApplyDate -> updateScheduleTemplateApplyDate(event.date)
             is ApplyScheduleTemplateToDate -> applyScheduleTemplateToDate()
+            is UndoDeleteScheduleBlock -> undoDeleteScheduleBlock(event.todoBlockId)
+        }
+    }
+
+    private fun undoDeleteScheduleBlock(todoBlockId: Int) {
+        viewModelScope.launch {
+            scheduleBlockRepository.unmarkTodoBlockForDeletion(todoBlockId)
         }
     }
 

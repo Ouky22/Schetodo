@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.schetodo.R
+import com.example.schetodo.feature.schedule.add_edit_schedule_block.ID_OF_TODO_BLOCK_MARKED_FOR_DELETION
 import com.example.schetodo.feature.schedule.components.ScheduleList
 import com.example.schetodo.feature.schedule.components.ScheduleListItem
 import com.example.schetodo.feature.schedule.components.createTodoBlocksForPreview
@@ -26,8 +27,11 @@ import com.example.schetodo.ui.components.ClickableReadOnlyOutlinedTextField
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
 import com.example.schetodo.ui.components.SubDestinationTopAppBar
 import com.example.schetodo.ui.theme.SchetodoTheme
+import com.example.schetodo.ui.util.popFromCurrentBackStackEntry
 import com.example.schetodo.ui.util.pushOntoPreviousBackStackEntry
 import com.example.schetodo.ui.util.showDatePicker
+import com.example.schetodo.ui.util.showSnackbarWithActionHandler
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -43,6 +47,25 @@ fun EditScheduleTemplateScreen(
     onAddScheduleBlockInGapNavigation: (templateId: Int, startTimeStamp: Int, endTimeStamp: Int) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+
+    LaunchedEffect(true) {
+        launch {
+            schetodoAppState.navController.popFromCurrentBackStackEntry<Int>(
+                key = ID_OF_TODO_BLOCK_MARKED_FOR_DELETION,
+                onPop = { todoBlockId ->
+                    snackbarHostState.showSnackbarWithActionHandler(
+                        message = context.getString(R.string.deleted_schedule_block),
+                        actionLabel = context.getString(R.string.undo),
+                        onActionPerformed = {
+                            viewModel.onEvent(UndoDeleteScheduleBlock(todoBlockId))
+                        }
+                    )
+                }
+            )
+        }
+    }
 
     EditScheduleTemplateScreen(
         modifier = modifier,
@@ -75,7 +98,8 @@ fun EditScheduleTemplateScreen(
                 startTime.toSecondOfDay(),
                 endTime.toSecondOfDay()
             )
-        }
+        },
+        snackbarHostState = snackbarHostState
     )
 }
 
@@ -92,7 +116,8 @@ fun EditScheduleTemplateScreen(
     onScheduleTemplateApplyDateSelected: (LocalDate) -> Unit,
     onApplyTemplateToSelectedDate: () -> Unit,
     onBackButtonClick: () -> Unit,
-    onFabClick: () -> Unit
+    onFabClick: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     var openSelectScheduleTemplateApplyDate by rememberSaveable { mutableStateOf(false) }
 
@@ -116,7 +141,8 @@ fun EditScheduleTemplateScreen(
                     contentDescription = stringResource(R.string.add_new_schedule_block)
                 )
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { contentPadding ->
         ScheduleList(
             modifier = modifier.padding(contentPadding),
@@ -239,7 +265,8 @@ fun EditScheduleTemplateScreenPreview() {
             scheduleTemplateApplyDate = "2023-02-02",
             onScheduleTemplateApplyDateSelected = {},
             onBackButtonClick = {},
-            onFabClick = {}
+            onFabClick = {},
+            snackbarHostState = SnackbarHostState()
         )
     }
 }

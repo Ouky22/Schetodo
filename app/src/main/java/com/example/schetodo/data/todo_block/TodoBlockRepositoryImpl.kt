@@ -36,25 +36,40 @@ class TodoBlockRepositoryImpl @Inject constructor(
     override suspend fun updateOrInsertTodoBlock(todoBlock: TodoBlock) =
         todoBlockDao.updateOrInsertTodoBlock(todoBlock)
 
-    override suspend fun markTodoBlockForDeletion(todoBlockId: Int) =
+    override suspend fun markTodoBlockForDeletion(todoBlockId: Int) {
+        deleteAllTodoBlocksMarkedForDeletion()
         todoBlockDao.markTodoBlockForDeletion(todoBlockId)
+    }
 
     override suspend fun markTodoBlocksOnDateForDeletion(date: LocalDate) {
         deleteAllTodoBlocksMarkedForDeletion()
         todoBlockDao.markTodoBlocksOnDateForDeletion(date.toEpochDay())
     }
 
-    override suspend fun markTodoBlocksOfScheduleTemplateForDeletion(templateId: Int) =
+    override suspend fun markTodoBlocksOfScheduleTemplateForDeletion(templateId: Int) {
+        deleteAllTodoBlocksMarkedForDeletion()
         todoBlockDao.markTodoBlocksOfScheduleTemplateForDeletion(templateId)
+    }
+
+    override suspend fun unmarkTodoBlockForDeletion(todoBlockId: Int) {
+        val todoBlock = todoBlockDao.getTodoBlockById(todoBlockId).first() ?: return
+        val todoBlockIsFromTemplate = todoBlock.templateId != null
+
+        val doesNotOverlapWithOtherTodoBlock =
+            if (todoBlockIsFromTemplate)
+                !templateTodoBlockOverlapsWithTodoBlockFromSameTemplate(todoBlock)
+            else
+                !todoBlockOverlapsWithOtherTodoBlock(todoBlock)
+
+        if (doesNotOverlapWithOtherTodoBlock)
+            todoBlockDao.unmarkTodoBlockForDeletion(todoBlockId)
+    }
 
     override suspend fun unmarkTodoBlocksOfScheduleTemplateForDeletion(templateId: Int) =
         todoBlockDao.unmarkTodoBlocksOfScheduleTemplateForDeletion(templateId)
 
     override suspend fun unmarkTodoBlocksOnDateForDeletion(date: LocalDate) =
         todoBlockDao.unmarkTodoBlocksOnDateForDeletion(date.toEpochDay())
-
-    override suspend fun unmarkTodoBlockForDeletion(todoBlockId: Int) =
-        todoBlockDao.unmarkTodoBlockForDeletion(todoBlockId)
 
     override suspend fun deleteAllTodoBlocksMarkedForDeletion() =
         todoBlockDao.deleteAllTodoBlocksMarkedForDeletion()

@@ -37,12 +37,7 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
     }
 
     override suspend fun unmarkTodoBlockForDeletion(todoBlockId: Int) {
-        val todoBlock = todoBlockRepository.getBlockById(todoBlockId).first() ?: return
-        val doesNotOverlapWithOtherTodoBlock =
-            !todoBlockRepository.todoBlockOverlapsWithOtherTodoBlock(todoBlock)
-
-        if (doesNotOverlapWithOtherTodoBlock)
-            todoBlockRepository.unmarkTodoBlockForDeletion(todoBlockId)
+        todoBlockRepository.unmarkTodoBlockForDeletion(todoBlockId)
     }
 
     override fun getScheduleBlocksOnDate(date: LocalDate): Flow<List<ScheduleBlock>> =
