@@ -67,8 +67,7 @@ fun TodosScreen(
         AddCategoryOrTodoDialog(
             onDismiss = { viewModel.onEvent(CloseAddCategoryOrTodoDialog) },
             onAddTodo = { viewModel.onEvent(NavigateToAddTodoScreen) },
-            onAddTodoCategory = { viewModel.onEvent(NavigateToAddTodoCategoryScreen) },
-            modifier = Modifier.fillMaxHeight(0.6f)
+            onAddTodoCategory = { viewModel.onEvent(NavigateToAddTodoCategoryScreen) }
         )
 
     // do not execute the navigation handler right after addTodo/addTodoCategory click, so that
@@ -141,7 +140,7 @@ fun TodosScreen(
                 .fillMaxSize()
                 .padding(contentPadding),
             verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = CenterHorizontally
         ) {
             TodoCategoryTodoList(
                 modifier = Modifier.weight(1f),
@@ -329,21 +328,19 @@ fun AddCategoryOrTodoDialog(
     Dialog(onDismissRequest = onDismiss) {
         Column(
             modifier = modifier,
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             AddCategoryOrTodoDialogButton(
                 onClick = onAddTodoCategory,
                 icon = Icons.Filled.Category,
-                text = stringResource(R.string.category),
-                modifier = Modifier.weight(1f)
+                text = stringResource(R.string.category)
             )
             Spacer(modifier = Modifier.size(80.dp))
             AddCategoryOrTodoDialogButton(
                 onClick = onAddTodo,
                 icon = Icons.Filled.TaskAlt,
-                text = stringResource(R.string.todo),
-                modifier = Modifier.weight(1f)
+                text = stringResource(R.string.todo)
             )
         }
     }
@@ -373,7 +370,7 @@ fun AddCategoryOrTodoDialogButton(
             )
             Text(
                 text = text,
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.weight(2f),
                 textAlign = TextAlign.Center
             )
