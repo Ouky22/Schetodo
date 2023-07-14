@@ -1,6 +1,9 @@
 package com.example.schetodo.data.schedule_template
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -8,6 +11,12 @@ import javax.inject.Singleton
 class ScheduleTemplateRepositoryImpl @Inject constructor(
     private val scheduleTemplateDao: ScheduleTemplateDao
 ) : ScheduleTemplateRepository {
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            scheduleTemplateDao.deleteAllMarkedForDeletion()
+        }
+    }
 
     override suspend fun insert(scheduleTemplate: ScheduleTemplate) =
         scheduleTemplateDao.insert(scheduleTemplate)

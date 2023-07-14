@@ -26,4 +26,7 @@ interface ScheduleTemplateDao {
 
     @Query("UPDATE ScheduleTemplate SET markedForDeletion = 0 WHERE templateId = :templateId")
     suspend fun unmarkForDeletion(templateId: Int)
+
+    @Query("DELETE FROM ScheduleTemplate WHERE markedForDeletion = 1")
+    suspend fun deleteAllMarkedForDeletion()
 }
