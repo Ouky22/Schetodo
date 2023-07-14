@@ -73,6 +73,24 @@ class FakeTodoBlockDao : TodoBlockDao {
         }.toMutableList()
     }
 
+    override suspend fun markTodoBlocksOfScheduleTemplateForDeletion(templateId: Int) {
+        todoBlocks = todoBlocks.map { todoBlock ->
+            if (todoBlock.templateId == templateId)
+                todoBlock.copy(markedForDeletion = true)
+            else
+                todoBlock
+        }.toMutableList()
+    }
+
+    override suspend fun unmarkTodoBlocksOfScheduleTemplateForDeletion(templateId: Int) {
+        todoBlocks = todoBlocks.map { todoBlock ->
+            if (todoBlock.templateId == templateId)
+                todoBlock.copy(markedForDeletion = false)
+            else
+                todoBlock
+        }.toMutableList()
+    }
+
     override suspend fun unmarkTodoBlocksOnDateForDeletion(dateStampInDays: Long) {
         todoBlocks = todoBlocks.map { todoBlock ->
             if (todoBlock.date?.toEpochDay() == dateStampInDays)

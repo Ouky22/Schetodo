@@ -6,7 +6,6 @@ import androidx.test.core.app.ApplicationProvider
 import com.example.schetodo.data.SchetodoDatabase
 import com.example.schetodo.data.schedule_template.ScheduleTemplate
 import com.example.schetodo.data.schedule_template.ScheduleTemplateDao
-import com.example.schetodo.ui.navigation.schedule.Schedule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -38,6 +37,47 @@ class TodoBlockDaoTest {
     @Throws(IOException::class)
     fun closeDb() {
         db.close()
+    }
+
+    @Test
+    fun unmark_all_todo_blocks_of_template_for_deletion() = runTest {
+        val date = LocalDate.of(2023, 2, 1)
+        val template1 = ScheduleTemplate(1, "test")
+        val template2 = ScheduleTemplate(2, "test")
+        val todoBlock1 = TodoBlock(1, null, null, testTime, testTime, template1.templateId)
+        val todoBlock2 = TodoBlock(2, null, date, testTime, testTime, null)
+        val todoBlock3 = TodoBlock(3, null, null, testTime, testTime, template2.templateId, true)
+        templateDao.insert(template1)
+        templateDao.insert(template2)
+        todoBlockDao.insertTodoBlock(todoBlock1)
+        todoBlockDao.insertTodoBlock(todoBlock2)
+        todoBlockDao.insertTodoBlock(todoBlock3)
+
+        todoBlockDao.markTodoBlocksOfScheduleTemplateForDeletion(template1.templateId)
+        todoBlockDao.unmarkTodoBlocksOfScheduleTemplateForDeletion(template1.templateId)
+
+        assertThat(todoBlockDao.getAllTodoBlocks().first()).containsExactly(
+            todoBlock1, todoBlock2
+        )
+    }
+
+    @Test
+    fun mark_all_todo_blocks_of_template_for_deletion() = runTest {
+        val date = LocalDate.of(2023, 2, 1)
+        val template1 = ScheduleTemplate(1, "test")
+        val template2 = ScheduleTemplate(2, "test")
+        val todoBlock1 = TodoBlock(1, null, null, testTime, testTime, template1.templateId)
+        val todoBlock2 = TodoBlock(2, null, date, testTime, testTime, null)
+        val todoBlock3 = TodoBlock(3, null, null, testTime, testTime, template2.templateId)
+        templateDao.insert(template1)
+        templateDao.insert(template2)
+        todoBlockDao.insertTodoBlock(todoBlock1)
+        todoBlockDao.insertTodoBlock(todoBlock2)
+        todoBlockDao.insertTodoBlock(todoBlock3)
+
+        todoBlockDao.markTodoBlocksOfScheduleTemplateForDeletion(template1.templateId)
+
+        assertThat(todoBlockDao.getAllTodoBlocks().first()).containsExactly(todoBlock2, todoBlock3)
     }
 
     @Test

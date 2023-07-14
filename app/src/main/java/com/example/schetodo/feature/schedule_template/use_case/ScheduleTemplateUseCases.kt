@@ -4,5 +4,6 @@ import javax.inject.Inject
 
 data class ScheduleTemplateUseCases @Inject constructor(
     val applyScheduleTemplate: ApplyScheduleTemplateUseCase,
-    val deleteScheduleTemplate: DeleteScheduleTemplateUseCase
+    val markScheduleTemplateForDeletion: MarkScheduleTemplateForDeletionUseCase,
+    val unmarkScheduleTemplateForDeletion: UnmarkScheduleTemplateForDeletionUseCase
 )

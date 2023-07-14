@@ -21,4 +21,6 @@ interface TodoBlockRepository {
     suspend fun deleteAllTodoBlocksMarkedForDeletion()
     suspend fun markTodoBlocksOnDateForDeletion(date: LocalDate)
     suspend fun unmarkTodoBlocksOnDateForDeletion(date: LocalDate)
+    suspend fun markTodoBlocksOfScheduleTemplateForDeletion(templateId: Int)
+    suspend fun unmarkTodoBlocksOfScheduleTemplateForDeletion(templateId: Int)
 }

@@ -8,4 +8,6 @@ interface ScheduleTemplateRepository {
     fun getAll(): Flow<List<ScheduleTemplate>>
     fun getById(templateId: Int): Flow<ScheduleTemplate?>
     suspend fun deleteById(templateId: Int)
+    suspend fun markForDeletion(templateId: Int)
+    suspend fun unmarkForDeletion(templateId: Int)
 }

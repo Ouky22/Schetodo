@@ -21,4 +21,10 @@ class ScheduleTemplateRepositoryImpl @Inject constructor(
         scheduleTemplateDao.getById(templateId)
 
     override suspend fun deleteById(templateId: Int) = scheduleTemplateDao.deleteById(templateId)
+
+    override suspend fun markForDeletion(templateId: Int) =
+        scheduleTemplateDao.markForDeletion(templateId)
+
+    override suspend fun unmarkForDeletion(templateId: Int) =
+        scheduleTemplateDao.unmarkForDeletion(templateId)
 }

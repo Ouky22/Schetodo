@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class FakeScheduleTemplateRepository : ScheduleTemplateRepository {
-    private val scheduleTemplates = mutableListOf<ScheduleTemplate>()
+    private var scheduleTemplates = mutableListOf<ScheduleTemplate>()
 
     override suspend fun insert(scheduleTemplate: ScheduleTemplate): Long {
         scheduleTemplates.add(scheduleTemplate)
@@ -42,5 +42,23 @@ class FakeScheduleTemplateRepository : ScheduleTemplateRepository {
 
     override suspend fun deleteById(templateId: Int) {
         scheduleTemplates.removeIf { templateId == it.templateId }
+    }
+
+    override suspend fun markForDeletion(templateId: Int) {
+        scheduleTemplates = scheduleTemplates.map { scheduleTemplate ->
+            if (scheduleTemplate.templateId == templateId)
+                scheduleTemplate.copy(markedForDeletion = true)
+            else
+                scheduleTemplate
+        }.toMutableList()
+    }
+
+    override suspend fun unmarkForDeletion(templateId: Int) {
+        scheduleTemplates = scheduleTemplates.map { scheduleTemplate ->
+            if (scheduleTemplate.templateId == templateId)
+                scheduleTemplate.copy(markedForDeletion = false)
+            else
+                scheduleTemplate
+        }.toMutableList()
     }
 }
