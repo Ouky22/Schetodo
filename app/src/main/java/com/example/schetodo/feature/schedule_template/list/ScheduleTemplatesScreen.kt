@@ -7,19 +7,26 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
+import com.example.schetodo.feature.schedule_template.list.ScheduleTemplatesEvent.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.schetodo.R
 import com.example.schetodo.data.schedule_template.ScheduleTemplate
+import com.example.schetodo.feature.schedule_template.edit_schedule_template.ID_OF_SCHEDULE_TEMPLATE_MARKED_FOR_DELETION
 import com.example.schetodo.ui.SchetodoAppState
-import com.example.schetodo.ui.components.MainDestinationTopAppBar
 import com.example.schetodo.ui.components.SubDestinationTopAppBar
 import com.example.schetodo.ui.theme.SchetodoTheme
+import com.example.schetodo.ui.util.popFromCurrentBackStackEntry
+import com.example.schetodo.ui.util.showSnackbarWithActionHandler
+import kotlinx.coroutines.launch
 
 @Composable
 fun ScheduleTemplatesScreen(
@@ -29,12 +36,32 @@ fun ScheduleTemplatesScreen(
     onEditScheduleTemplate: (templateId: Int) -> Unit
 ) {
     val scheduleTemplates = viewModel.scheduleTemplates.collectAsState()
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(true) {
+        launch {
+            schetodoAppState.navController.popFromCurrentBackStackEntry<Int>(
+                key = ID_OF_SCHEDULE_TEMPLATE_MARKED_FOR_DELETION,
+                onPop = { templateId ->
+                    snackbarHostState.showSnackbarWithActionHandler(
+                        message = context.getString(R.string.deleted_schedule_template),
+                        actionLabel = context.getString(R.string.undo),
+                        onActionPerformed = {
+                            viewModel.onEvent(UndoDeletionOfScheduleTemplate(templateId))
+                        }
+                    )
+                }
+            )
+        }
+    }
 
     ScheduleTemplatesScreen(
         modifier = modifier,
         scheduleTemplates = scheduleTemplates.value,
         onClickOnScheduleTemplate = onEditScheduleTemplate,
-        onBackButtonClick = { schetodoAppState.navController.popBackStack() }
+        onBackButtonClick = { schetodoAppState.navController.popBackStack() },
+        snackbarHostState = snackbarHostState
     )
 }
 
@@ -44,7 +71,8 @@ fun ScheduleTemplatesScreen(
     modifier: Modifier = Modifier,
     scheduleTemplates: List<ScheduleTemplate>,
     onClickOnScheduleTemplate: (templateId: Int) -> Unit,
-    onBackButtonClick: () -> Unit
+    onBackButtonClick: () -> Unit,
+    snackbarHostState: SnackbarHostState
 ) {
     Scaffold(
         topBar = {
@@ -53,7 +81,8 @@ fun ScheduleTemplatesScreen(
                 showBackButton = true,
                 onBackButtonClick = onBackButtonClick
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { contentPadding ->
         LazyColumn(
             modifier = modifier.padding(contentPadding),
@@ -112,7 +141,8 @@ fun ScheduleTemplatesScreenPreview() {
                 ScheduleTemplate(5, "Fifth template")
             ),
             onClickOnScheduleTemplate = {},
-            onBackButtonClick = {}
+            onBackButtonClick = {},
+            snackbarHostState = SnackbarHostState()
         )
     }
 }
@@ -131,7 +161,8 @@ fun ScheduleTemplatesScreenDarkPreview() {
                 ScheduleTemplate(5, "Fifth template")
             ),
             onClickOnScheduleTemplate = {},
-            onBackButtonClick = {}
+            onBackButtonClick = {},
+            snackbarHostState = SnackbarHostState()
         )
     }
 }

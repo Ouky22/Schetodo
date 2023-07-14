@@ -9,7 +9,6 @@ import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import com.example.schetodo.feature.schedule_template.edit_schedule_template.EditScheduleTemplateEvent.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -21,15 +20,18 @@ import com.example.schetodo.R
 import com.example.schetodo.feature.schedule.components.ScheduleList
 import com.example.schetodo.feature.schedule.components.ScheduleListItem
 import com.example.schetodo.feature.schedule.components.createTodoBlocksForPreview
+import com.example.schetodo.feature.schedule_template.edit_schedule_template.EditScheduleTemplateEvent.*
 import com.example.schetodo.ui.SchetodoAppState
 import com.example.schetodo.ui.components.ClickableReadOnlyOutlinedTextField
 import com.example.schetodo.ui.components.PositiveNegativeButtonRow
-import com.example.schetodo.ui.components.MainDestinationTopAppBar
 import com.example.schetodo.ui.components.SubDestinationTopAppBar
 import com.example.schetodo.ui.theme.SchetodoTheme
+import com.example.schetodo.ui.util.pushOntoPreviousBackStackEntry
 import com.example.schetodo.ui.util.showDatePicker
 import java.time.LocalDate
 import java.time.LocalTime
+
+const val ID_OF_SCHEDULE_TEMPLATE_MARKED_FOR_DELETION = "deleted_schedule_block_id"
 
 @Composable
 fun EditScheduleTemplateScreen(
@@ -49,6 +51,9 @@ fun EditScheduleTemplateScreen(
             onEditScheduleBlockNavigation(todoBlockId)
         },
         onDeleteScheduleTemplate = {
+            schetodoAppState.navController.pushOntoPreviousBackStackEntry(
+                ID_OF_SCHEDULE_TEMPLATE_MARKED_FOR_DELETION, viewModel.templateId
+            )
             viewModel.onEvent(DeleteScheduleTemplate)
             schetodoAppState.navController.popBackStack()
         },

@@ -7,7 +7,6 @@ import com.example.schetodo.data.schedule_block.ScheduleBlockRepository
 import com.example.schetodo.data.schedule_template.ScheduleTemplateRepository
 import com.example.schetodo.feature.schedule_template.edit_schedule_template.EditScheduleTemplateEvent.*
 import com.example.schetodo.feature.schedule_template.use_case.ApplyScheduleConflictStrategy
-import com.example.schetodo.feature.schedule_template.use_case.ApplyScheduleTemplateUseCase
 import com.example.schetodo.feature.schedule_template.use_case.ScheduleTemplateUseCases
 import com.example.schetodo.feature.use_case.GeneralUseCases
 import com.example.schetodo.ui.navigation.schedule.EditScheduleTemplate
@@ -15,7 +14,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -61,9 +59,15 @@ class EditScheduleTemplateViewModel @Inject constructor(
 
     fun onEvent(event: EditScheduleTemplateEvent) {
         when (event) {
-            is DeleteScheduleTemplate -> deleteScheduleTemplate()
+            is DeleteScheduleTemplate -> markScheduleTemplateForDeletion()
             is SelectScheduleTemplateApplyDate -> updateScheduleTemplateApplyDate(event.date)
             is ApplyScheduleTemplateToDate -> applyScheduleTemplateToDate()
+        }
+    }
+
+    private fun markScheduleTemplateForDeletion() {
+        viewModelScope.launch {
+            scheduleTemplateUseCases.markScheduleTemplateForDeletion(templateId)
         }
     }
 
@@ -82,11 +86,5 @@ class EditScheduleTemplateViewModel @Inject constructor(
         _state.value = _state.value.copy(
             scheduleTemplateApplyDate = generalUseCases.formatDate(date)
         )
-    }
-
-    private fun deleteScheduleTemplate() {
-        viewModelScope.launch {
-            scheduleTemplateUseCases.deleteScheduleTemplate(templateId)
-        }
     }
 }
