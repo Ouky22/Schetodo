@@ -18,7 +18,6 @@ class ApplyScheduleTemplateUseCase @Inject constructor(
     ) {
         scheduleBlockRepository.getScheduleBlocksOfScheduleTemplate(scheduleTemplateId)
             .first()
-            .filter { !it.todoBlock.markedForDeletion }
             .filter { scheduleBlock ->
                 val overlappingTodoBlocks = todoBlockRepository.getTodoBlocksThatOverlapWith(
                     scheduleBlock.todoBlock, applyDate
