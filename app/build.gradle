@@ -110,7 +110,7 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     // accompanist libraries
-    implementation "com.google.accompanist:accompanist-permissions:0.29.2-rc"
+    implementation "com.google.accompanist:accompanist-permissions:0.31.5-beta"
 
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 }

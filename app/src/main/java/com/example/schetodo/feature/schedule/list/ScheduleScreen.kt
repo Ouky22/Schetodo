@@ -277,7 +277,10 @@ fun SchedulePager(
     key: ((index: Int) -> Any)? = null,
     pageContent: @Composable (Int) -> Unit
 ) {
-    val pagerState = rememberPagerState(initialPage = currentDate.toEpochDay().toInt())
+    val pagerState = rememberPagerState(
+        initialPage = currentDate.toEpochDay().toInt(),
+        pageCount = { maxDate.toEpochDay().toInt() + 1 }
+    )
 
     var previousPage by remember { mutableStateOf(pagerState.currentPage) }
     var scrollingAnimatedBySystem by remember { mutableStateOf(false) }
@@ -309,7 +312,6 @@ fun SchedulePager(
     HorizontalPager(
         modifier = Modifier.fillMaxSize(),
         state = pagerState,
-        pageCount = maxDate.toEpochDay().toInt() + 1,
         key = key
     ) { page ->
         pageContent(page)

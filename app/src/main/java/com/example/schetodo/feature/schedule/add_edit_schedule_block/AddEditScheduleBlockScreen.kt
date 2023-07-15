@@ -334,7 +334,7 @@ fun CategoriesFlowRow(
     onRemoveCategoryIconClick: (TodoCategory) -> Unit
 ) {
     if (todoCategories.isNotEmpty())
-        FlowRow(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        FlowRow(modifier = modifier) {
             todoCategories.forEach { todoCategory ->
                 CategoryItem(
                     modifier = Modifier
@@ -358,6 +358,7 @@ fun CategoriesFlowRow(
                 modifier = Modifier
                     .height(60.dp)
                     .padding(start = 10.dp)
+                    .align(Alignment.CenterVertically)
             )
         }
     else
