@@ -3,7 +3,6 @@ package com.example.schetodo.data.todo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
-import app.cash.turbine.test
 import com.example.schetodo.data.user_preferences.FakeUserPreferencesRepository
 import com.example.schetodo.data.user_preferences.UserPreferencesRepository
 import com.google.common.truth.Truth.assertThat
