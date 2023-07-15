@@ -17,6 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Schetodo"
         tools:targetApi="31">
+        <profileable android:shell="true" />
         <activity
             android:name="com.example.schetodo.ui.MainActivity"
             android:exported="true"
