@@ -127,7 +127,7 @@ fun AddEditTodoScreen(
                     todoCategoryIcon = todoCategoryIcon,
                     todoCategoryColor = todoCategoryColor
                 )
-                Spacer(modifier = Modifier.size(64.dp))
+                Spacer(modifier = Modifier.size(32.dp))
 
                 TodoPrioritySlider(
                     onTodoPriorityChanged = onTodoPriorityChanged,
@@ -136,11 +136,12 @@ fun AddEditTodoScreen(
                 Spacer(modifier = Modifier.size(32.dp))
 
                 Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = stringResource(R.string.recurring))
-                    Spacer(modifier = Modifier.size(4.dp))
-                    Checkbox(
+                    Switch(
                         checked = todoFlag == TodoFlag.RECURRING,
                         onCheckedChange = { recurring ->
                             if (recurring) onTodoFlagChanged(TodoFlag.RECURRING)
@@ -148,7 +149,7 @@ fun AddEditTodoScreen(
                         }
                     )
                 }
-                Spacer(modifier = Modifier.size(8.dp))
+                Spacer(modifier = Modifier.size(12.dp))
 
                 if (inEditingMode && todoFlag != TodoFlag.RECURRING)
                     TodoStatusRow(
