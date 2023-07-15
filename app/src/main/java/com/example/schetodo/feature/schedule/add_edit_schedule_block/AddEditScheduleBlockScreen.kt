@@ -414,24 +414,32 @@ fun NotificationSection(
     onChangeShowNotificationAtEnd: (Boolean) -> Unit
 ) {
     Column(modifier = modifier) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(
-                checked = showNotificationAtBeginning,
-                onCheckedChange = onChangeShowNotificationAtBeginning
-            )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(
                 text = stringResource(R.string.show_notification_at_beginning),
                 modifier = Modifier.clickable { onChangeShowNotificationAtBeginning(!showNotificationAtBeginning) }
             )
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
-                checked = showNotificationAtEnd,
-                onCheckedChange = onChangeShowNotificationAtEnd
+                checked = showNotificationAtBeginning,
+                onCheckedChange = onChangeShowNotificationAtBeginning
             )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(
                 text = stringResource(R.string.show_notification_at_end),
                 modifier = Modifier.clickable { onChangeShowNotificationAtEnd(!showNotificationAtEnd) }
+            )
+            Checkbox(
+                checked = showNotificationAtEnd,
+                onCheckedChange = onChangeShowNotificationAtEnd
             )
         }
     }
