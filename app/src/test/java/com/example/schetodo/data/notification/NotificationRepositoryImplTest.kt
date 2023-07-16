@@ -3,7 +3,9 @@ package com.example.schetodo.data.notification
 import com.example.schetodo.data.todo_block.FakeTodoBlockDao
 import com.example.schetodo.data.todo_block.TodoBlock
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -17,8 +19,11 @@ internal class NotificationRepositoryImplTest {
 
     private val fakeNotificationDao = FakeNotificationDao()
     private val fakeTodoBlockDao = FakeTodoBlockDao()
-    private val notificationRepository =
-        NotificationRepositoryImpl(fakeNotificationDao, fakeTodoBlockDao)
+    private val notificationRepository = NotificationRepositoryImpl(
+        fakeNotificationDao,
+        fakeTodoBlockDao,
+        CoroutineScope(SupervisorJob())
+    )
 
 
     @Test

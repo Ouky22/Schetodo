@@ -1,14 +1,19 @@
 package com.example.schetodo.data.notification
 
 import com.example.schetodo.data.todo_block.TodoBlockDao
+import com.example.schetodo.di.CoroutineScopeModule.ApplicationCoroutineScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import javax.inject.Inject
 
 class NotificationRepositoryImpl @Inject constructor(
     private val notificationDao: NotificationDao,
-    private val todoBlockDao: TodoBlockDao
+    private val todoBlockDao: TodoBlockDao,
+    @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope
 ) : NotificationRepository {
 
     override suspend fun getNextNotification(): Notification? {
@@ -42,23 +47,31 @@ class NotificationRepositoryImpl @Inject constructor(
         notificationDao.getNotificationsOfTodoBlock(todoBlockId)
 
     override suspend fun insertNotification(notification: Notification) =
-        notificationDao.insertNotification(notification)
+        withContext(applicationCoroutineScope.coroutineContext) {
+            notificationDao.insertNotification(notification)
+        }
 
     override suspend fun insertNotifications(notifications: List<Notification>) =
-        notificationDao.insertNotifications(notifications)
+        withContext(applicationCoroutineScope.coroutineContext) {
+            notificationDao.insertNotifications(notifications)
+        }
 
     override suspend fun deleteNotification(notification: Notification) =
-        notificationDao.deleteNotification(notification)
+        withContext(applicationCoroutineScope.coroutineContext) {
+            notificationDao.deleteNotification(notification)
+        }
 
     override suspend fun updateNotificationsOfTodoBlock(
         todoBlockId: Int,
         notifications: List<Notification>
     ) {
-        notificationDao.deleteAllNotificationsOfTodoBlock(todoBlockId)
+        applicationCoroutineScope.launch {
+            notificationDao.deleteAllNotificationsOfTodoBlock(todoBlockId)
 
-        if (notifications.isNotEmpty())
-            notificationDao.insertNotifications(
-                notifications.map { it.copy(todoBlockId = todoBlockId) }
-            )
+            if (notifications.isNotEmpty())
+                notificationDao.insertNotifications(
+                    notifications.map { it.copy(todoBlockId = todoBlockId) }
+                )
+        }
     }
 }
