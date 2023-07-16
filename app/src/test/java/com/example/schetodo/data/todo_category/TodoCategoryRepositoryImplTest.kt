@@ -1,7 +1,9 @@
 package com.example.schetodo.data.todo_category
 
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -16,7 +18,9 @@ internal class TodoCategoryRepositoryImplTest {
     @Before
     fun init() {
         fakeTodoCategoryDao = FakeTodoCategoryDao()
-        todoCategoryRepositoryImpl = TodoCategoryRepositoryImpl(fakeTodoCategoryDao)
+        todoCategoryRepositoryImpl = TodoCategoryRepositoryImpl(
+            fakeTodoCategoryDao, CoroutineScope(SupervisorJob())
+        )
     }
 
     @Test
