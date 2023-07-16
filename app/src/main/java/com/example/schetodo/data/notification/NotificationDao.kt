@@ -20,6 +20,9 @@ interface NotificationDao {
     @Insert
     suspend fun insertNotification(notification: Notification): Long
 
+    @Insert
+    suspend fun insertNotifications(notifications: List<Notification>)
+
     @Delete
     suspend fun deleteNotification(notification: Notification)
 

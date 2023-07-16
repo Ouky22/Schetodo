@@ -92,7 +92,7 @@ internal class NotificationRepositoryImplTest {
             Notification(3, currentDateTime.plusHours(2), todoBlockId),
             notification1
         )
-        notificationRepository.setNotificationsOfTodoBlock(todoBlockId, newNotifications)
+        notificationRepository.updateNotificationsOfTodoBlock(todoBlockId, newNotifications)
 
         val allNotificationsOfTodoBlock =
             notificationRepository.getNotificationsOfTodoBlock(todoBlockId).first()

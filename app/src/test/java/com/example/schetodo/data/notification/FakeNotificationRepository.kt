@@ -25,7 +25,7 @@ class FakeNotificationRepository : NotificationRepository {
         notifications -= notification
     }
 
-    override suspend fun setNotificationsOfTodoBlock(
+    override suspend fun updateNotificationsOfTodoBlock(
         todoBlockId: Int,
         notifications: List<Notification>
     ) {
@@ -43,5 +43,9 @@ class FakeNotificationRepository : NotificationRepository {
         return flow {
             emit(notifications)
         }
+    }
+
+    override suspend fun insertNotifications(notifications: List<Notification>) {
+        this.notifications.addAll(notifications)
     }
 }

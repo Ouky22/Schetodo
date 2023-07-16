@@ -30,6 +30,10 @@ class FakeNotificationDao : NotificationDao {
         return notification.notificationId.toLong()
     }
 
+    override suspend fun insertNotifications(notifications: List<Notification>) {
+        this.notifications.addAll(notifications)
+    }
+
     override suspend fun deleteNotification(notification: Notification) {
         notifications.remove(notification)
     }

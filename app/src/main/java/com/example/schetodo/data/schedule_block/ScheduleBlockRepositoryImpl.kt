@@ -66,13 +66,38 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
         if (todoBlockUpdated)
             todoBlockId = scheduleBlock.todoBlock.todoBlockId
 
+        val otherStuffStart = System.currentTimeMillis()
+
+        var start = System.currentTimeMillis()
         connectTodoBlockAndTodos(todoBlockId, scheduleBlock.todos, todoBlockUpdated)
+        var time = System.currentTimeMillis() - start
+        Log.d("testing", "$time ms for connecting todo block and todo")
+
+        start = System.currentTimeMillis()
         setFlagOfTodosToInProgress(scheduleBlock.todos)
+        time = System.currentTimeMillis() - start
+        Log.d("testing", "$time ms for setting flag of todos")
+
+        start = System.currentTimeMillis()
         connectTodoBlockAndTodoCategories(
             todoBlockId, scheduleBlock.todoCategories, todoBlockUpdated
         )
-        setNotificationsOfTodoBlock(todoBlockId, scheduleBlock.notifications)
+        time = System.currentTimeMillis() - start
+        Log.d("testing", "$time ms for connecting todo block and categories")
+
+        start = System.currentTimeMillis()
+        setNotificationsOfTodoBlock(todoBlockId, scheduleBlock.notifications, todoBlockUpdated)
+        time = System.currentTimeMillis() - start
+        Log.d("testing", "$time ms for setting notifications")
+
+        start = System.currentTimeMillis()
         setNotificationPreferences(scheduleBlock)
+        time = System.currentTimeMillis() - start
+        Log.d("testing", "$time ms for setting notification preferences")
+
+        val otherStuffEnd = System.currentTimeMillis() - otherStuffStart
+        Log.d("testing", "$otherStuffEnd ms for inserting other stuff")
+        Log.d("testing", "---------------------------------------------")
     }
 
     override val showScheduleBlockNotificationAtBeginning =
@@ -109,12 +134,10 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
         if (todoBlockUpdated)
             todoBlockTodoRelationshipDao.disconnectAllTodosFromTodoBlock(todoBlockId)
 
-        if (todos.isEmpty())
-            return
-
-        todoBlockTodoRelationshipDao.connectTodoBlocksAndTodos(todos.map { todo ->
-            TodoBlockTodoRelationship(todoBlockId, todo.todoId)
-        })
+        if (todos.isNotEmpty())
+            todoBlockTodoRelationshipDao.connectTodoBlocksAndTodos(todos.map { todo ->
+                TodoBlockTodoRelationship(todoBlockId, todo.todoId)
+            })
     }
 
     private suspend fun connectTodoBlockAndTodoCategories(
@@ -125,34 +148,31 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
         if (todoBlockUpdated)
             todoBlockCategoryRelationshipDao.disconnectAllTodoCategoriesFromTodoBlock(todoBlockId)
 
-        if (todoCategories.isEmpty())
-            return
-
-        todoBlockCategoryRelationshipDao.connectTodoBlocksAndTodoCategories(
-            todoCategories.map { category ->
-                TodoBlockCategoryRelationship(todoBlockId, category.categoryId)
-            }
-        )
+        if (todoCategories.isNotEmpty())
+            todoBlockCategoryRelationshipDao.connectTodoBlocksAndTodoCategories(
+                todoCategories.map { category ->
+                    TodoBlockCategoryRelationship(todoBlockId, category.categoryId)
+                }
+            )
     }
 
     private suspend fun setFlagOfTodosToInProgress(todos: List<Todo>) {
-        if (todos.isEmpty())
-            return
-
-        todoDao.updateTodos(
-            todos.filter { it.flag != TodoFlag.RECURRING }
-                .map { it.copy(flag = TodoFlag.IN_PROGRESS) }
-        )
+        if (todos.isNotEmpty())
+            todoDao.updateTodos(
+                todos.filter { it.flag != TodoFlag.RECURRING }
+                    .map { it.copy(flag = TodoFlag.IN_PROGRESS) }
+            )
     }
 
     private suspend fun setNotificationsOfTodoBlock(
         todoBlockId: Int,
-        notifications: List<Notification>
+        notifications: List<Notification>,
+        todoBlockUpdated: Boolean
     ) {
-        notificationRepository.setNotificationsOfTodoBlock(
-            todoBlockId = todoBlockId,
-            notifications = notifications.map { it.copy(todoBlockId = todoBlockId) }
-        )
+        if (todoBlockUpdated)
+            notificationRepository.updateNotificationsOfTodoBlock(todoBlockId, notifications)
+        else if (notifications.isNotEmpty())
+            notificationRepository.insertNotifications(notifications)
     }
 
     private suspend fun setNotificationPreferences(scheduleBlock: ScheduleBlock) {
