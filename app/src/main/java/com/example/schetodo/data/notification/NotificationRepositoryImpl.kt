@@ -72,6 +72,6 @@ class NotificationRepositoryImpl @Inject constructor(
                 notificationDao.insertNotifications(
                     notifications.map { it.copy(todoBlockId = todoBlockId) }
                 )
-        }
+        }.join()
     }
 }
