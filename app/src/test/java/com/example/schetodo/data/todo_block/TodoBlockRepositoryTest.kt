@@ -1,7 +1,9 @@
 package com.example.schetodo.data.todo_block
 
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -12,28 +14,31 @@ import java.time.LocalTime
 internal class TodoBlockRepositoryTest {
 
     private val fakeTodoBlockDao = FakeTodoBlockDao()
-    private val todoBlockRepository = TodoBlockRepositoryImpl(fakeTodoBlockDao)
+    private val todoBlockRepository = TodoBlockRepositoryImpl(
+        fakeTodoBlockDao, CoroutineScope(SupervisorJob())
+    )
     private val testTime = LocalTime.now()
 
     @Test
-    fun when_unmarking_blocks_on_date_for_deletion_then_blocks_previously_marked_are_not_unmarked() = runTest {
-        val time = LocalTime.of(10, 0)
-        val date = LocalDate.now()
-        val todoBlock1 = TodoBlock(1, "", date, time, time, null)
-        val todoBlock2 = TodoBlock(2, "", date, time, time,  null)
-        val todoBlock3 = TodoBlock(3, "", null, time, time,  1)
-        todoBlockRepository.insertTodoBlock(todoBlock1)
-        todoBlockRepository.insertTodoBlock(todoBlock2)
-        todoBlockRepository.insertTodoBlock(todoBlock3)
+    fun when_unmarking_blocks_on_date_for_deletion_then_blocks_previously_marked_are_not_unmarked() =
+        runTest {
+            val time = LocalTime.of(10, 0)
+            val date = LocalDate.now()
+            val todoBlock1 = TodoBlock(1, "", date, time, time, null)
+            val todoBlock2 = TodoBlock(2, "", date, time, time, null)
+            val todoBlock3 = TodoBlock(3, "", null, time, time, 1)
+            todoBlockRepository.insertTodoBlock(todoBlock1)
+            todoBlockRepository.insertTodoBlock(todoBlock2)
+            todoBlockRepository.insertTodoBlock(todoBlock3)
 
-        todoBlockRepository.markTodoBlockForDeletion(todoBlock1.todoBlockId)
-        todoBlockRepository.markTodoBlocksOnDateForDeletion(date)
-        todoBlockRepository.unmarkTodoBlocksOnDateForDeletion(date)
+            todoBlockRepository.markTodoBlockForDeletion(todoBlock1.todoBlockId)
+            todoBlockRepository.markTodoBlocksOnDateForDeletion(date)
+            todoBlockRepository.unmarkTodoBlocksOnDateForDeletion(date)
 
-        assertThat(todoBlockRepository.getAllTodoBlocks().first()).containsExactly(
-            todoBlock2, todoBlock3
-        )
-    }
+            assertThat(todoBlockRepository.getAllTodoBlocks().first()).containsExactly(
+                todoBlock2, todoBlock3
+            )
+        }
 
     @Test
     fun check_if_template_todo_blocks_overlap_with_todo_block_from_same_template() = runTest {

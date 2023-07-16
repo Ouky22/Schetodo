@@ -1,15 +1,18 @@
 package com.example.schetodo.data.todo_block
 
+import com.example.schetodo.di.CoroutineScopeModule.ApplicationCoroutineScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import javax.inject.Inject
 
 class TodoBlockRepositoryImpl @Inject constructor(
-    private val todoBlockDao: TodoBlockDao
+    private val todoBlockDao: TodoBlockDao,
+    @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope
 ) : TodoBlockRepository {
 
     init {
@@ -28,60 +31,91 @@ class TodoBlockRepositoryImpl @Inject constructor(
     override fun getAllTodoBlocks() = todoBlockDao.getAllTodoBlocks()
 
     override suspend fun insertTodoBlock(todoBlock: TodoBlock) =
-        todoBlockDao.insertTodoBlock(todoBlock)
+        withContext(applicationCoroutineScope.coroutineContext) {
+            todoBlockDao.insertTodoBlock(todoBlock)
+        }
 
     override suspend fun updateTodoBlock(todoBlock: TodoBlock) =
-        todoBlockDao.updateTodoBlock(todoBlock)
+        withContext(applicationCoroutineScope.coroutineContext) {
+            todoBlockDao.updateTodoBlock(todoBlock)
+        }
 
     override suspend fun updateOrInsertTodoBlock(todoBlock: TodoBlock) =
-        todoBlockDao.updateOrInsertTodoBlock(todoBlock)
+        withContext(applicationCoroutineScope.coroutineContext) {
+            todoBlockDao.updateOrInsertTodoBlock(todoBlock)
+        }
 
     override suspend fun markTodoBlockForDeletion(todoBlockId: Int) {
-        deleteAllTodoBlocksMarkedForDeletion()
-        todoBlockDao.markTodoBlockForDeletion(todoBlockId)
+        applicationCoroutineScope.launch {
+            deleteAllTodoBlocksMarkedForDeletion()
+            todoBlockDao.markTodoBlockForDeletion(todoBlockId)
+        }.join()
     }
 
     override suspend fun markTodoBlocksOnDateForDeletion(date: LocalDate) {
-        deleteAllTodoBlocksMarkedForDeletion()
-        todoBlockDao.markTodoBlocksOnDateForDeletion(date.toEpochDay())
+        applicationCoroutineScope.launch {
+            deleteAllTodoBlocksMarkedForDeletion()
+            todoBlockDao.markTodoBlocksOnDateForDeletion(date.toEpochDay())
+        }.join()
     }
 
     override suspend fun markTodoBlocksOfScheduleTemplateForDeletion(templateId: Int) {
-        deleteAllTodoBlocksMarkedForDeletion()
-        todoBlockDao.markTodoBlocksOfScheduleTemplateForDeletion(templateId)
+        applicationCoroutineScope.launch {
+            deleteAllTodoBlocksMarkedForDeletion()
+            todoBlockDao.markTodoBlocksOfScheduleTemplateForDeletion(templateId)
+        }.join()
     }
 
     override suspend fun unmarkTodoBlockForDeletion(todoBlockId: Int) {
-        val todoBlock = todoBlockDao.getTodoBlockById(todoBlockId).first() ?: return
-        val todoBlockIsFromTemplate = todoBlock.templateId != null
+        applicationCoroutineScope.launch {
+            val todoBlock = todoBlockDao.getTodoBlockById(todoBlockId).first() ?: return@launch
+            val todoBlockIsFromTemplate = todoBlock.templateId != null
 
-        val doesNotOverlapWithOtherTodoBlock =
-            if (todoBlockIsFromTemplate)
-                !templateTodoBlockOverlapsWithTodoBlockFromSameTemplate(todoBlock)
-            else
-                !todoBlockOverlapsWithOtherTodoBlock(todoBlock)
+            val doesNotOverlapWithOtherTodoBlock =
+                if (todoBlockIsFromTemplate)
+                    !templateTodoBlockOverlapsWithTodoBlockFromSameTemplate(todoBlock)
+                else
+                    !todoBlockOverlapsWithOtherTodoBlock(todoBlock)
 
-        if (doesNotOverlapWithOtherTodoBlock)
-            todoBlockDao.unmarkTodoBlockForDeletion(todoBlockId)
+            if (doesNotOverlapWithOtherTodoBlock)
+                todoBlockDao.unmarkTodoBlockForDeletion(todoBlockId)
+        }.join()
     }
 
-    override suspend fun unmarkTodoBlocksOfScheduleTemplateForDeletion(templateId: Int) =
-        todoBlockDao.unmarkTodoBlocksOfScheduleTemplateForDeletion(templateId)
+    override suspend fun unmarkTodoBlocksOfScheduleTemplateForDeletion(templateId: Int) {
+        applicationCoroutineScope.launch {
+            todoBlockDao.unmarkTodoBlocksOfScheduleTemplateForDeletion(templateId)
+        }.join()
+    }
 
-    override suspend fun unmarkTodoBlocksOnDateForDeletion(date: LocalDate) =
-        todoBlockDao.unmarkTodoBlocksOnDateForDeletion(date.toEpochDay())
+    override suspend fun unmarkTodoBlocksOnDateForDeletion(date: LocalDate) {
+        applicationCoroutineScope.launch {
+            todoBlockDao.unmarkTodoBlocksOnDateForDeletion(date.toEpochDay())
+        }.join()
+    }
 
-    override suspend fun deleteAllTodoBlocksMarkedForDeletion() =
-        todoBlockDao.deleteAllTodoBlocksMarkedForDeletion()
+    override suspend fun deleteAllTodoBlocksMarkedForDeletion() {
+        applicationCoroutineScope.launch {
+            todoBlockDao.deleteAllTodoBlocksMarkedForDeletion()
+        }.join()
+    }
 
-    override suspend fun deleteTodoBlock(todoBlock: TodoBlock) =
-        todoBlockDao.deleteTodoBlock(todoBlock)
+    override suspend fun deleteTodoBlock(todoBlock: TodoBlock) {
+        applicationCoroutineScope.launch {
+            todoBlockDao.deleteTodoBlock(todoBlock)
+        }.join()
+    }
 
     override suspend fun deleteTodoBlockById(todoBlockId: Int) =
-        todoBlockDao.deleteTodoBlockById(todoBlockId)
+        applicationCoroutineScope.launch {
+            todoBlockDao.deleteTodoBlockById(todoBlockId)
+        }.join()
 
-    override suspend fun deleteAllTodoBlocksOfScheduleTemplate(templateId: Int) =
-        todoBlockDao.deleteAllTodoBlocksOfScheduleTemplate(templateId)
+    override suspend fun deleteAllTodoBlocksOfScheduleTemplate(templateId: Int) {
+        applicationCoroutineScope.launch {
+            todoBlockDao.deleteAllTodoBlocksOfScheduleTemplate(templateId)
+        }.join()
+    }
 
     override suspend fun todoBlockOverlapsWithOtherTodoBlock(todoBlock: TodoBlock): Boolean {
         val date = todoBlock.date ?: return false
