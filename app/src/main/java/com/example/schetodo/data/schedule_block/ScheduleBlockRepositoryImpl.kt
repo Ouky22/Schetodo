@@ -12,6 +12,7 @@ import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo_block.TodoBlockRepository
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.user_preferences.UserPreferencesRepository
+import com.example.schetodo.di.CoroutineScopeModule.ApplicationCoroutineScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -28,7 +29,8 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
     private val todoBlockRepository: TodoBlockRepository,
     private val todoDao: TodoDao,
     private val notificationRepository: NotificationRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
+    @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope
 ) : ScheduleBlockRepository {
 
     init {
@@ -38,7 +40,9 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
     }
 
     override suspend fun unmarkTodoBlockForDeletion(todoBlockId: Int) {
-        todoBlockRepository.unmarkTodoBlockForDeletion(todoBlockId)
+        applicationCoroutineScope.launch {
+            todoBlockRepository.unmarkTodoBlockForDeletion(todoBlockId)
+        }
     }
 
     override fun getScheduleBlocksOnDate(date: LocalDate): Flow<List<ScheduleBlock>> =
@@ -57,23 +61,24 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
             .map { scheduleBlocks -> removeTodoCategoriesMarkedForDeletion(scheduleBlocks) }
 
     override suspend fun insertOrUpdateScheduleBlock(scheduleBlock: ScheduleBlock) {
-        var todoBlockId =
-            todoBlockRepository.updateOrInsertTodoBlock(scheduleBlock.todoBlock).toInt()
+        applicationCoroutineScope.launch {
+            var todoBlockId =
+                todoBlockRepository.updateOrInsertTodoBlock(scheduleBlock.todoBlock).toInt()
 
-        // updateOrInsertTodoBlock returns -1 when todoBlock is updated
-        val todoBlockUpdated = todoBlockId <= 0
-        if (todoBlockUpdated)
-            todoBlockId = scheduleBlock.todoBlock.todoBlockId
+            // updateOrInsertTodoBlock returns -1 when todoBlock is updated
+            val todoBlockUpdated = todoBlockId <= 0
+            if (todoBlockUpdated)
+                todoBlockId = scheduleBlock.todoBlock.todoBlockId
 
-        connectTodoBlockAndTodos(todoBlockId, scheduleBlock.todos, todoBlockUpdated)
-        setFlagOfTodosToInProgress(scheduleBlock.todos)
-        connectTodoBlockAndTodoCategories(
-            todoBlockId, scheduleBlock.todoCategories, todoBlockUpdated
-        )
-        setNotificationsOfTodoBlock(todoBlockId, scheduleBlock.notifications, todoBlockUpdated)
-        setNotificationPreferences(scheduleBlock)
+            connectTodoBlockAndTodos(todoBlockId, scheduleBlock.todos, todoBlockUpdated)
+            setFlagOfTodosToInProgress(scheduleBlock.todos)
+            connectTodoBlockAndTodoCategories(
+                todoBlockId, scheduleBlock.todoCategories, todoBlockUpdated
+            )
+            setNotificationsOfTodoBlock(todoBlockId, scheduleBlock.notifications, todoBlockUpdated)
+            setNotificationPreferences(scheduleBlock)
+        }.join()
     }
-
 
     override val showScheduleBlockNotificationAtBeginning =
         userPreferencesRepository.showScheduleBlockNotificationAtBeginning

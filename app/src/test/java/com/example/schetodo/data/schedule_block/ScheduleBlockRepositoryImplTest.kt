@@ -14,7 +14,9 @@ import com.example.schetodo.data.todo_block.TodoBlock
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.user_preferences.FakeUserPreferencesRepository
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -43,7 +45,8 @@ internal class ScheduleBlockRepositoryImplTest {
             fakeTodoBlockRepository,
             fakeTodoDao,
             fakeNotificationRepository,
-            fakeUserPreferencesRepository
+            fakeUserPreferencesRepository,
+            CoroutineScope(SupervisorJob())
         )
 
     private val startTime = LocalTime.of(10, 15)
