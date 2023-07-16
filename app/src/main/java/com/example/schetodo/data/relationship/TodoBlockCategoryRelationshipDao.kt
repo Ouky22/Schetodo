@@ -1,17 +1,16 @@
 package com.example.schetodo.data.relationship
 
-import androidx.room.Dao
-import androidx.room.Query
-import androidx.room.Transaction
+import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TodoBlockCategoryRelationshipDao {
-    @Transaction
     @Query("INSERT INTO TodoBlockCategoryRelationship VALUES (:todoBlockId, :todoCategoryId)")
     suspend fun connectTodoBlockAndTodoCategory(todoBlockId: Int, todoCategoryId: Int)
 
-    @Transaction
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun connectTodoBlocksAndTodoCategories(relationships: List<TodoBlockCategoryRelationship>)
+
     @Query("DELETE FROM TodoBlockCategoryRelationship WHERE todoBlockId = :todoBlockId")
     suspend fun disconnectAllTodoCategoriesFromTodoBlock(todoBlockId: Int)
 

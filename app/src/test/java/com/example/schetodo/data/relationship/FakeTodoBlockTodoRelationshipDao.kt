@@ -9,6 +9,10 @@ class FakeTodoBlockTodoRelationshipDao : TodoBlockTodoRelationshipDao {
         todoBlockTodoRelationships.add(TodoBlockTodoRelationship(todoBlockId, todoId))
     }
 
+    override suspend fun connectTodoBlocksAndTodos(relationships: List<TodoBlockTodoRelationship>) {
+        todoBlockTodoRelationships.addAll(relationships)
+    }
+
     override suspend fun disconnectAllTodosFromTodoBlock(todoBlockId: Int) {
         todoBlockTodoRelationships.removeIf { it.todoBlockId == todoBlockId }
     }

@@ -10,6 +10,10 @@ class FakeTodoBlockCategoryRelationshipDao : TodoBlockCategoryRelationshipDao {
         todoBlockCategoryRelationships.add(TodoBlockCategoryRelationship(todoBlockId, todoCategoryId))
     }
 
+    override suspend fun connectTodoBlocksAndTodoCategories(relationships: List<TodoBlockCategoryRelationship>) {
+        todoBlockCategoryRelationships.addAll(relationships)
+    }
+
     override suspend fun disconnectAllTodoCategoriesFromTodoBlock(todoBlockId: Int) {
         todoBlockCategoryRelationships.removeIf { it.todoBlockId == todoBlockId }
     }
