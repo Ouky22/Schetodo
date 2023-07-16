@@ -1,6 +1,5 @@
 package com.example.schetodo.data.schedule_block
 
-import android.util.Log
 import com.example.schetodo.data.notification.Notification
 import com.example.schetodo.data.notification.NotificationRepository
 import com.example.schetodo.data.relationship.TodoBlockCategoryRelationship
@@ -66,39 +65,15 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
         if (todoBlockUpdated)
             todoBlockId = scheduleBlock.todoBlock.todoBlockId
 
-        val otherStuffStart = System.currentTimeMillis()
-
-        var start = System.currentTimeMillis()
         connectTodoBlockAndTodos(todoBlockId, scheduleBlock.todos, todoBlockUpdated)
-        var time = System.currentTimeMillis() - start
-        Log.d("testing", "$time ms for connecting todo block and todo")
-
-        start = System.currentTimeMillis()
         setFlagOfTodosToInProgress(scheduleBlock.todos)
-        time = System.currentTimeMillis() - start
-        Log.d("testing", "$time ms for setting flag of todos")
-
-        start = System.currentTimeMillis()
         connectTodoBlockAndTodoCategories(
             todoBlockId, scheduleBlock.todoCategories, todoBlockUpdated
         )
-        time = System.currentTimeMillis() - start
-        Log.d("testing", "$time ms for connecting todo block and categories")
-
-        start = System.currentTimeMillis()
         setNotificationsOfTodoBlock(todoBlockId, scheduleBlock.notifications, todoBlockUpdated)
-        time = System.currentTimeMillis() - start
-        Log.d("testing", "$time ms for setting notifications")
-
-        start = System.currentTimeMillis()
         setNotificationPreferences(scheduleBlock)
-        time = System.currentTimeMillis() - start
-        Log.d("testing", "$time ms for setting notification preferences")
-
-        val otherStuffEnd = System.currentTimeMillis() - otherStuffStart
-        Log.d("testing", "$otherStuffEnd ms for inserting other stuff")
-        Log.d("testing", "---------------------------------------------")
     }
+
 
     override val showScheduleBlockNotificationAtBeginning =
         userPreferencesRepository.showScheduleBlockNotificationAtBeginning
