@@ -6,13 +6,17 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import com.example.schetodo.data.todo.TodoFilterSettings
+import com.example.schetodo.di.CoroutineScopeModule.ApplicationCoroutineScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
 
 class UserPreferencesRepositoryImpl @Inject constructor(
-    private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>,
+    @ApplicationCoroutineScope private val applicationCoroutineScope: CoroutineScope
 ) : UserPreferencesRepository {
     private val TAG = "UserPreferencesRepositoryImpl"
 
@@ -55,15 +59,19 @@ class UserPreferencesRepositoryImpl @Inject constructor(
         }
 
     override suspend fun setShowScheduleBlockNotificationAtBeginning(show: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[SHOW_SCHEDULE_BLOCK_NOTIFICATION_AT_BEGINNING] = show
-        }
+        applicationCoroutineScope.launch {
+            dataStore.edit { preferences ->
+                preferences[SHOW_SCHEDULE_BLOCK_NOTIFICATION_AT_BEGINNING] = show
+            }
+        }.join()
     }
 
     override suspend fun setShowScheduleBlockNotificationAtEnd(show: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[SHOW_SCHEDULE_BLOCK_NOTIFICATION_AT_END] = show
-        }
+        applicationCoroutineScope.launch {
+            dataStore.edit { preferences ->
+                preferences[SHOW_SCHEDULE_BLOCK_NOTIFICATION_AT_END] = show
+            }
+        }.join()
     }
 
     override val todoFilterSettingsPreferences = dataStore.data
@@ -77,12 +85,14 @@ class UserPreferencesRepositoryImpl @Inject constructor(
         .map { mapTodoFilterSettingsPreferences(it) }
 
     override suspend fun setTodoFilterSettings(todoFilterSettings: TodoFilterSettings) {
-        dataStore.edit { preferences ->
-            preferences[SHOW_RECURRING_TODOS] = todoFilterSettings.showRecurringTodos
-            preferences[SHOW_UNDONE_TODOS] = todoFilterSettings.showUndoneTodos
-            preferences[SHOW_IN_PROGRESS_TODOS] = todoFilterSettings.showInProgressTodos
-            preferences[SHOW_DONE_TODOS] = todoFilterSettings.showDoneTodos
-        }
+        applicationCoroutineScope.launch {
+            dataStore.edit { preferences ->
+                preferences[SHOW_RECURRING_TODOS] = todoFilterSettings.showRecurringTodos
+                preferences[SHOW_UNDONE_TODOS] = todoFilterSettings.showUndoneTodos
+                preferences[SHOW_IN_PROGRESS_TODOS] = todoFilterSettings.showInProgressTodos
+                preferences[SHOW_DONE_TODOS] = todoFilterSettings.showDoneTodos
+            }
+        }.join()
     }
 
     private fun mapTodoFilterSettingsPreferences(preferences: Preferences) =
