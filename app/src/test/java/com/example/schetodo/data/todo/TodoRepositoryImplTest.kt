@@ -6,6 +6,8 @@ import org.junit.Before
 import com.example.schetodo.data.user_preferences.FakeUserPreferencesRepository
 import com.example.schetodo.data.user_preferences.UserPreferencesRepository
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import org.junit.Test
 
@@ -20,7 +22,10 @@ internal class TodoRepositoryImplTest {
     fun init() {
         fakeTodoDao = FakeTodoDao()
         userPreferencesRepository = FakeUserPreferencesRepository()
-        todoRepositoryImpl = TodoRepositoryImpl(fakeTodoDao, userPreferencesRepository)
+        todoRepositoryImpl =
+            TodoRepositoryImpl(
+                fakeTodoDao, userPreferencesRepository, CoroutineScope(SupervisorJob())
+            )
     }
 
     @Test
@@ -34,7 +39,9 @@ internal class TodoRepositoryImplTest {
 
         fakeTodoDao.markTodoForDeletion(todo1.todoId)
         fakeTodoDao.markTodoForDeletion(todo2.todoId)
-        val todoRepository = TodoRepositoryImpl(fakeTodoDao, userPreferencesRepository)
+        val todoRepository = TodoRepositoryImpl(
+            fakeTodoDao, userPreferencesRepository, CoroutineScope(SupervisorJob())
+        )
 
         assertThat(todoRepository.getTodosOfTodoCategory(1).first()).containsExactly(todo3)
     }
