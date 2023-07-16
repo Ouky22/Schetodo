@@ -1,8 +1,11 @@
 package com.example.schetodo.data.schedule_block
 
+import android.util.Log
 import com.example.schetodo.data.notification.Notification
 import com.example.schetodo.data.notification.NotificationRepository
+import com.example.schetodo.data.relationship.TodoBlockCategoryRelationship
 import com.example.schetodo.data.relationship.TodoBlockCategoryRelationshipDao
+import com.example.schetodo.data.relationship.TodoBlockTodoRelationship
 import com.example.schetodo.data.relationship.TodoBlockTodoRelationshipDao
 import com.example.schetodo.data.todo.Todo
 import com.example.schetodo.data.todo.TodoDao
@@ -13,7 +16,6 @@ import com.example.schetodo.data.user_preferences.UserPreferencesRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -64,9 +66,11 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
         if (todoBlockUpdated)
             todoBlockId = scheduleBlock.todoBlock.todoBlockId
 
-        connectTodoBlockAndTodos(todoBlockId, scheduleBlock.todos)
+        connectTodoBlockAndTodos(todoBlockId, scheduleBlock.todos, todoBlockUpdated)
         setFlagOfTodosToInProgress(scheduleBlock.todos)
-        connectTodoBlockAndTodoCategories(todoBlockId, scheduleBlock.todoCategories)
+        connectTodoBlockAndTodoCategories(
+            todoBlockId, scheduleBlock.todoCategories, todoBlockUpdated
+        )
         setNotificationsOfTodoBlock(todoBlockId, scheduleBlock.notifications)
         setNotificationPreferences(scheduleBlock)
     }
@@ -99,31 +103,46 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
 
     private suspend fun connectTodoBlockAndTodos(
         todoBlockId: Int,
-        todos: List<Todo>
+        todos: List<Todo>,
+        todoBlockUpdated: Boolean
     ) {
-        todoBlockTodoRelationshipDao.disconnectAllTodosFromTodoBlock(todoBlockId)
-        todos.forEach {
-            todoBlockTodoRelationshipDao.connectTodoBlockAndTodo(todoBlockId, it.todoId)
-        }
+        if (todoBlockUpdated)
+            todoBlockTodoRelationshipDao.disconnectAllTodosFromTodoBlock(todoBlockId)
+
+        if (todos.isEmpty())
+            return
+
+        todoBlockTodoRelationshipDao.connectTodoBlocksAndTodos(todos.map { todo ->
+            TodoBlockTodoRelationship(todoBlockId, todo.todoId)
+        })
     }
 
     private suspend fun connectTodoBlockAndTodoCategories(
         todoBlockId: Int,
-        todoCategories: List<TodoCategory>
+        todoCategories: List<TodoCategory>,
+        todoBlockUpdated: Boolean
     ) {
-        todoBlockCategoryRelationshipDao.disconnectAllTodoCategoriesFromTodoBlock(todoBlockId)
-        todoCategories.forEach {
-            todoBlockCategoryRelationshipDao.connectTodoBlockAndTodoCategory(
-                todoBlockId, it.categoryId
-            )
-        }
+        if (todoBlockUpdated)
+            todoBlockCategoryRelationshipDao.disconnectAllTodoCategoriesFromTodoBlock(todoBlockId)
+
+        if (todoCategories.isEmpty())
+            return
+
+        todoBlockCategoryRelationshipDao.connectTodoBlocksAndTodoCategories(
+            todoCategories.map { category ->
+                TodoBlockCategoryRelationship(todoBlockId, category.categoryId)
+            }
+        )
     }
 
     private suspend fun setFlagOfTodosToInProgress(todos: List<Todo>) {
-        todos.forEach {
-            if (it.flag != TodoFlag.RECURRING)
-                todoDao.updateTodo(it.copy(flag = TodoFlag.IN_PROGRESS))
-        }
+        if (todos.isEmpty())
+            return
+
+        todoDao.updateTodos(
+            todos.filter { it.flag != TodoFlag.RECURRING }
+                .map { it.copy(flag = TodoFlag.IN_PROGRESS) }
+        )
     }
 
     private suspend fun setNotificationsOfTodoBlock(

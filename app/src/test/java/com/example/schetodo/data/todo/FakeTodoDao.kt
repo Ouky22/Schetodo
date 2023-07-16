@@ -27,6 +27,10 @@ class FakeTodoDao : TodoDao {
         }
     }
 
+    override suspend fun updateTodos(todos: List<Todo>) {
+        todos.forEach { updateTodo(it) }
+    }
+
     override suspend fun deleteTodoById(todoId: Int) {
         todos.removeIf { it.todoId == todoId }
     }
