@@ -1,6 +1,6 @@
 package com.example.schetodo.feature.schedule_template.use_case
 
-import com.example.schetodo.data.FakeScheduleTemplateRepository
+import com.example.schetodo.data.schedule_template.FakeScheduleTemplateRepository
 import com.example.schetodo.data.schedule_template.ScheduleTemplate
 import com.example.schetodo.data.todo_block.FakeTodoBlockRepository
 import com.example.schetodo.data.todo_block.TodoBlock

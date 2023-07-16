@@ -1,7 +1,5 @@
-package com.example.schetodo.data
+package com.example.schetodo.data.schedule_template
 
-import com.example.schetodo.data.schedule_template.ScheduleTemplate
-import com.example.schetodo.data.schedule_template.ScheduleTemplateRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

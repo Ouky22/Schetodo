@@ -1,7 +1,6 @@
 package com.example.schetodo.feature.schedule
 
-import com.example.schetodo.data.FakeScheduleTemplateRepository
-import com.example.schetodo.data.notification.FakeNotificationRepository
+import com.example.schetodo.data.schedule_template.FakeScheduleTemplateRepository
 import com.example.schetodo.data.notification.Notification
 import com.example.schetodo.data.schedule_block.FakeScheduleBlockRepository
 import com.example.schetodo.data.schedule_block.ScheduleBlock
@@ -13,7 +12,6 @@ import com.example.schetodo.data.todo_block.FakeTodoBlockRepository
 import com.example.schetodo.data.todo_block.TodoBlock
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.feature.schedule.components.UiScheduleBlock
-import com.example.schetodo.feature.schedule.notification.FakeTodoBlockNotificationScheduler
 import com.example.schetodo.util.MainDispatcherRule
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,10 +26,6 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import com.example.schetodo.feature.schedule.list.ScheduleEvent.*
 import com.example.schetodo.feature.schedule.list.ScheduleViewModel
-import com.example.schetodo.feature.use_case.ConvertScheduleBlocksToScheduleListItemsUseCase
-import com.example.schetodo.feature.use_case.FormatDateUseCase
-import com.example.schetodo.feature.use_case.FormatTimeUseCase
-import com.example.schetodo.feature.use_case.GeneralUseCases
 import com.example.schetodo.util.generalUseCases
 
 @OptIn(ExperimentalCoroutinesApi::class)
