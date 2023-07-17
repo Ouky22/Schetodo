@@ -101,8 +101,8 @@ class AddEditScheduleBlockViewModel @Inject constructor(
             return
 
         viewModelScope.launch {
-            todoBlockRepository.markTodoBlockForDeletion(todoBlockId)
             _closeAddEditScheduleBlockScreen.value = true
+            todoBlockRepository.markTodoBlockForDeletion(todoBlockId)
         }
     }
 
@@ -126,6 +126,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
                 return@launch
             }
 
+            _closeAddEditScheduleBlockScreen.value = true
             scheduleBlockRepository.insertOrUpdateScheduleBlock(
                 ScheduleBlock(
                     todoBlock = todoBlock,
@@ -134,8 +135,6 @@ class AddEditScheduleBlockViewModel @Inject constructor(
                     notifications = getNotifications(todoBlock)
                 )
             )
-
-            _closeAddEditScheduleBlockScreen.value = true
         }
     }
 
