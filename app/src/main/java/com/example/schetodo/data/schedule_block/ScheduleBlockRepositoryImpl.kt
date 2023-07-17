@@ -152,7 +152,9 @@ class ScheduleBlockRepositoryImpl @Inject constructor(
         if (todoBlockUpdated)
             notificationRepository.updateNotificationsOfTodoBlock(todoBlockId, notifications)
         else if (notifications.isNotEmpty())
-            notificationRepository.insertNotifications(notifications)
+            notificationRepository.insertNotifications(
+                notifications.map { it.copy(todoBlockId = todoBlockId) }
+            )
     }
 
     private suspend fun setNotificationPreferences(scheduleBlock: ScheduleBlock) {
