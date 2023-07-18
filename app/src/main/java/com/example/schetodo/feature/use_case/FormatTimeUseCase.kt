@@ -8,6 +8,12 @@ import javax.inject.Inject
 class FormatTimeUseCase @Inject constructor() {
     operator fun invoke(time: LocalTime): String {
         val formatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
-        return formatter.format(time)
+        val timeString = formatter.format(time)
+
+        val is12HourFormat = timeString.length > 5
+        return if (is12HourFormat)
+            timeString.padStart(8, '0')
+        else
+            timeString
     }
 }

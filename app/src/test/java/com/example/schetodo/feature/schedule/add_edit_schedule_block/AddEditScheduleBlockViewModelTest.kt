@@ -326,7 +326,7 @@ internal class AddEditScheduleBlockViewModelTest {
         val newEndTime = LocalTime.of(13, 45)
         viewModel.onEvent(ChangeEndTime(newEndTime))
 
-        assertThat(viewModel.state.endTime).isEqualTo("1:45 PM")
+        assertThat(viewModel.state.endTime).isEqualTo("01:45 PM")
     }
 
     @Test
@@ -339,7 +339,7 @@ internal class AddEditScheduleBlockViewModelTest {
         val newStartTime = LocalTime.of(13, 45)
         viewModel.onEvent(ChangeStartTime(newStartTime))
 
-        assertThat(viewModel.state.startTime).isEqualTo("1:45 PM")
+        assertThat(viewModel.state.startTime).isEqualTo("01:45 PM")
     }
 
     @Test
@@ -355,8 +355,8 @@ internal class AddEditScheduleBlockViewModelTest {
 
             val state = viewModel.state
             assertThat(state.date).isEqualTo("Wed 15 Feb, 2023")
-            assertThat(state.startTime).isEqualTo("1:45 PM")
-            assertThat(state.endTime).isEqualTo("3:00 PM")
+            assertThat(state.startTime).isEqualTo("01:45 PM")
+            assertThat(state.endTime).isEqualTo("03:00 PM")
             assertThat(state.todoCategories).containsExactlyElementsIn(scheduleBlock.todoCategories)
             assertThat(state.todos).containsExactlyElementsIn(scheduleBlock.todos)
             assertThat(state.notes).isEqualTo(scheduleBlock.todoBlock.notes)
@@ -379,8 +379,8 @@ internal class AddEditScheduleBlockViewModelTest {
         )
         val viewModel = createAddEditScheduleBlockViewModel(savedStateHandle)
 
-        assertThat(viewModel.state.startTime).isEqualTo("1:45 PM")
-        assertThat(viewModel.state.endTime).isEqualTo("3:00 PM")
+        assertThat(viewModel.state.startTime).isEqualTo("01:45 PM")
+        assertThat(viewModel.state.endTime).isEqualTo("03:00 PM")
         assertThat(viewModel.state.inEditingMode).isFalse()
     }
 
@@ -396,7 +396,7 @@ internal class AddEditScheduleBlockViewModelTest {
         )
         val viewModel = createAddEditScheduleBlockViewModel(savedStateHandle)
 
-        assertThat(viewModel.state.endTime).isEqualTo("1:45 PM")
+        assertThat(viewModel.state.endTime).isEqualTo("01:45 PM")
         assertThat(viewModel.state.inEditingMode).isFalse()
     }
 
@@ -412,7 +412,7 @@ internal class AddEditScheduleBlockViewModelTest {
         )
         val viewModel = createAddEditScheduleBlockViewModel(savedStateHandle)
 
-        assertThat(viewModel.state.startTime).isEqualTo("1:45 PM")
+        assertThat(viewModel.state.startTime).isEqualTo("01:45 PM")
         assertThat(viewModel.state.inEditingMode).isFalse()
     }
 

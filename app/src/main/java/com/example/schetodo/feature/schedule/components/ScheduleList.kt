@@ -1,16 +1,11 @@
 package com.example.schetodo.feature.schedule.components
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.filled.School
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +22,8 @@ import java.time.LocalTime
 interface ScheduleListItem {
     val startTime: LocalTime
     val endTime: LocalTime
+    val startTimeText: String
+    val endTimeText: String
     val durationHours: UiText
     val durationMinutes: UiText
 }
@@ -35,15 +32,17 @@ data class ScheduleGap(
     override val startTime: LocalTime,
     override val endTime: LocalTime,
     override val durationHours: UiText = UiText.DynamicString(""),
-    override val durationMinutes: UiText = UiText.DynamicString("")
+    override val durationMinutes: UiText = UiText.DynamicString(""),
+    override val startTimeText: String,
+    override val endTimeText: String
 ) : ScheduleListItem
 
 data class UiScheduleBlock(
     val todoBlockId: Int = 0,
     override val startTime: LocalTime = LocalTime.of(0, 0),
     override val endTime: LocalTime = LocalTime.of(0, 0),
-    val startTimeText: String = "",
-    val endTimeText: String = "",
+    override val startTimeText: String = "",
+    override val endTimeText: String = "",
     override val durationHours: UiText = UiText.DynamicString(""),
     override val durationMinutes: UiText = UiText.DynamicString(""),
     val categories: List<TodoCategory> = emptyList(),
@@ -63,35 +62,34 @@ fun ScheduleList(
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(top = 16.dp, bottom = 100.dp, start = 12.dp, end = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(
             items = scheduleListItems, key = { it.startTime.toSecondOfDay() }
         ) { scheduleListItem ->
+            val isLastItem = scheduleListItems.last() == scheduleListItem
+
             when (scheduleListItem) {
                 is UiScheduleBlock ->
                     ScheduleBlockItem(
                         todoCategories = scheduleListItem.categories,
                         todoDescriptions = scheduleListItem.todoDescriptions,
-                        todoBlocKNotes = scheduleListItem.notes,
+                        todoBlockNotes = scheduleListItem.notes,
                         startTimeString = scheduleListItem.startTimeText,
-                        endTimeString = scheduleListItem.endTimeText,
+                        endTimeString = if (isLastItem) scheduleListItem.endTimeText else null,
                         durationString = "${scheduleListItem.durationHours.asString()} ${scheduleListItem.durationMinutes.asString()}",
-                        modifier = Modifier.clickable { onScheduleBlockItemClick(scheduleListItem.todoBlockId) },
-                        elevate = scheduleListItem.isCurrentScheduleBlock
+                        elevate = scheduleListItem.isCurrentScheduleBlock,
+                        onClick = { onScheduleBlockItemClick(scheduleListItem.todoBlockId) }
                     )
                 is ScheduleGap ->
-                    OutlinedButton(
+                    ScheduleBlockItem(
+                        startTimeString = scheduleListItem.startTimeText,
+                        endTimeString = if (isLastItem) scheduleListItem.endTimeText else null,
+                        durationString = "${scheduleListItem.durationHours.asString()} ${scheduleListItem.durationMinutes.asString()}",
                         onClick = {
-                            onScheduleGapClick(
-                                scheduleListItem.startTime,
-                                scheduleListItem.endTime
-                            )
-                        }, modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = "${scheduleListItem.durationHours.asString()} ${scheduleListItem.durationMinutes.asString()}")
-                    }
+                            onScheduleGapClick(scheduleListItem.startTime, scheduleListItem.endTime)
+                        }
+                    )
             }
         }
     }
@@ -123,7 +121,9 @@ fun createTodoBlocksForPreview(): List<ScheduleListItem> {
         ScheduleGap(
             startTime = LocalTime.of(0, 0),
             endTime = LocalTime.of(12, 0),
-            durationHours = UiText.DynamicString("12h")
+            durationHours = UiText.DynamicString("12h"),
+            startTimeText = "00:00",
+            endTimeText = "12:00"
         ),
         UiScheduleBlock(
             todoBlockId = 1,
@@ -141,7 +141,9 @@ fun createTodoBlocksForPreview(): List<ScheduleListItem> {
         ScheduleGap(
             startTime = LocalTime.of(15, 0),
             endTime = LocalTime.of(15, 30),
-            durationMinutes = UiText.DynamicString("30min")
+            durationMinutes = UiText.DynamicString("30min"),
+            startTimeText = "15:00",
+            endTimeText = "15:30"
         ),
         UiScheduleBlock(
             todoBlockId = 3,
@@ -169,7 +171,9 @@ fun createTodoBlocksForPreview(): List<ScheduleListItem> {
             startTime = LocalTime.of(17, 0),
             endTime = LocalTime.of(23, 59),
             durationHours = UiText.DynamicString("6h"),
-            durationMinutes = UiText.DynamicString("59min")
+            durationMinutes = UiText.DynamicString("59min"),
+            startTimeText = "17:00",
+            endTimeText = "23:59"
         )
     )
 }

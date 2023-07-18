@@ -28,7 +28,9 @@ class ConvertScheduleBlocksToScheduleListItemsUseCase @Inject constructor(
                         startTime = previousEndTime,
                         endTime = scheduleBlock.todoBlock.startTime,
                         durationHours = getDurationHoursUiText(gapDuration),
-                        durationMinutes = getDurationMinutesUiText(gapDuration)
+                        durationMinutes = getDurationMinutesUiText(gapDuration),
+                        startTimeText = formatTimeUseCase(previousEndTime),
+                        endTimeText = formatTimeUseCase(scheduleBlock.todoBlock.startTime)
                     )
                 )
 
@@ -46,7 +48,9 @@ class ConvertScheduleBlocksToScheduleListItemsUseCase @Inject constructor(
                         startTime = previousEndTime,
                         endTime = scheduleMaxTime,
                         durationHours = getDurationHoursUiText(gap),
-                        durationMinutes = getDurationMinutesUiText(gap)
+                        durationMinutes = getDurationMinutesUiText(gap),
+                        startTimeText = formatTimeUseCase(previousEndTime),
+                        endTimeText = formatTimeUseCase(scheduleMaxTime)
                     )
                 )
         }

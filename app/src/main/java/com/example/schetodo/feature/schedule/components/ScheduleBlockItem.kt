@@ -1,5 +1,6 @@
 package com.example.schetodo.feature.schedule.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
@@ -7,12 +8,13 @@ import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.feature.todos.getIconByName
 import com.example.schetodo.feature.todos.todoCategoryColors
@@ -20,71 +22,114 @@ import com.example.schetodo.ui.components.CategoryItem
 import com.example.schetodo.ui.theme.SchetodoTheme
 import com.example.schetodo.ui.util.appendDotsToStrings
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ScheduleBlockItem(
     modifier: Modifier = Modifier,
-    todoCategories: List<TodoCategory>,
-    todoDescriptions: List<String>,
-    todoBlocKNotes: String,
-    startTimeString: String,
-    endTimeString: String,
+    todoCategories: List<TodoCategory> = emptyList(),
+    todoDescriptions: List<String> = emptyList(),
+    todoBlockNotes: String? = null,
+    startTimeString: String? = null,
+    endTimeString: String? = null,
     durationString: String,
-    elevate: Boolean = false
+    elevate: Boolean = false,
+    onClick: () -> Unit
 ) {
-    OutlinedCard(
-        modifier = modifier,
-        elevation = if (elevate) CardDefaults.elevatedCardElevation() else CardDefaults.outlinedCardElevation()
+    TimeStampsWrapper(
+        startTime = startTimeString,
+        endTime = endTimeString,
+        modifier = modifier.fillMaxWidth()
     ) {
-        Column(
-            modifier = Modifier.padding(8.dp)
+        OutlinedCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onClick() },
+            elevation = if (elevate) CardDefaults.elevatedCardElevation() else CardDefaults.outlinedCardElevation()
         ) {
-            if (todoCategories.isNotEmpty()) {
-                FlowRow(
-                    modifier = Modifier.wrapContentHeight()
-                ) {
-                    todoCategories.forEach { todoCategory ->
-                        CategoryItem(
-                            modifier = Modifier
-                                .padding(2.dp)
-                                .height(50.dp),
-                            todoCategoryName = todoCategory.name,
-                            todoCategoryColor = Color(todoCategory.color),
-                            todoCategoryIcon = getIconByName(todoCategory.iconName)
-                                ?: Icons.Filled.Category,
-                            textStyle = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                }
-            }
-            if (todoDescriptions.isNotEmpty()) {
+            Column(modifier = Modifier.padding(8.dp)) {
+                if (todoCategories.isNotEmpty())
+                    CategoriesFlowRow(
+                        todoCategories = todoCategories,
+                        modifier = Modifier.wrapContentHeight()
+                    )
+
+                if (todoDescriptions.isNotEmpty())
+                    Text(
+                        modifier = Modifier.padding(8.dp),
+                        text = appendDotsToStrings(todoDescriptions, separator = "\n")
+                    )
+
+                if (todoBlockNotes != null && todoBlockNotes.isNotEmpty())
+                    Text(
+                        text = todoBlockNotes,
+                        modifier = Modifier.padding(8.dp)
+                    )
+
                 Text(
-                    modifier = Modifier.padding(8.dp),
-                    text = appendDotsToStrings(todoDescriptions, separator = "\n")
-                )
-            }
-            if (todoBlocKNotes.isNotEmpty()) {
-                Text(
-                    text = todoBlocKNotes,
+                    text = durationString,
                     modifier = Modifier.padding(8.dp)
                 )
             }
-            Divider(
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp)
-            )
+        }
+    }
+}
 
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
+@Composable
+fun TimeStampsWrapper(
+    modifier: Modifier = Modifier,
+    startTime: String?,
+    endTime: String?,
+    content: @Composable () -> Unit
+) {
+    ConstraintLayout(modifier = modifier) {
+        val (startTimeTextRef, endTimeRef, contentRef) = createRefs()
+
+        Row(modifier = Modifier.constrainAs(contentRef) {
+            start.linkTo(startTimeTextRef.end, margin = 8.dp)
+            end.linkTo(parent.end)
+            top.linkTo(startTimeTextRef.bottom)
+            bottom.linkTo(endTimeRef.top)
+            width = Dimension.fillToConstraints
+        }) {
+            content()
+        }
+
+        if (startTime != null)
+            Text(
+                modifier = Modifier.constrainAs(startTimeTextRef) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                },
+                text = startTime
+            )
+        if (endTime != null)
+            Text(
+                modifier = Modifier.constrainAs(endTimeRef) {
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                },
+                text = endTime
+            )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun CategoriesFlowRow(
+    modifier: Modifier = Modifier,
+    todoCategories: List<TodoCategory>
+) {
+    FlowRow(modifier = modifier) {
+        todoCategories.forEach { todoCategory ->
+            CategoryItem(
                 modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .align(CenterHorizontally)
-            ) {
-                Text(text = "$startTimeString - $endTimeString")
-                Text(text = durationString)
-            }
+                    .padding(2.dp)
+                    .height(50.dp),
+                todoCategoryName = todoCategory.name,
+                todoCategoryColor = Color(todoCategory.color),
+                todoCategoryIcon = getIconByName(todoCategory.iconName)
+                    ?: Icons.Filled.Category,
+                textStyle = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }
@@ -114,10 +159,11 @@ fun ScheduleBlockItemPreview() {
                 .fillMaxWidth(),
             todoCategories = todoCategories,
             todoDescriptions = listOf("Wash the dishes", "Clean the floor", "Bake a cake"),
-            todoBlocKNotes = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
+            todoBlockNotes = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
             startTimeString = "14.00",
             endTimeString = "16.30",
-            durationString = "2 Std 30 min"
+            durationString = "2 Std 30 min",
+            onClick = {}
         )
     }
 }
@@ -132,10 +178,11 @@ fun ScheduleBlockItemPreviewWithoutCategoriesAndTodos() {
                 .fillMaxWidth(),
             todoCategories = emptyList(),
             todoDescriptions = emptyList(),
-            todoBlocKNotes = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
+            todoBlockNotes = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam",
             startTimeString = "14.00",
             endTimeString = "16.30",
-            durationString = "2 Std 30 min"
+            durationString = "2 Std 30 min",
+            onClick = {}
         )
     }
 }
@@ -154,10 +201,11 @@ fun ScheduleBlockItemPreviewWithoutNotes() {
                 .fillMaxWidth(),
             todoCategories = listOf(category),
             todoDescriptions = listOf("Wash the dishes"),
-            todoBlocKNotes = "",
+            todoBlockNotes = "",
             startTimeString = "14.00",
             endTimeString = "16.30",
-            durationString = "2 Std 30 min"
+            durationString = "2 Std 30 min",
+            onClick = {}
         )
     }
 }
