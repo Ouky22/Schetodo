@@ -123,7 +123,11 @@ fun TodoPickerList(
                 modifier = Modifier
                     .height(125.dp)
                     .padding(vertical = 8.dp, horizontal = 16.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .clickable {
+                        if (todo in selectedTodos) onUndoMarkTodoForSelection(todo)
+                        else onMarkTodoForSelection(todo)
+                    },
                 alignEndSideContentToEnd = true
             )
         }
