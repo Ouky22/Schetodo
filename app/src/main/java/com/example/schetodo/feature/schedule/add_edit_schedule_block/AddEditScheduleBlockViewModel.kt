@@ -118,7 +118,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
 
         viewModelScope.launch {
             val todoBlock = TodoBlock(
-                todoBlockId, state.notes, scheduleBlockDate, startTime, endTime, todoBlockTemplateId
+                todoBlockId, state.notes.trim(), scheduleBlockDate, startTime, endTime, todoBlockTemplateId
             )
 
             if (todoBlockOverlapsWithOtherTodoBlock(todoBlock)) {
