@@ -283,11 +283,12 @@ fun SchedulePager(
     )
 
     var previousPage by remember { mutableStateOf(pagerState.currentPage) }
-    var scrollingAnimatedBySystem by remember { mutableStateOf(false) }
+    // scrolling is by system when e.g. the user clicks on "jump to current date" button. The scroll is not animated by system when user uses a horizontal flip gesture
+    var scrollingBySystemInProgress by remember { mutableStateOf(false) }
 
     LaunchedEffect(pagerState) {
         snapshotFlow { pagerState.currentPage }.collect { currentPage ->
-            if (scrollingAnimatedBySystem) return@collect
+            if (scrollingBySystemInProgress) return@collect
             when {
                 currentPage > previousPage -> onNavigateToNextDate()
                 currentPage < previousPage -> onNavigateToPreviousDate()
@@ -297,14 +298,14 @@ fun SchedulePager(
     }
 
     LaunchedEffect(currentDate) {
-        if (scrollingAnimatedBySystem) return@LaunchedEffect
+        if (scrollingBySystemInProgress || pagerState.isScrollInProgress) return@LaunchedEffect
 
         try {
-            scrollingAnimatedBySystem = true
+            scrollingBySystemInProgress = true
             val targetPage = currentDate.toEpochDay().toInt()
             pagerState.animateScrollToPage(targetPage)
         } finally {
-            scrollingAnimatedBySystem = false
+            scrollingBySystemInProgress = false
             previousPage = pagerState.currentPage
         }
     }
