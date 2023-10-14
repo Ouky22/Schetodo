@@ -84,7 +84,7 @@ dependencies {
     implementation "androidx.compose.material:material:$compose_material_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1"
     implementation "androidx.hilt:hilt-navigation-compose:1.1.0-alpha01"
-    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.2"
 
     // testing
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
