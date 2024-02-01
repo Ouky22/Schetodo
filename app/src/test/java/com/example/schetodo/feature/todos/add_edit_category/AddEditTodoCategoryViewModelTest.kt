@@ -37,6 +37,24 @@ internal class AddEditTodoCategoryViewModelTest {
     private val fakeTodoRepository = FakeTodoRepository()
 
     @Test
+    fun name_length_should_not_exceed_50_characters() = runTest {
+        val todoCategory = TodoCategory(1, "Test", 0xffeeddaa, null, "Icon")
+        fakeTodoCategoryRepository.insertTodoCategory(todoCategory)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(EditTodoCategory.todoCategoryIdArg to todoCategory.categoryId)
+        )
+        val viewModel = AddEditTodoCategoryViewModel(
+            fakeTodoCategoryRepository, fakeTodoRepository, savedStateHandle
+        )
+
+        val categoryName = "x".repeat(50)
+        viewModel.onEvent(ChangeTodoCategoryName(categoryName))
+        viewModel.onEvent(ChangeTodoCategoryName(categoryName + "x"))
+
+        assertThat(viewModel.todoCategoryName).isEqualTo(categoryName)
+    }
+
+    @Test
     fun when_marking_todo_category_for_deletion_then_all_sub_categories_are_marked_for_deletion() =
         runTest {
             val category1 = TodoCategory(1, "Test", 0xffeeddaa, null, "Icon")

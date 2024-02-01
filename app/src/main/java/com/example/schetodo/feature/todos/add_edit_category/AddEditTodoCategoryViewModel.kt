@@ -56,6 +56,8 @@ class AddEditTodoCategoryViewModel @Inject constructor(
 
     private var parentTodoCategoryId: Int? = null
 
+    private val maxNameLength = 50
+
     init {
         val categoryIdForEditing = savedStateHandle.get<Int>(EditTodoCategory.todoCategoryIdArg)
         if (categoryIdForEditing != null) {
@@ -123,7 +125,7 @@ class AddEditTodoCategoryViewModel @Inject constructor(
     }
 
     private fun onTodoCategoryNameChanged(newName: String) {
-        todoCategoryName = newName.replace("\n", "").trimStart()
+        todoCategoryName = newName.replace("\n", "").trimStart().take(maxNameLength)
         showInvalidTodoCategoryNameError = false
     }
 
