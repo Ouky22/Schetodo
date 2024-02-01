@@ -35,6 +35,8 @@ class ScheduleViewModel @Inject constructor(
     private val numberOfSchedulesAroundDate = 4L
     private lateinit var lastDateSchedulesWereLoaded: LocalDate
 
+    private val maxScheduleTemplateNameLength = 50
+
     init {
         updateCurrentDate(LocalDate.now())
         loadSchedulesForDate(_scheduleState.value.currentDate)
@@ -72,7 +74,7 @@ class ScheduleViewModel @Inject constructor(
 
     private fun changeScheduleTemplateName(templateName: String) {
         _scheduleState.value = _scheduleState.value.copy(
-            scheduleTemplateName = templateName,
+            scheduleTemplateName = templateName.take(maxScheduleTemplateNameLength),
             showInvalidScheduleTemplateNameError = false
         )
     }
