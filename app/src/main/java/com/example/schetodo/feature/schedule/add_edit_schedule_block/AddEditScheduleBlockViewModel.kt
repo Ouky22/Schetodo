@@ -57,6 +57,8 @@ class AddEditScheduleBlockViewModel @Inject constructor(
     private lateinit var startTime: LocalTime
     private lateinit var endTime: LocalTime
 
+    private val maxNotesLength = 1000
+
     init {
         todoBlockId = savedStateHandle[EditScheduleBlock.todoBlockIdArg] ?: 0
 
@@ -188,7 +190,7 @@ class AddEditScheduleBlockViewModel @Inject constructor(
 
     private fun updateTodoBlockNotes(notes: String) {
         state = state.copy(
-            notes = notes
+            notes = notes.take(maxNotesLength)
         )
     }
 

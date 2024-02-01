@@ -48,6 +48,22 @@ internal class AddEditScheduleBlockViewModelTest {
     }
 
     @Test
+    fun `notes length should not exceed 1000 characters`() = runTest {
+        val date = LocalDate.of(2023, 2, 15)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(AddScheduleBlock.dateStampArg to date.toEpochDay())
+        )
+        val viewModel = createAddEditScheduleBlockViewModel(savedStateHandle)
+        advanceUntilIdle()
+
+        val notes = "x".repeat(1000)
+        viewModel.onEvent(ChangeTodoBlockNotes(notes))
+        viewModel.onEvent(ChangeTodoBlockNotes(notes + "x"))
+
+        assertThat(viewModel.state.notes).isEqualTo(notes)
+    }
+
+    @Test
     fun `test saving notifications of added schedule block for template`() = runTest {
         val viewModel = createAddEditScheduleBlockViewModel(SavedStateHandle())
         advanceUntilIdle()
