@@ -36,6 +36,8 @@ class AddEditTodoViewModel @Inject constructor(
     var todoId = 0
         private set
 
+    private val maxDescriptionLength = 1000
+
     init {
         val todoIdForEditing = savedStateHandle.get<Int>(EditTodo.todoId)
         if (todoIdForEditing != null) {
@@ -93,7 +95,7 @@ class AddEditTodoViewModel @Inject constructor(
 
     private fun onChangeDescription(newDescription: String) {
         _addEditTodoState.value = _addEditTodoState.value.copy(
-            todoDescription = newDescription,
+            todoDescription = newDescription.take(maxDescriptionLength),
             showInvalidDescriptionError = false
         )
     }

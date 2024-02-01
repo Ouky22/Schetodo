@@ -1,14 +1,17 @@
 package com.example.schetodo.feature.todos.add_edit_todo
 
 import androidx.lifecycle.SavedStateHandle
+import com.example.schetodo.data.todo.FakeTodoRepository
 import com.example.schetodo.data.todo.Todo
-import com.example.schetodo.data.todo_category.TodoCategory
 import com.example.schetodo.data.todo.TodoFlag
 import com.example.schetodo.data.todo.TodoPriority
 import com.example.schetodo.data.todo_category.FakeTodoCategoryRepository
-import com.example.schetodo.data.todo.FakeTodoRepository
-import com.example.schetodo.feature.todos.add_edit_todo.AddEditTodoEvent
-import com.example.schetodo.feature.todos.add_edit_todo.AddEditTodoViewModel
+import com.example.schetodo.data.todo_category.TodoCategory
+import com.example.schetodo.feature.todos.add_edit_todo.AddEditTodoEvent.ChangeTodoDescription
+import com.example.schetodo.feature.todos.add_edit_todo.AddEditTodoEvent.ChangeTodoFlag
+import com.example.schetodo.feature.todos.add_edit_todo.AddEditTodoEvent.ChangeTodoPriority
+import com.example.schetodo.feature.todos.add_edit_todo.AddEditTodoEvent.MarkTodoForDeletion
+import com.example.schetodo.feature.todos.add_edit_todo.AddEditTodoEvent.SaveTodo
 import com.example.schetodo.ui.navigation.todos.AddTodo
 import com.example.schetodo.ui.navigation.todos.EditTodo
 import com.example.schetodo.util.MainDispatcherRule
@@ -20,7 +23,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
-import com.example.schetodo.feature.todos.add_edit_todo.AddEditTodoEvent.*
 
 @ExperimentalCoroutinesApi
 internal class AddEditTodoViewModelTest {
@@ -30,6 +32,24 @@ internal class AddEditTodoViewModelTest {
 
     private val fakeTodoRepository = FakeTodoRepository()
     private val fakeTodoCategoryRepository = FakeTodoCategoryRepository()
+
+    @Test
+    fun description_length_should_not_exceed_1000_characters() = runTest {
+        val category = TodoCategory(1, "test category", 0, null, "icon")
+        val todo = Todo(1, "test", TodoPriority.HIGH, TodoFlag.UNDONE, category.categoryId)
+        fakeTodoCategoryRepository.insertTodoCategory(category)
+        fakeTodoRepository.insertTodo(todo)
+        val savedStateHandle =
+            SavedStateHandle(mapOf(EditTodo.todoId to category.categoryId))
+        val viewModel =
+            AddEditTodoViewModel(fakeTodoRepository, fakeTodoCategoryRepository, savedStateHandle)
+
+        val description = "x".repeat(1000)
+        viewModel.onEvent(ChangeTodoDescription(description))
+        viewModel.onEvent(ChangeTodoDescription(description + "x"))
+
+        assertThat(viewModel.addEditTodoState.value.todoDescription).isEqualTo(description)
+    }
 
     @Test
     fun when_in_editing_mode_and_mark_todo_for_deletion_then_todo_marked_for_deletion() = runTest {
