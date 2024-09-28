@@ -45,7 +45,7 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
             notificationRepository.deleteNotification(notification)
 
             // when the app is started an instance of TodoBlockNotificationScheduler is created and
-            // the next notification (is exists) is scheduled
+            // the next notification (if exists) is scheduled
         }
     }
 }
