@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.example.schetodo.data.TODO_CATEGORY_TABLE_NAME
 
 @Entity(
     foreignKeys = [
@@ -14,7 +15,8 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
-    ]
+    ],
+    tableName = TODO_CATEGORY_TABLE_NAME
 )
 data class TodoCategory(
     @PrimaryKey(autoGenerate = true) val categoryId: Int,

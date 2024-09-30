@@ -1,6 +1,7 @@
 package com.example.schetodo.data.todo
 
 import androidx.room.*
+import com.example.schetodo.data.TODO_TABLE_NAME
 import com.example.schetodo.data.todo_category.TodoCategory
 
 @Entity(
@@ -15,7 +16,8 @@ import com.example.schetodo.data.todo_category.TodoCategory
     ],
     indices = [
         Index("categoryId")
-    ]
+    ],
+    tableName = TODO_TABLE_NAME
 )
 data class Todo(
     @PrimaryKey(autoGenerate = true) val todoId: Int,

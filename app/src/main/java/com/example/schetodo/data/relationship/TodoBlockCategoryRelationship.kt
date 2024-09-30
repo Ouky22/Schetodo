@@ -3,6 +3,7 @@ package com.example.schetodo.data.relationship
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
+import com.example.schetodo.data.TODO_BLOCK_CATEGORY_RELATIONSHIP_TABLE_NAME
 import com.example.schetodo.data.todo_block.TodoBlock
 import com.example.schetodo.data.todo_category.TodoCategory
 
@@ -24,7 +25,8 @@ import com.example.schetodo.data.todo_category.TodoCategory
             onUpdate = ForeignKey.CASCADE
         )
     ],
-    indices = [Index("categoryId")]
+    indices = [Index("categoryId")],
+    tableName = TODO_BLOCK_CATEGORY_RELATIONSHIP_TABLE_NAME
 )
 data class TodoBlockCategoryRelationship(
     val todoBlockId: Int,

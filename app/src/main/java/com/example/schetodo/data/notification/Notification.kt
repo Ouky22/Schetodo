@@ -4,10 +4,9 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.example.schetodo.data.NOTIFICATION_TABLE_NAME
 import com.example.schetodo.data.todo_block.TodoBlock
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 @Entity(
     foreignKeys = [
@@ -19,7 +18,8 @@ import java.time.LocalTime
             onUpdate = ForeignKey.CASCADE
         )
     ],
-    indices = [Index("todoBlockId")]
+    indices = [Index("todoBlockId")],
+    tableName = NOTIFICATION_TABLE_NAME
 )
 data class Notification(
     @PrimaryKey(autoGenerate = true) val notificationId: Int = 0,

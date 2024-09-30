@@ -1,6 +1,7 @@
 package com.example.schetodo.data.todo_block
 
 import androidx.room.*
+import com.example.schetodo.data.TODO_BLOCK_TABLE_NAME
 import com.example.schetodo.data.schedule_template.ScheduleTemplate
 import java.time.LocalDate
 import java.time.LocalTime
@@ -18,7 +19,8 @@ import java.time.LocalTime
             onDelete = ForeignKey.CASCADE,
             onUpdate = ForeignKey.CASCADE
         )
-    ]
+    ],
+    tableName = TODO_BLOCK_TABLE_NAME
 )
 data class TodoBlock(
     @PrimaryKey(autoGenerate = true) val todoBlockId: Int,
