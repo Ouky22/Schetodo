@@ -19,7 +19,10 @@ import com.example.schetodo.feature.schedule_template.edit_schedule_template.Edi
 import com.example.schetodo.feature.schedule_template.edit_schedule_template.EditScheduleTemplateViewModel
 import com.example.schetodo.feature.schedule_template.list.ScheduleTemplatesScreen
 import com.example.schetodo.feature.schedule_template.list.ScheduleTemplatesViewModel
+import com.example.schetodo.feature.settings.SettingsScreen
+import com.example.schetodo.feature.settings.SettingsViewModel
 import com.example.schetodo.ui.navigation.Graph
+import com.example.schetodo.ui.navigation.settings.Settings
 
 fun NavGraphBuilder.scheduleNavGraph(
     schetodoAppState: SchetodoAppState
@@ -51,6 +54,9 @@ fun NavGraphBuilder.scheduleNavGraph(
                 },
                 onScheduleTemplatesScreenNavigation = {
                     schetodoAppState.navController.navigate(ScheduleTemplates.route)
+                },
+                onSettingsScreenNavigation = {
+                    schetodoAppState.navController.navigate(Settings.route)
                 },
                 schetodoAppState = schetodoAppState
             )
@@ -129,6 +135,13 @@ fun NavGraphBuilder.scheduleNavGraph(
                         endTimeStamp = endTimeStamp
                     )
                 }
+            )
+        }
+        composable(route = Settings.route) {
+            val viewModel = hiltViewModel<SettingsViewModel>()
+            SettingsScreen(
+                viewModel = viewModel,
+                schetodoAppState = schetodoAppState
             )
         }
     }

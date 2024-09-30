@@ -87,4 +87,5 @@
     <string name="clear_schedule">Clear schedule</string>
     <string name="cleared_schedule">Cleared schedule</string>
     <string name="deleted_schedule_template">Deleted schedule template</string>
+    <string name="settings">Settings</string>
 </resources>

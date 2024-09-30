@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.DeleteSweep
 import androidx.compose.material.icons.outlined.Save
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.TableRows
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -43,6 +44,7 @@ fun ScheduleScreen(
     onEditScheduleBlockNavigation: (todoBlockId: Int) -> Unit,
     onAddScheduleBlockInGapNavigation: (dateStamp: Long, startTimeStamp: Int, endTimeStamp: Int) -> Unit,
     onScheduleTemplatesScreenNavigation: () -> Unit,
+    onSettingsScreenNavigation: () -> Unit,
     schetodoAppState: SchetodoAppState
 ) {
     val state by viewModel.scheduleState.collectAsStateWithLifecycle()
@@ -101,7 +103,8 @@ fun ScheduleScreen(
             )
         },
         onDeleteAllScheduleBlocks = { viewModel.onEvent(MarkAllTodoBlocksForDeletion) },
-        onUndoDeleteAllScheduleBlocks = { viewModel.onEvent(UndoMarkAllTodoBlocksForDeletion) }
+        onUndoDeleteAllScheduleBlocks = { viewModel.onEvent(UndoMarkAllTodoBlocksForDeletion) },
+        onSettingsClick = onSettingsScreenNavigation
     )
 }
 
@@ -132,7 +135,8 @@ fun ScheduleScreen(
     onEditScheduleBlock: (todoBlockId: Int) -> Unit,
     onAddScheduleGapButtonClick: (startTime: LocalTime, endTime: LocalTime) -> Unit,
     onDeleteAllScheduleBlocks: () -> Unit,
-    onUndoDeleteAllScheduleBlocks: () -> Unit
+    onUndoDeleteAllScheduleBlocks: () -> Unit,
+    onSettingsClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -161,7 +165,8 @@ fun ScheduleScreen(
                                     onActionPerformed = onUndoDeleteAllScheduleBlocks
                                 )
                             }
-                        }
+                        },
+                        onSettingsClick = onSettingsClick
                     )
                 }
             )
@@ -362,7 +367,8 @@ fun ScheduleOverflowMenu(
     modifier: Modifier = Modifier,
     onScheduleTemplatesOptionClick: () -> Unit,
     onSaveAsTemplateOptionClick: () -> Unit,
-    onDeleteAllScheduleBlocks: () -> Unit
+    onDeleteAllScheduleBlocks: () -> Unit,
+    onSettingsClick: () -> Unit,
 ) {
     Box(modifier = modifier) {
         var expandOverflowMenu by remember { mutableStateOf(false) }
@@ -406,6 +412,17 @@ fun ScheduleOverflowMenu(
                 },
                 leadingIcon = {
                     Icon(imageVector = Icons.Outlined.DeleteSweep, contentDescription = null)
+                }
+            )
+            Divider()
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.settings)) },
+                onClick = {
+                    expandOverflowMenu = false
+                    onSettingsClick()
+                },
+                leadingIcon = {
+                    Icon(imageVector = Icons.Outlined.Settings, contentDescription = null)
                 }
             )
         }
@@ -455,7 +472,8 @@ fun ScheduleScreenPreview() {
             onEditScheduleBlock = {},
             onAddScheduleGapButtonClick = { _, _ -> },
             onDeleteAllScheduleBlocks = {},
-            onUndoDeleteAllScheduleBlocks = {}
+            onUndoDeleteAllScheduleBlocks = {},
+            onSettingsClick = {}
         )
     }
 }
