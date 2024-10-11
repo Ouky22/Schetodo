@@ -12,3 +12,5 @@ const val SCHEDULE_TEMPLATE_TABLE_NAME = "ScheduleTemplate"
 const val TODO_TABLE_NAME = "Todo"
 const val TODO_BLOCK_TABLE_NAME = "TodoBlock"
 const val TODO_CATEGORY_TABLE_NAME = "TodoCategory"
+
+const val BACKUP_FILE_MIME_TYPE = "application/octet-stream"

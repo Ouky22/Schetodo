@@ -49,16 +49,19 @@ abstract class SchetodoDatabase : RoomDatabase() {
     abstract val scheduleBlockDao: ScheduleBlockDao
     abstract val notificationDao: NotificationDao
     abstract val scheduleTemplateDao: ScheduleTemplateDao
+    abstract val databaseDao: DatabaseDao
 
     companion object {
         @Volatile
         private var INSTANCE: SchetodoDatabase? = null
 
+        const val DATABASE_NAME = "schetodo_database"
+
         fun getInstance(context: Context) = INSTANCE ?: synchronized(this) {
             val instance = Room.databaseBuilder(
                 context,
                 SchetodoDatabase::class.java,
-                "schetodo_database"
+                DATABASE_NAME
             )
                 .fallbackToDestructiveMigration()
                 .build()

@@ -1,6 +1,7 @@
 package com.example.schetodo.di
 
 import android.content.Context
+import com.example.schetodo.data.DatabaseDao
 import com.example.schetodo.data.SchetodoDatabase
 import com.example.schetodo.data.notification.NotificationDao
 import com.example.schetodo.data.relationship.TodoBlockCategoryRelationshipDao
@@ -64,4 +65,9 @@ object DatabaseModule {
     @Provides
     fun provideScheduleTemplateDao(schetodoDatabase: SchetodoDatabase): ScheduleTemplateDao =
         schetodoDatabase.scheduleTemplateDao
+
+    @Singleton
+    @Provides
+    fun provideDatabaseDao(schetodoDatabase: SchetodoDatabase): DatabaseDao =
+        schetodoDatabase.databaseDao
 }
