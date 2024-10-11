@@ -1,5 +1,6 @@
 package com.example.schetodo.data.user_preferences
 
+import android.net.Uri
 import com.example.schetodo.data.todo.TodoFilterSettings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -32,5 +33,12 @@ class FakeUserPreferencesRepository : UserPreferencesRepository {
 
     override suspend fun setShowScheduleBlockNotificationAtEnd(show: Boolean) {
         _showScheduleBlockNotificationAtEnd = show
+    }
+
+    override val showDatabaseBackupDirectoryPath: Flow<Uri>
+        get() = TODO("Not yet implemented")
+
+    override suspend fun setDatabaseBackupDirectoryPath(uri: Uri) {
+        TODO("Not yet implemented")
     }
 }

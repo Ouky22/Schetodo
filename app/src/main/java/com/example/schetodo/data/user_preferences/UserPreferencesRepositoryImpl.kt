@@ -1,10 +1,12 @@
 package com.example.schetodo.data.user_preferences
 
+import android.net.Uri
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.schetodo.data.todo.TodoFilterSettings
 import com.example.schetodo.di.CoroutineScopeModule.ApplicationCoroutineScope
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +34,29 @@ class UserPreferencesRepositoryImpl @Inject constructor(
         val SHOW_SCHEDULE_BLOCK_NOTIFICATION_AT_END = booleanPreferencesKey(
             "show_schedule_block_notification_at_start"
         )
+
+        val SHOW_DATABASE_BACKUP_DIRECTORY_PATH = stringPreferencesKey(
+            "show_database_backup_directory_path"
+        )
     }
+
+    override val showDatabaseBackupDirectoryPath = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) Log.e(
+                TAG, "Error while reading database-backup-directory-path",
+                exception
+            )
+            else throw exception
+        }
+        .map { preferences ->
+
+            try {
+                preferences[SHOW_DATABASE_BACKUP_DIRECTORY_PATH]?.let { Uri.parse(it) } ?: Uri.EMPTY
+            } catch (e: Exception) {
+                Log.e(TAG, "Error while parsing database-backup-directory-path", e)
+                Uri.EMPTY
+            }
+        }
 
     override val showScheduleBlockNotificationAtBeginning = dataStore.data
         .catch { exception ->
@@ -70,6 +94,14 @@ class UserPreferencesRepositoryImpl @Inject constructor(
         applicationCoroutineScope.launch {
             dataStore.edit { preferences ->
                 preferences[SHOW_SCHEDULE_BLOCK_NOTIFICATION_AT_END] = show
+            }
+        }.join()
+    }
+
+    override suspend fun setDatabaseBackupDirectoryPath(uri: Uri) {
+        applicationCoroutineScope.launch {
+            dataStore.edit { preferences ->
+                preferences[SHOW_DATABASE_BACKUP_DIRECTORY_PATH] = uri.toString()
             }
         }.join()
     }

@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.schetodo.R
+import com.example.schetodo.data.user_preferences.UserPreferencesRepository
 import com.example.schetodo.feature.dbbackup.DatabaseBackupExporter
 import com.example.schetodo.feature.dbbackup.DatabaseBackupImporter
 import com.example.schetodo.feature.settings.SettingsEvent.SetOfflineBackupUri
@@ -22,6 +23,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val databaseBackupExporter: DatabaseBackupExporter,
     private val databaseBackupImporter: DatabaseBackupImporter,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
 
     private val _settingsState = MutableStateFlow(SettingsState())
@@ -31,6 +33,14 @@ class SettingsViewModel @Inject constructor(
     private val _snackBarMessages = MutableSharedFlow<UiText>()
     val snackBarMessages: SharedFlow<UiText>
         get() = _snackBarMessages.asSharedFlow()
+
+    init {
+        viewModelScope.launch {
+            userPreferencesRepository.showDatabaseBackupDirectoryPath.collect { uri ->
+                _settingsState.value = _settingsState.value.copy(selectedUri = uri)
+            }
+        }
+    }
 
     fun onEvent(event: SettingsEvent) {
         when (event) {
@@ -57,6 +67,9 @@ class SettingsViewModel @Inject constructor(
 
     private fun setOfflineBackupUri(uri: Uri) {
         _settingsState.value = _settingsState.value.copy(selectedUri = uri)
+        viewModelScope.launch {
+            userPreferencesRepository.setDatabaseBackupDirectoryPath(uri)
+        }
     }
 
     private fun importBackupFile(uri: Uri) {

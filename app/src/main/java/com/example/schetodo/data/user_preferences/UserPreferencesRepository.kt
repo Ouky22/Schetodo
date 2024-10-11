@@ -1,5 +1,6 @@
 package com.example.schetodo.data.user_preferences
 
+import android.net.Uri
 import com.example.schetodo.data.todo.TodoFilterSettings
 import kotlinx.coroutines.flow.Flow
 
@@ -11,4 +12,6 @@ interface UserPreferencesRepository {
     val showScheduleBlockNotificationAtEnd: Flow<Boolean>
     suspend fun setShowScheduleBlockNotificationAtBeginning(show: Boolean)
     suspend fun setShowScheduleBlockNotificationAtEnd(show: Boolean)
+    val showDatabaseBackupDirectoryPath: Flow<Uri>
+    suspend fun setDatabaseBackupDirectoryPath(uri: Uri)
 }
