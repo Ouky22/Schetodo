@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import okio.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -64,7 +63,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 databaseBackupImporter.importDatabase(uri)
-            } catch (ex: IOException) {
+            } catch (ex: Exception) {
                 _snackBarMessages.emit(UiText.StringResource(R.string.database_import_failed))
             }
         }
