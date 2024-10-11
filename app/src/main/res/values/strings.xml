@@ -96,4 +96,7 @@
     <string name="restore_backup">Restore backup</string>
     <string name="restore_backup_description">Restore your data from a backup file.\nThis will overwrite all existing data!</string>
     <string name="currently_no_backup_directory_selected">Currently no backup directory selected.</string>
+    <string name="database_exported_successfully">Database successfully exported.</string>
+    <string name="database_export_failed">Database export failed.</string>
+    <string name="database_import_failed">Database import failed.</string>
 </resources>

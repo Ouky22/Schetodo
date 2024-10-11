@@ -11,12 +11,17 @@ import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +40,14 @@ fun SettingsScreen(
     schetodoAppState: SchetodoAppState,
 ) {
     val state by viewModel.settingsState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = true) {
+        viewModel.snackBarMessages.collect { uiText ->
+            snackbarHostState.showSnackbar(uiText.asString(context))
+        }
+    }
 
     SettingsScreen(
         modifier = modifier,
@@ -51,6 +64,7 @@ fun SettingsScreen(
         onImportBackupFile = { uri ->
             viewModel.onEvent(SettingsEvent.ImportBackupFile(uri))
         },
+        snackbarHostState = snackbarHostState,
     )
 }
 
@@ -63,6 +77,7 @@ fun SettingsScreen(
     onOfflineBackupUriSelected: (uri: Uri) -> Unit,
     onTriggerOfflineBackup: () -> Unit,
     onImportBackupFile: (uri: Uri) -> Unit,
+    snackbarHostState: SnackbarHostState,
 ) {
     val selectBackupDirectoryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
@@ -86,6 +101,7 @@ fun SettingsScreen(
                 onBackButtonClick = onBackButtonClick,
             )
         },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { contentPadding ->
         Column(
             modifier = modifier.padding(contentPadding),
@@ -185,6 +201,7 @@ fun SettingsScreenPreview() {
             onOfflineBackupUriSelected = {},
             onTriggerOfflineBackup = {},
             onImportBackupFile = {},
+            snackbarHostState = SnackbarHostState(),
         )
     }
 }
