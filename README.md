@@ -59,3 +59,6 @@ This is an Android Studio Project. The code is written in Kotlin and the UI is i
 - Room for the database
 - Hilt for dependency injection
 - Truth for writing more readable assertions in tests
+
+# Local Execution
+- To use the sign in with google functionality locally you need to create a web application client in google cloud console and add the client id to the local.properties file with the name OAUTH_WEB_CLIENT_ID. See https://developer.android.com/identity/sign-in/credential-manager-siwg#set-google for more details.

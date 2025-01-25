@@ -6,6 +6,12 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.compose'
 }
 
+def localPropertiesFile = project.rootProject.file("local.properties")
+def localProperties = new Properties()
+if (localPropertiesFile.exists()) {
+    localProperties.load(new FileInputStream(localPropertiesFile))
+}
+
 android {
     namespace 'com.example.schetodo'
     compileSdk 35
@@ -26,6 +32,10 @@ android {
             arg("room.schemaLocation", "$projectDir/schemas")
         }
         signingConfig signingConfigs.debug
+
+        def oauthWebClientId = System.getenv("OAUTH_WEB_CLIENT_ID") ?:
+                localProperties.getProperty("OAUTH_WEB_CLIENT_ID", "")
+        buildConfigField("String", "OAUTH_WEB_CLIENT_ID", oauthWebClientId)
     }
 
     sourceSets {
