@@ -3,10 +3,13 @@ package com.example.schetodo.feature.settings
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -20,8 +23,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,6 +69,9 @@ fun SettingsScreen(
         onImportBackupFile = { uri ->
             viewModel.onEvent(SettingsEvent.ImportBackupFile(uri))
         },
+        onSignInWithGoogleClick = {
+            viewModel.onEvent(SettingsEvent.SignInWithGoogle)
+        },
         snackbarHostState = snackbarHostState,
     )
 }
@@ -77,6 +85,7 @@ fun SettingsScreen(
     onOfflineBackupUriSelected: (uri: Uri) -> Unit,
     onTriggerOfflineBackup: () -> Unit,
     onImportBackupFile: (uri: Uri) -> Unit,
+    onSignInWithGoogleClick: () -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     val selectBackupDirectoryLauncher =
@@ -139,6 +148,15 @@ fun SettingsScreen(
                     importBackupFileLauncher.launch(arrayOf(BACKUP_FILE_MIME_TYPE))
                 },
             )
+
+            SettingsSectionTitle(
+                text = stringResource(R.string.online_synchronization),
+                modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 24.dp)
+            )
+
+            GoogleSignInButton(
+                onSignInWithGoogleClick = onSignInWithGoogleClick,
+            )
         }
     }
 }
@@ -188,6 +206,37 @@ fun SettingsButton(
 }
 
 
+@Composable
+fun GoogleSignInButton(
+    onSignInWithGoogleClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    TextButton(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 8.dp),
+        onClick = onSignInWithGoogleClick,
+        shape = RectangleShape,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.google_g),
+                contentDescription = null,
+                tint = Color.Unspecified,
+            )
+            Text(
+                text = "Sign in with Google",
+                modifier = Modifier.padding(horizontal = 8.dp),
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 fun SettingsScreenPreview() {
@@ -201,6 +250,7 @@ fun SettingsScreenPreview() {
             onOfflineBackupUriSelected = {},
             onTriggerOfflineBackup = {},
             onImportBackupFile = {},
+            onSignInWithGoogleClick = {},
             snackbarHostState = SnackbarHostState(),
         )
     }

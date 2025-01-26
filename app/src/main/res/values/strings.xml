@@ -99,4 +99,7 @@
     <string name="database_exported_successfully">Database successfully exported.</string>
     <string name="database_export_failed">Database export failed.</string>
     <string name="database_import_failed">Database import failed.</string>
+    <string name="online_synchronization">Online synchronization</string>
+    <string name="no_google_credentials_found">No Google credentials found. Sign in to your Google account on this device.</string>
+    <string name="something_went_wrong_while_signing_in_with_google">Something went wrong while signing in with Google</string>
 </resources>

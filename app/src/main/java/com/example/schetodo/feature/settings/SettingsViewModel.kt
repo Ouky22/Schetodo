@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.schetodo.R
 import com.example.schetodo.data.user_preferences.UserPreferencesRepository
+import com.example.schetodo.feature.authentication.AuthenticationService
 import com.example.schetodo.feature.dbbackup.DatabaseBackupExporter
 import com.example.schetodo.feature.dbbackup.DatabaseBackupImporter
 import com.example.schetodo.feature.settings.SettingsEvent.SetOfflineBackupUri
@@ -24,6 +25,7 @@ class SettingsViewModel @Inject constructor(
     private val databaseBackupExporter: DatabaseBackupExporter,
     private val databaseBackupImporter: DatabaseBackupImporter,
     private val userPreferencesRepository: UserPreferencesRepository,
+    private val authenticationService: AuthenticationService,
 ) : ViewModel() {
 
     private val _settingsState = MutableStateFlow(SettingsState())
@@ -47,6 +49,7 @@ class SettingsViewModel @Inject constructor(
             is SetOfflineBackupUri -> setOfflineBackupUri(event.uri)
             is SettingsEvent.TriggerOfflineBackup -> triggerOfflineBackup()
             is SettingsEvent.ImportBackupFile -> importBackupFile(event.uri)
+            is SettingsEvent.SignInWithGoogle -> signInWithGoogle()
         }
     }
 
@@ -78,6 +81,22 @@ class SettingsViewModel @Inject constructor(
                 databaseBackupImporter.importDatabase(uri)
             } catch (ex: Exception) {
                 _snackBarMessages.emit(UiText.StringResource(R.string.database_import_failed))
+            }
+        }
+    }
+
+    private fun signInWithGoogle() {
+        viewModelScope.launch {
+            try {
+                authenticationService.signInWithGoogle()
+            } catch (e: AuthenticationService.GoogleSignInNoCredentialException) {
+                _snackBarMessages.emit(UiText.StringResource(R.string.no_google_credentials_found))
+            } catch (e: AuthenticationService.GoogleSignInException) {
+                _snackBarMessages.emit(
+                    UiText.StringResource(
+                        R.string.something_went_wrong_while_signing_in_with_google
+                    )
+                )
             }
         }
     }
