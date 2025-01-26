@@ -127,4 +127,9 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
     implementation "androidx.documentfile:documentfile:1.0.1"
+
+    // Google Sign In
+    implementation "androidx.credentials:credentials:$credentials_version"
+    implementation "androidx.credentials:credentials-play-services-auth:$credentials_version"
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 }
