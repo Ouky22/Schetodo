@@ -21,7 +21,7 @@ fun ClickableReadOnlyOutlinedTextField(
         label = { Text(labelText) },
         modifier = modifier.clickable { onClick() },
         // because the text field must be disabled to be clickable, the colors are set to match an enabled textField style
-        colors = TextFieldDefaults.outlinedTextFieldColors(
+        colors = OutlinedTextFieldDefaults.colors(
             disabledTextColor = MaterialTheme.colorScheme.onSurface,
             disabledBorderColor = MaterialTheme.colorScheme.outline,
             disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
