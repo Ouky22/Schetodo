@@ -9,14 +9,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.schetodo.ui.components.BottomNavBar
-import com.example.schetodo.ui.navigation.*
+import com.example.schetodo.ui.navigation.SchetodoNavHost
+import com.example.schetodo.ui.navigation.bottomNavDestinations
+import com.example.schetodo.ui.navigation.navigateSingleTopTo
 import com.example.schetodo.ui.navigation.schedule.Schedule
 import com.example.schetodo.ui.theme.SchetodoTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,6 +29,12 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content)) { view, insets ->
+            val bottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            view.updatePadding(bottom = bottom)
+            insets
+        }
 
         setContent {
             SchetodoApp()
