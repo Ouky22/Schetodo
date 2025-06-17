@@ -1,13 +1,10 @@
 package com.example.schetodo.ui.components
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.example.schetodo.ui.navigation.MainSchetodoDestination
@@ -26,32 +23,18 @@ fun BottomNavBar(
         destinations.forEach { destination ->
             val selected = destination == currentDestination
 
-            BottomNavigationItem(
+            NavigationBarItem(
                 selected = selected,
                 onClick = { onItemClick(destination) },
-                icon = { BottomNavIconWithLabel(destination = destination, selected = selected) },
-                unselectedContentColor = MaterialTheme.colorScheme.onSurface,
-                selectedContentColor = MaterialTheme.colorScheme.onSurface
+                icon = {
+                    Icon(
+                        imageVector = destination.icon,
+                        contentDescription = stringResource(id = destination.titleResourceId)
+                    )
+                },
+                label = { Text(text = stringResource(id = destination.titleResourceId)) },
+                alwaysShowLabel = false
             )
         }
-    }
-}
-
-@Composable
-fun BottomNavIconWithLabel(
-    modifier: Modifier = Modifier,
-    destination: MainSchetodoDestination,
-    selected: Boolean
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            imageVector = destination.icon,
-            contentDescription = stringResource(id = destination.titleResourceId)
-        )
-        if (selected)
-            Text(text = stringResource(id = destination.titleResourceId))
     }
 }
