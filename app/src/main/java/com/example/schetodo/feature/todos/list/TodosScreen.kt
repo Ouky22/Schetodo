@@ -114,6 +114,7 @@ fun TodosScreen(
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0.dp),
         topBar = {
             TodosAppBar(
                 currentCategoryName = state.currentCategory?.name,

@@ -142,6 +142,7 @@ fun ScheduleScreen(
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0.dp),
         topBar = {
             MainDestinationTopAppBar(
                 title = stringResource(R.string.schedule),
