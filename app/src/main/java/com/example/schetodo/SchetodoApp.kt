@@ -6,7 +6,7 @@ import android.app.NotificationManager
 import android.content.Context
 import androidx.compose.ui.graphics.toArgb
 import com.example.schetodo.feature.schedule.notification.TodoBlockNotificationScheduler
-import com.example.schetodo.ui.theme.md_theme_dark_primary
+import com.example.schetodo.ui.theme.primaryDark
 import com.example.schetodo.ui.util.NotificationService
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -31,7 +31,7 @@ class SchetodoApp : Application() {
         )
         channel.description = getString(R.string.schedule_notification_description)
         channel.enableLights(true)
-        channel.lightColor = md_theme_dark_primary.toArgb()
+        channel.lightColor = primaryDark.toArgb()
 
         with(getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager) {
             createNotificationChannel(channel)
