@@ -101,7 +101,17 @@ fun TimeStampsWrapper(
                 },
                 text = startTime
             )
-        if (endTime != null)
+
+        if (endTime == null) {
+            HorizontalDivider(
+                modifier = Modifier
+                    .size(0.dp)
+                    .constrainAs(endTimeRef) {
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                    }
+            )
+        } else {
             Text(
                 modifier = Modifier.constrainAs(endTimeRef) {
                     bottom.linkTo(parent.bottom)
@@ -109,6 +119,7 @@ fun TimeStampsWrapper(
                 },
                 text = endTime
             )
+        }
     }
 }
 
@@ -204,6 +215,29 @@ fun ScheduleBlockItemPreviewWithoutNotes() {
             todoBlockNotes = "",
             startTimeString = "14.00",
             endTimeString = "16.30",
+            durationString = "2 Std 30 min",
+            onClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ScheduleBlockItemPreviewWithoutEndTime() {
+    val category = TodoCategory(
+        1, "Household", todoCategoryColors[0].toArgb().toLong(), null,
+        Icons.Filled.House.name
+    )
+    SchetodoTheme {
+        ScheduleBlockItem(
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth(),
+            todoCategories = listOf(category),
+            todoDescriptions = listOf("Wash the dishes"),
+            todoBlockNotes = "",
+            startTimeString = "14.00",
+            endTimeString = null,
             durationString = "2 Std 30 min",
             onClick = {}
         )
