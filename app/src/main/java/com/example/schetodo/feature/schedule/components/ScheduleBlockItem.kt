@@ -43,7 +43,11 @@ fun ScheduleBlockItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onClick() },
-            elevation = if (elevate) CardDefaults.elevatedCardElevation() else CardDefaults.outlinedCardElevation()
+            colors =
+                if (elevate) CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+                else CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         ) {
             Column(modifier = Modifier.padding(8.dp)) {
                 if (todoCategories.isNotEmpty())
